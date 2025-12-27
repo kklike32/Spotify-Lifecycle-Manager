@@ -1,1 +1,11 @@
 copilot/
+.github/*.md
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
+env/
+.idea/
+.pytest_cache/
+.ruff_cache/
