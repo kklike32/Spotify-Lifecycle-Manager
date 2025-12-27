@@ -2,6 +2,8 @@ copilot/
 .github/*.md
 .venv/
 __pycache__/
+src/spotify_lifecycle/__pycache__
+src/spotify_lifecycle/spotify/__pycache__
 *.pyc
 .DS_Store
 .vscode/
