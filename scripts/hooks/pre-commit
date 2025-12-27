@@ -1,0 +1,22 @@
+#!/bin/bash
+# Git pre-commit hook: Run code quality checks before allowing commit
+# This ensures all commits pass linting, formatting, and tests
+
+set -e  # Exit on any error
+
+echo "Running pre-commit checks..."
+echo ""
+
+# Run make check (format + lint + test)
+if make check; then
+    echo ""
+    echo "✓ All checks passed! Proceeding with commit..."
+    exit 0
+else
+    echo ""
+    echo "✗ Checks failed! Commit aborted."
+    echo ""
+    echo "Fix the issues above and try again."
+    echo "To bypass this check (not recommended): git commit --no-verify"
+    exit 1
+fi
