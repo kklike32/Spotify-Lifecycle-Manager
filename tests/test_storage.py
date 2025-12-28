@@ -1,4 +1,4 @@
-"""Tests for storage layer (hot store, state store, idempotency).
+"""Tests for storage layer (hot store, state store, cold store, idempotency).
 
 These tests verify:
 - Conditional writes and idempotency guarantees
@@ -6,9 +6,12 @@ These tests verify:
 - State race condition handling
 - Retry safety (duplicate operations)
 - Cache-once strategy for metadata
+- Cold store partition paths and JSONL serialization
+- Append-only behavior for data lake
 """
 
 # Import mocks from local directory
+import json
 import sys
 import time
 from datetime import datetime, timezone
@@ -458,3 +461,326 @@ def test_retry_weekly_run_record_is_safe():
     # First record succeeds, subsequent records fail (idempotent)
     assert results == [True, False, False]
     assert len([k for k in store.state if k.startswith("weekly_run#")]) == 1
+
+
+# ====================
+# Cold Store Tests (S3)
+# ====================
+
+
+def test_cold_store_partition_path_generation():
+    """Test that partition paths follow dt=YYYY-MM-DD format."""
+    from unittest.mock import MagicMock
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()  # Mock S3 client
+
+    track_id = "spotify:track:3n3Ppam7vgaVa1iaRUc9Lp"
+    played_at = datetime(2025, 1, 15, 14, 30, 0, tzinfo=timezone.utc)
+    events = [
+        PlayEvent(
+            play_id=make_play_id(played_at, track_id),
+            track_id=track_id,
+            played_at=played_at,
+            user_id="user456",
+            context=None,
+        )
+    ]
+
+    # Write events for specific date
+    partition_date = datetime(2025, 1, 15)
+    key = store.write_play_events("test-bucket", partition_date, events)
+
+    # Verify partition path format
+    assert key.startswith("dt=2025-01-15/")
+    assert key.endswith(".jsonl")
+    assert "events_" in key
+
+    # Verify S3 put_object was called
+    store.s3.put_object.assert_called_once()
+    call_args = store.s3.put_object.call_args
+    assert call_args[1]["Bucket"] == "test-bucket"
+    assert call_args[1]["Key"] == key
+    assert call_args[1]["ContentType"] == "application/x-jsonlines"
+
+
+def test_cold_store_jsonl_serialization():
+    """Test that events are serialized as JSONL (one JSON per line)."""
+    from unittest.mock import MagicMock
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()
+
+    # Create multiple events
+    events = []
+    for i in range(3):
+        track_id = f"spotify:track:track{i}"
+        played_at = datetime(2025, 1, 15, 12, i, 0, tzinfo=timezone.utc)
+        events.append(
+            PlayEvent(
+                play_id=make_play_id(played_at, track_id),
+                track_id=track_id,
+                played_at=played_at,
+                user_id="user456",
+                context=None,
+            )
+        )
+
+    # Write events
+    partition_date = datetime(2025, 1, 15)
+    store.write_play_events("test-bucket", partition_date, events)
+
+    # Extract serialized body
+    call_args = store.s3.put_object.call_args
+    body = call_args[1]["Body"].decode("utf-8")
+
+    # Verify JSONL format (one JSON per line, trailing newline)
+    lines = body.strip().split("\n")
+    assert len(lines) == 3
+
+    # Verify each line is valid JSON
+    for line in lines:
+        event_dict = json.loads(line)
+        assert "play_id" in event_dict
+        assert "track_id" in event_dict
+        assert "played_at" in event_dict
+
+    # Verify trailing newline
+    assert body.endswith("\n")
+
+
+def test_cold_store_append_only_behavior():
+    """Test that writes never overwrite (append-only with unique timestamps)."""
+    from unittest.mock import MagicMock, patch
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()
+
+    track_id = "spotify:track:3n3Ppam7vgaVa1iaRUc9Lp"
+    played_at = datetime(2025, 1, 15, 12, 0, 0, tzinfo=timezone.utc)
+    events = [
+        PlayEvent(
+            play_id=make_play_id(played_at, track_id),
+            track_id=track_id,
+            played_at=played_at,
+            user_id="user456",
+            context=None,
+        )
+    ]
+
+    partition_date = datetime(2025, 1, 15)
+
+    # Mock datetime to control timestamp
+    with patch("spotify_lifecycle.storage.s3.datetime") as mock_datetime:
+        # First write at 10:00:00
+        mock_datetime.utcnow.return_value = datetime(2025, 1, 15, 10, 0, 0)
+        key1 = store.write_play_events("test-bucket", partition_date, events)
+
+        # Second write at 10:00:01 (1 second later)
+        mock_datetime.utcnow.return_value = datetime(2025, 1, 15, 10, 0, 1)
+        key2 = store.write_play_events("test-bucket", partition_date, events)
+
+    # Verify different keys (no overwrite)
+    assert key1 != key2
+    assert key1 == "dt=2025-01-15/events_100000.jsonl"
+    assert key2 == "dt=2025-01-15/events_100001.jsonl"
+
+    # Verify both writes called S3 (no overwrite)
+    assert store.s3.put_object.call_count == 2
+
+
+def test_cold_store_rejects_empty_events():
+    """Test that writing empty events list raises ValueError."""
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    partition_date = datetime(2025, 1, 15)
+
+    # Attempt to write empty list
+    import pytest
+
+    with pytest.raises(ValueError, match="Cannot write empty events list"):
+        store.write_play_events("test-bucket", partition_date, [])
+
+
+def test_cold_store_read_date_range():
+    """Test reading events from multiple partitions within date range."""
+    from unittest.mock import MagicMock
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()
+
+    # Mock list_objects_v2 paginator
+    mock_paginator = MagicMock()
+    store.s3.get_paginator.return_value = mock_paginator
+
+    # Simulate 3 days of data
+    mock_paginator.paginate.side_effect = [
+        # Day 1 (2025-01-15)
+        [{"Contents": [{"Key": "dt=2025-01-15/events_120000.jsonl"}]}],
+        # Day 2 (2025-01-16)
+        [{"Contents": [{"Key": "dt=2025-01-16/events_120000.jsonl"}]}],
+        # Day 3 (2025-01-17)
+        [{"Contents": [{"Key": "dt=2025-01-17/events_120000.jsonl"}]}],
+    ]
+
+    # Mock get_object for each file
+    def mock_get_object(Bucket, Key):
+        event = {
+            "version": "1.0.0",
+            "play_id": "test-id",
+            "track_id": "spotify:track:test",
+            "played_at": "2025-01-15T12:00:00+00:00",
+            "user_id": "user456",
+            "context": None,
+            "ingested_at": "2025-01-15T12:00:00+00:00",
+        }
+        return {"Body": MagicMock(read=lambda: json.dumps(event).encode("utf-8"))}
+
+    store.s3.get_object.side_effect = mock_get_object
+
+    # Read events from 3-day range
+    start_date = datetime(2025, 1, 15)
+    end_date = datetime(2025, 1, 17)
+    events = list(store.read_play_events("test-bucket", start_date, end_date))
+
+    # Verify 3 events read (one per file)
+    assert len(events) == 3
+
+    # Verify all are PlayEvent objects
+    for event in events:
+        assert isinstance(event, PlayEvent)
+        assert event.track_id == "spotify:track:test"
+
+
+def test_cold_store_partition_stats():
+    """Test getting storage statistics for partitions."""
+    from unittest.mock import MagicMock
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()
+
+    # Mock list_objects_v2 paginator
+    mock_paginator = MagicMock()
+    store.s3.get_paginator.return_value = mock_paginator
+
+    # Simulate 2 partitions with 3 files total
+    mock_paginator.paginate.side_effect = [
+        # Day 1: 2 files
+        [
+            {
+                "Contents": [
+                    {"Key": "dt=2025-01-15/events_120000.jsonl"},
+                    {"Key": "dt=2025-01-15/events_130000.jsonl"},
+                ]
+            }
+        ],
+        # Day 2: 1 file
+        [{"Contents": [{"Key": "dt=2025-01-16/events_120000.jsonl"}]}],
+    ]
+
+    # Mock head_object for sizes
+    def mock_head_object(Bucket, Key):
+        return {"ContentLength": 1024}  # 1 KB per file
+
+    store.s3.head_object.side_effect = mock_head_object
+
+    # Get stats
+    start_date = datetime(2025, 1, 15)
+    end_date = datetime(2025, 1, 16)
+    stats = store.get_partition_stats("test-bucket", start_date, end_date)
+
+    # Verify stats
+    assert stats["partition_count"] == 2  # 2 days
+    assert stats["file_count"] == 3  # 3 files total
+    assert stats["total_bytes"] == 3072  # 3 * 1024
+    assert stats["avg_bytes_per_partition"] == 1536  # 3072 / 2
+
+
+def test_cold_store_stats_empty_bucket():
+    """Test partition stats for empty bucket."""
+    from unittest.mock import MagicMock
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()
+
+    # Mock empty paginator
+    mock_paginator = MagicMock()
+    store.s3.get_paginator.return_value = mock_paginator
+    mock_paginator.paginate.return_value = [{}]  # No Contents key
+
+    # Get stats
+    start_date = datetime(2025, 1, 15)
+    end_date = datetime(2025, 1, 16)
+    stats = store.get_partition_stats("test-bucket", start_date, end_date)
+
+    # Verify zero stats
+    assert stats["partition_count"] == 0
+    assert stats["file_count"] == 0
+    assert stats["total_bytes"] == 0
+    assert stats["avg_bytes_per_partition"] == 0
+
+
+def test_dashboard_store_write_and_read():
+    """Test dashboard data write/read cycle."""
+    from unittest.mock import MagicMock
+
+    from spotify_lifecycle.storage.s3 import S3DashboardStore
+
+    store = S3DashboardStore()
+    store.s3 = MagicMock()
+
+    # Write dashboard data
+    dashboard_data = {
+        "top_tracks": ["track1", "track2"],
+        "listening_trends": [{"date": "2025-01-15", "count": 50}],
+    }
+    store.write_dashboard_data("dashboard-bucket", dashboard_data)
+
+    # Verify write
+    store.s3.put_object.assert_called_once()
+    call_args = store.s3.put_object.call_args
+    assert call_args[1]["Bucket"] == "dashboard-bucket"
+    assert call_args[1]["Key"] == "dashboard_data.json"
+    assert call_args[1]["ContentType"] == "application/json"
+
+    # Mock read
+    mock_body = MagicMock()
+    mock_body.read.return_value = json.dumps(dashboard_data).encode("utf-8")
+    store.s3.get_object.return_value = {"Body": mock_body}
+
+    # Read dashboard data
+    data = store.read_dashboard_data("dashboard-bucket")
+    assert data == dashboard_data
+
+
+def test_dashboard_store_read_missing():
+    """Test reading missing dashboard data returns None."""
+    from unittest.mock import MagicMock
+
+    from botocore.exceptions import ClientError
+
+    from spotify_lifecycle.storage.s3 import S3DashboardStore
+
+    store = S3DashboardStore()
+    store.s3 = MagicMock()
+
+    # Mock NoSuchKey error
+    error = ClientError({"Error": {"Code": "NoSuchKey"}}, "get_object")
+    store.s3.get_object.side_effect = error
+
+    # Read missing data
+    data = store.read_dashboard_data("dashboard-bucket")
+    assert data is None

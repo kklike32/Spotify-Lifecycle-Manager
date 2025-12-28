@@ -7,7 +7,7 @@ from typing import Optional
 from spotify_lifecycle.models import PlayEvent
 from spotify_lifecycle.spotify.client import SpotifyClient
 from spotify_lifecycle.storage.dynamo import DynamoDBClient
-from spotify_lifecycle.storage.s3 import S3Client
+from spotify_lifecycle.storage.s3 import S3ColdStore
 
 
 def compute_dedup_key(track_id: str, played_at: datetime) -> str:
@@ -27,7 +27,7 @@ def compute_dedup_key(track_id: str, played_at: datetime) -> str:
 def ingest_recently_played(
     spotify_client: SpotifyClient,
     dynamo_client: DynamoDBClient,
-    s3_client: S3Client,
+    s3_client: S3ColdStore,
     hot_table_name: str,
     raw_bucket_name: str,
     limit: int = 50,

@@ -3,12 +3,12 @@
 from datetime import datetime, timedelta
 
 from spotify_lifecycle.storage.dynamo import DynamoDBClient
-from spotify_lifecycle.storage.s3 import S3Client
+from spotify_lifecycle.storage.s3 import S3DashboardStore
 
 
 def build_dashboard_data(
     dynamo_client: DynamoDBClient,
-    s3_client: S3Client,
+    s3_client: S3DashboardStore,
     hot_table_name: str,
     dashboard_bucket_name: str,
     lookback_days: int = 30,
@@ -17,7 +17,7 @@ def build_dashboard_data(
 
     Args:
         dynamo_client: DynamoDB client
-        s3_client: S3 client
+        s3_client: S3 dashboard store client
         hot_table_name: DynamoDB table with play events
         dashboard_bucket_name: S3 bucket for dashboard data
         lookback_days: Number of days to include in aggregates
