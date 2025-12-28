@@ -1,0 +1,313 @@
+{
+    "version": "1.0.0",
+    "metadata": {
+        "generated_at": "2025-12-27T10:30:00Z",
+        "total_play_count": 2847,
+        "unique_track_count": 542,
+        "unique_artist_count": 187,
+        "genre_count": 34,
+        "date_range_start": "2025-10-01T00:00:00Z",
+        "date_range_end": "2025-12-27T00:00:00Z"
+    },
+    "top_tracks": [
+        {
+            "track_id": "3n3Ppam7vgaVa1iaRUc9Lp",
+            "track_name": "Mr. Brightside",
+            "artist_name": "The Killers",
+            "play_count": 89
+        },
+        {
+            "track_id": "0VjIjW4GlUZAMYd2vXMi3b",
+            "track_name": "Blinding Lights",
+            "artist_name": "The Weeknd",
+            "play_count": 76
+        },
+        {
+            "track_id": "3WMj8moIAXJhHsyLaqIIHI",
+            "track_name": "Levitating",
+            "artist_name": "Dua Lipa",
+            "play_count": 68
+        },
+        {
+            "track_id": "7qiZfU4dY1lWllzX7mPBI",
+            "track_name": "Shape of You",
+            "artist_name": "Ed Sheeran",
+            "play_count": 61
+        },
+        {
+            "track_id": "0DiWol3AO6WpXZgp0goxAV",
+            "track_name": "One Dance",
+            "artist_name": "Drake",
+            "play_count": 54
+        }
+    ],
+    "top_artists": [
+        {
+            "artist_id": "0C8ZW7ezQVs4URX5aX7Kqx",
+            "artist_name": "Selena Gomez",
+            "play_count": 234
+        },
+        {
+            "artist_id": "1Xyo4u8uXC1ZmMpatF05PJ",
+            "artist_name": "The Weeknd",
+            "play_count": 187
+        },
+        {
+            "artist_id": "6eUKZXaKkcviH0Ku9w2n3V",
+            "artist_name": "Ed Sheeran",
+            "play_count": 156
+        },
+        {
+            "artist_id": "3TVXtAsR1Inumwj472S9r4",
+            "artist_name": "Drake",
+            "play_count": 142
+        },
+        {
+            "artist_id": "6qqNVTkY8uBg9cP3Jd7DAH",
+            "artist_name": "Billie Eilish",
+            "play_count": 128
+        }
+    ],
+    "top_genres": [
+        {
+            "genre": "pop",
+            "play_count": 892
+        },
+        {
+            "genre": "hip hop",
+            "play_count": 567
+        },
+        {
+            "genre": "rock",
+            "play_count": 434
+        },
+        {
+            "genre": "electronic",
+            "play_count": 321
+        },
+        {
+            "genre": "indie",
+            "play_count": 287
+        }
+    ],
+    "daily_plays": [
+        {
+            "date": "2025-10-01",
+            "play_count": 28
+        },
+        {
+            "date": "2025-10-02",
+            "play_count": 34
+        },
+        {
+            "date": "2025-10-03",
+            "play_count": 41
+        },
+        {
+            "date": "2025-10-04",
+            "play_count": 37
+        },
+        {
+            "date": "2025-10-05",
+            "play_count": 29
+        },
+        {
+            "date": "2025-10-06",
+            "play_count": 22
+        },
+        {
+            "date": "2025-10-07",
+            "play_count": 31
+        },
+        {
+            "date": "2025-10-08",
+            "play_count": 45
+        },
+        {
+            "date": "2025-10-09",
+            "play_count": 38
+        },
+        {
+            "date": "2025-10-10",
+            "play_count": 33
+        },
+        {
+            "date": "2025-10-11",
+            "play_count": 27
+        },
+        {
+            "date": "2025-10-12",
+            "play_count": 35
+        },
+        {
+            "date": "2025-10-13",
+            "play_count": 42
+        },
+        {
+            "date": "2025-10-14",
+            "play_count": 39
+        },
+        {
+            "date": "2025-10-15",
+            "play_count": 31
+        },
+        {
+            "date": "2025-10-16",
+            "play_count": 28
+        },
+        {
+            "date": "2025-10-17",
+            "play_count": 36
+        },
+        {
+            "date": "2025-10-18",
+            "play_count": 44
+        },
+        {
+            "date": "2025-10-19",
+            "play_count": 40
+        },
+        {
+            "date": "2025-10-20",
+            "play_count": 32
+        },
+        {
+            "date": "2025-10-21",
+            "play_count": 29
+        },
+        {
+            "date": "2025-10-22",
+            "play_count": 37
+        },
+        {
+            "date": "2025-10-23",
+            "play_count": 43
+        },
+        {
+            "date": "2025-10-24",
+            "play_count": 38
+        },
+        {
+            "date": "2025-10-25",
+            "play_count": 34
+        },
+        {
+            "date": "2025-10-26",
+            "play_count": 30
+        },
+        {
+            "date": "2025-10-27",
+            "play_count": 26
+        },
+        {
+            "date": "2025-10-28",
+            "play_count": 33
+        },
+        {
+            "date": "2025-10-29",
+            "play_count": 41
+        },
+        {
+            "date": "2025-10-30",
+            "play_count": 36
+        }
+    ],
+    "hourly_distribution": [
+        {
+            "hour": 0,
+            "play_count": 12
+        },
+        {
+            "hour": 1,
+            "play_count": 8
+        },
+        {
+            "hour": 2,
+            "play_count": 5
+        },
+        {
+            "hour": 3,
+            "play_count": 3
+        },
+        {
+            "hour": 4,
+            "play_count": 4
+        },
+        {
+            "hour": 5,
+            "play_count": 7
+        },
+        {
+            "hour": 6,
+            "play_count": 15
+        },
+        {
+            "hour": 7,
+            "play_count": 32
+        },
+        {
+            "hour": 8,
+            "play_count": 67
+        },
+        {
+            "hour": 9,
+            "play_count": 124
+        },
+        {
+            "hour": 10,
+            "play_count": 156
+        },
+        {
+            "hour": 11,
+            "play_count": 178
+        },
+        {
+            "hour": 12,
+            "play_count": 189
+        },
+        {
+            "hour": 13,
+            "play_count": 195
+        },
+        {
+            "hour": 14,
+            "play_count": 203
+        },
+        {
+            "hour": 15,
+            "play_count": 198
+        },
+        {
+            "hour": 16,
+            "play_count": 187
+        },
+        {
+            "hour": 17,
+            "play_count": 164
+        },
+        {
+            "hour": 18,
+            "play_count": 142
+        },
+        {
+            "hour": 19,
+            "play_count": 118
+        },
+        {
+            "hour": 20,
+            "play_count": 95
+        },
+        {
+            "hour": 21,
+            "play_count": 76
+        },
+        {
+            "hour": 22,
+            "play_count": 48
+        },
+        {
+            "hour": 23,
+            "play_count": 23
+        }
+    ]
+}

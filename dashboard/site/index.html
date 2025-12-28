@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Lifecycle Analytics</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>Spotify Lifecycle Analytics</h1>
+            <p class="subtitle">Keenan Kalra Listening Insights</p>
+            <div id="last-updated" class="last-updated"></div>
+        </header>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="loading-state">
+            <div class="spinner"></div>
+            <p>Loading your listening data...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="error-state" style="display: none;">
+            <div class="error-icon">⚠️</div>
+            <h2>Unable to Load Data</h2>
+            <p id="error-message">Failed to fetch dashboard data. Please try again later.</p>
+            <button onclick="location.reload()">Retry</button>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <div class="empty-icon">🎵</div>
+            <h2>No Listening History Yet</h2>
+            <p>Start listening to Spotify and check back soon!</p>
+        </div>
+
+        <!-- Main Content -->
+        <div id="main-content" style="display: none;">
+            <!-- Summary Cards -->
+            <section class="summary-cards">
+                <div class="card">
+                    <div class="card-icon">🎵</div>
+                    <div class="card-content">
+                        <h3 id="total-plays">-</h3>
+                        <p>Total Plays</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎤</div>
+                    <div class="card-content">
+                        <h3 id="unique-tracks">-</h3>
+                        <p>Unique Tracks</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">👤</div>
+                    <div class="card-content">
+                        <h3 id="unique-artists">-</h3>
+                        <p>Unique Artists</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎸</div>
+                    <div class="card-content">
+                        <h3 id="unique-genres">-</h3>
+                        <p>Genres</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-section">
+                <!-- Daily Listening Trend -->
+                <div class="chart-container">
+                    <h2>Daily Listening Trend (Last 90 Days)</h2>
+                    <canvas id="daily-trend-chart"></canvas>
+                </div>
+
+                <!-- Hourly Distribution -->
+                <div class="chart-container">
+                    <h2>Listening by Hour of Day</h2>
+                    <canvas id="hourly-chart"></canvas>
+                </div>
+            </section>
+
+            <!-- Top Lists Section -->
+            <section class="top-lists-section">
+                <!-- Top Tracks -->
+                <div class="top-list">
+                    <h2>Top 50 Tracks</h2>
+                    <div id="top-tracks-list" class="list-container"></div>
+                </div>
+
+                <!-- Top Artists -->
+                <div class="top-list">
+                    <h2>Top 50 Artists</h2>
+                    <div id="top-artists-list" class="list-container"></div>
+                </div>
+
+                <!-- Top Genres -->
+                <div class="top-list">
+                    <h2>Top 20 Genres</h2>
+                    <div id="top-genres-list" class="list-container"></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Data refreshed nightly via serverless aggregation | Zero live queries</p>
+            <p class="cost-note"><a
+                    href="https://github.com/kklike32/" target="_blank">View on GitHub</a></p>
+        </footer>
+    </div>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- Main Application Script -->
+    <script src="app.js"></script>
+</body>
+
+</html>
