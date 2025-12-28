@@ -9,13 +9,13 @@ resource "aws_budgets_budget" "monthly" {
   budget_type       = "COST"
   limit_amount      = var.budget_limit_monthly
   limit_unit        = "USD"
-  time_period_start = "2025-01-01_00:00"
+  time_period_start = formatdate("YYYY-MM-01_00:00", timestamp())
   time_unit         = "MONTHLY"
 
   cost_filter {
     name = "TagKeyValue"
     values = [
-      "user:Project$SpotifyLifecycleManager"
+      "Project$SpotifyLifecycleManager"
     ]
   }
 

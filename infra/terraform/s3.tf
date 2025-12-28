@@ -7,7 +7,7 @@ resource "aws_s3_bucket" "raw_events" {
 
   tags = {
     Name        = "${var.project_name}-raw-events"
-    Description = "Cold storage for partitioned play events (JSONL)"
+    Description = "Cold storage for partitioned play events in JSONL format"
   }
 }
 
@@ -23,8 +23,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "raw_events" {
   bucket = aws_s3_bucket.raw_events.id
 
   rule {
-    id     = "transition-to-infrequent-access"
+    id     = "transition-and-expire"
     status = "Enabled"
+
+    filter {}
 
     transition {
       days          = 90
@@ -33,13 +35,19 @@ resource "aws_s3_bucket_lifecycle_configuration" "raw_events" {
 
     transition {
       days          = 365
-      storage_class = "GLACIER_INSTANT_RETRIEVAL"
+      storage_class = "GLACIER_IR"
+    }
+
+    expiration {
+      days = 730  # Delete after 2 years (hard cap on storage growth)
     }
   }
 
   rule {
     id     = "abort-incomplete-multipart-uploads"
     status = "Enabled"
+
+    filter {}
 
     abort_incomplete_multipart_upload {
       days_after_initiation = 7
@@ -65,7 +73,7 @@ resource "aws_s3_bucket" "dashboard" {
 
   tags = {
     Name        = "${var.project_name}-dashboard"
-    Description = "Static dashboard website (HTML/CSS/JS)"
+    Description = "Static dashboard website with HTML CSS JS"
   }
 }
 

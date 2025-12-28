@@ -6,10 +6,10 @@
 resource "aws_dynamodb_table" "play_events" {
   name         = var.hot_table_name
   billing_mode = "PAY_PER_REQUEST" # On-demand, no provisioned capacity
-  hash_key     = "play_id"
+  hash_key     = "dedup_key"
 
   attribute {
-    name = "play_id"
+    name = "dedup_key"
     type = "S"
   }
 
@@ -40,12 +40,12 @@ resource "aws_dynamodb_table" "tracks" {
   }
 
   point_in_time_recovery {
-    enabled = true
+    enabled = false # Cache data, not critical
   }
 
   tags = {
     Name        = "${var.project_name}-tracks"
-    Description = "Cached track metadata (no TTL)"
+    Description = "Cached track metadata without TTL"
   }
 }
 
@@ -61,12 +61,12 @@ resource "aws_dynamodb_table" "artists" {
   }
 
   point_in_time_recovery {
-    enabled = true
+    enabled = false # Cache data, not critical
   }
 
   tags = {
     Name        = "${var.project_name}-artists"
-    Description = "Cached artist metadata (no TTL)"
+    Description = "Cached artist metadata without TTL"
   }
 }
 
@@ -82,11 +82,11 @@ resource "aws_dynamodb_table" "state" {
   }
 
   point_in_time_recovery {
-    enabled = true
+    enabled = false # Small state data, not critical
   }
 
   tags = {
     Name        = "${var.project_name}-state"
-    Description = "Pipeline state (cursors, run IDs)"
+    Description = "Pipeline state for cursors and run IDs"
   }
 }

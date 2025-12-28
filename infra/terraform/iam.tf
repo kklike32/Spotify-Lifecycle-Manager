@@ -20,7 +20,7 @@ resource "aws_iam_role" "lambda_execution" {
 
   tags = {
     Name        = "${var.project_name}-lambda-execution"
-    Description = "IAM role for all Lambda functions (least privilege)"
+    Description = "IAM role for all Lambda functions with least privilege"
   }
 }
 

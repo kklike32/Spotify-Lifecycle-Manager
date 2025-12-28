@@ -178,8 +178,8 @@ resource "aws_lambda_function" "aggregate" {
   role          = aws_iam_role.lambda_execution.arn
   handler       = "spotify_lifecycle.lambda_handler.aggregate_handler"
   runtime       = var.lambda_runtime
-  timeout       = var.aggregate_lambda_timeout
-  memory_size   = var.aggregate_lambda_memory
+  timeout       = 180  # 3 minutes (down from 300s)
+  memory_size   = 256  # 256 MB (down from 512MB)
 
   filename         = data.archive_file.lambda_package.output_path
   source_code_hash = data.archive_file.lambda_package.output_base64sha256

@@ -188,7 +188,7 @@ output "lambda_role_name" {
 
 output "budget_name" {
   description = "Name of the AWS budget for cost alerts"
-  value       = var.budget_notification_email != "" ? aws_budgets_budget.monthly[0].budget_name : "Not configured"
+  value       = var.budget_notification_email != "" ? aws_budgets_budget.monthly[0].name : "Not configured"
 }
 
 output "budget_limit" {
