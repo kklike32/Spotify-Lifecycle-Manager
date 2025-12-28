@@ -70,6 +70,7 @@ class AppConfig:
     Attributes:
         source_playlist_id: Spotify playlist ID to source tracks from (for weekly playlists)
         lookback_days: Number of days to look back for recent plays (default: 7)
+        aggregation_frequency_days: How often to run aggregation (default: 7 days = weekly)
         environment: Deployment environment (development/production)
         spotify: Spotify API configuration (auto-loaded from env vars)
         storage: AWS storage configuration (auto-loaded from env vars)
@@ -77,6 +78,7 @@ class AppConfig:
 
     source_playlist_id: str
     lookback_days: int = 7
+    aggregation_frequency_days: int = 7
     environment: str = "development"
     spotify: SpotifyConfig = None
     storage: StorageConfig = None
@@ -134,5 +136,6 @@ def load_config() -> AppConfig:
     return AppConfig(
         source_playlist_id=os.getenv("SOURCE_PLAYLIST_ID", ""),
         lookback_days=int(os.getenv("LOOKBACK_DAYS", "7")),
+        aggregation_frequency_days=int(os.getenv("AGGREGATION_FREQUENCY_DAYS", "7")),
         environment=os.getenv("ENVIRONMENT", "development"),
     )
