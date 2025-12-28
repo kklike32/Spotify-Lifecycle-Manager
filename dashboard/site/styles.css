@@ -280,6 +280,8 @@ canvas {
     background-color: var(--surface);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
+    position: relative;
+    z-index: 2;
 }
 
 .window-control label {
@@ -293,6 +295,9 @@ canvas {
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     padding: var(--spacing-xs) var(--spacing-sm);
+    position: relative;
+    z-index: 3;
+    pointer-events: auto;
 }
 
 .window-pill {
