@@ -151,3 +151,54 @@ class SpotifyClient:
         for i in range(0, len(track_ids), 100):
             batch = track_ids[i : i + 100]
             self.sp.playlist_add_items(playlist_id, batch)
+
+    def get_playlist_tracks(self, playlist_id: str) -> list[str]:
+        """Get all track IDs from a playlist (with pagination).
+
+        Fetches all tracks from a Spotify playlist, handling pagination
+        automatically. Useful for fetching source playlists for filtering.
+
+        Args:
+            playlist_id: Spotify playlist ID (or URI)
+
+        Returns:
+            List of Spotify track URIs
+
+        Raises:
+            RuntimeError: If not authenticated
+
+        Notes:
+            - Handles pagination automatically (Spotify returns max 100 per page)
+            - Returns track URIs in format: spotify:track:{id}
+            - Skips local tracks (not available via Spotify API)
+            - Empty playlists return empty list
+        """
+        if not self.sp:
+            raise RuntimeError("Not authenticated.")
+
+        track_ids = []
+        offset = 0
+        limit = 100  # Spotify API max
+
+        while True:
+            # Fetch one page of tracks
+            response = self.sp.playlist_tracks(
+                playlist_id,
+                fields="items(track(uri,is_local)),next",
+                limit=limit,
+                offset=offset,
+            )
+
+            # Extract track URIs (skip local tracks)
+            for item in response.get("items", []):
+                track = item.get("track")
+                if track and not track.get("is_local", False):
+                    track_ids.append(track["uri"])
+
+            # Check if more pages exist
+            if response.get("next"):
+                offset += limit
+            else:
+                break
+
+        return track_ids

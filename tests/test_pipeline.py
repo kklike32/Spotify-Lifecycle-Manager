@@ -438,3 +438,262 @@ def test_run_ingestion_no_items(mock_spotify_client, mock_dynamo_client, mock_s3
     assert summary["unique_events"] == 0
     assert summary["hot_written"] == 0
     assert summary["cold_written"] == 0
+
+
+# ==========================================
+# PLAYLIST PIPELINE TESTS (Phase 6)
+# ==========================================
+
+
+def test_compute_candidates_basic():
+    """Test basic set-difference logic for candidate selection."""
+    from spotify_lifecycle.pipeline.playlists import _compute_candidates
+
+    source = [
+        "spotify:track:1",
+        "spotify:track:2",
+        "spotify:track:3",
+        "spotify:track:4",
+        "spotify:track:5",
+    ]
+    recent = {"spotify:track:2", "spotify:track:4"}
+
+    candidates = _compute_candidates(source, recent)
+
+    # Should return source - recent
+    assert len(candidates) == 3
+    assert "spotify:track:1" in candidates
+    assert "spotify:track:3" in candidates
+    assert "spotify:track:5" in candidates
+    # Should not contain recent tracks
+    assert "spotify:track:2" not in candidates
+    assert "spotify:track:4" not in candidates
+
+
+def test_compute_candidates_preserves_order():
+    """Test that candidate selection preserves source playlist order."""
+    from spotify_lifecycle.pipeline.playlists import _compute_candidates
+
+    source = ["spotify:track:5", "spotify:track:3", "spotify:track:1"]
+    recent = set()
+
+    candidates = _compute_candidates(source, recent)
+
+    # Order should match source
+    assert candidates == ["spotify:track:5", "spotify:track:3", "spotify:track:1"]
+
+
+def test_compute_candidates_all_recent():
+    """Test candidate selection when all tracks are recently played."""
+    from spotify_lifecycle.pipeline.playlists import _compute_candidates
+
+    source = ["spotify:track:1", "spotify:track:2", "spotify:track:3"]
+    recent = {"spotify:track:1", "spotify:track:2", "spotify:track:3"}
+
+    candidates = _compute_candidates(source, recent)
+
+    # Should return empty list
+    assert candidates == []
+
+
+def test_compute_candidates_empty_source():
+    """Test candidate selection with empty source playlist."""
+    from spotify_lifecycle.pipeline.playlists import _compute_candidates
+
+    source = []
+    recent = {"spotify:track:1", "spotify:track:2"}
+
+    candidates = _compute_candidates(source, recent)
+
+    # Should return empty list
+    assert candidates == []
+
+
+def test_compute_candidates_no_recent():
+    """Test candidate selection when no tracks recently played."""
+    from spotify_lifecycle.pipeline.playlists import _compute_candidates
+
+    source = ["spotify:track:1", "spotify:track:2", "spotify:track:3"]
+    recent = set()
+
+    candidates = _compute_candidates(source, recent)
+
+    # Should return all source tracks
+    assert candidates == source
+
+
+def test_create_weekly_playlist_success(mock_spotify_client, mock_dynamo_client):
+    """Test successful weekly playlist creation."""
+    from spotify_lifecycle.pipeline.playlists import create_weekly_playlist
+
+    # Setup: No existing state (first run)
+    mock_dynamo_client.get_playlist_state.return_value = None
+
+    # Setup: Source playlist with 5 tracks
+    source_tracks = [
+        "spotify:track:1",
+        "spotify:track:2",
+        "spotify:track:3",
+        "spotify:track:4",
+        "spotify:track:5",
+    ]
+    mock_spotify_client.get_playlist_tracks.return_value = source_tracks
+
+    # Setup: 2 tracks played recently
+    mock_dynamo_client.get_recently_played_track_ids.return_value = {
+        "spotify:track:2",
+        "spotify:track:4",
+    }
+
+    # Setup: Playlist creation returns new playlist
+    mock_spotify_client.create_playlist.return_value = {
+        "id": "new_playlist_id",
+        "uri": "spotify:playlist:new_playlist_id",
+    }
+
+    # Setup: State write succeeds
+    mock_dynamo_client.write_playlist_state.return_value = True
+
+    # Execute
+    result = create_weekly_playlist(
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        source_playlist_id="spotify:playlist:source",
+        lookback_days=7,
+        hot_table_name="test_hot",
+        state_table_name="test_state",
+        user_id="testuser",
+    )
+
+    # Verify: Result summary
+    assert result["playlist_id"] == "spotify:playlist:new_playlist_id"
+    assert result["tracks_added"] == 3  # 5 source - 2 recent = 3 candidates
+    assert result["source_count"] == 5
+    assert result["recent_count"] == 2
+    assert result["candidate_count"] == 3
+    assert result["already_exists"] is False
+
+    # Verify: Playlist created with correct name
+    mock_spotify_client.create_playlist.assert_called_once()
+    call_args = mock_spotify_client.create_playlist.call_args
+    assert "Weekly Unheard" in call_args.kwargs["name"]
+
+    # Verify: Tracks added to playlist
+    mock_spotify_client.add_tracks_to_playlist.assert_called_once()
+    added_tracks = mock_spotify_client.add_tracks_to_playlist.call_args[0][1]
+    assert len(added_tracks) == 3
+    assert "spotify:track:1" in added_tracks
+    assert "spotify:track:3" in added_tracks
+    assert "spotify:track:5" in added_tracks
+
+    # Verify: State written
+    mock_dynamo_client.write_playlist_state.assert_called_once()
+
+
+def test_create_weekly_playlist_idempotent_skip(mock_spotify_client, mock_dynamo_client):
+    """Test that existing playlist is skipped (idempotency)."""
+    from datetime import datetime, timezone
+
+    from spotify_lifecycle.models import PlaylistState
+    from spotify_lifecycle.pipeline.playlists import create_weekly_playlist
+
+    # Setup: Existing state (playlist already created this week)
+    now = datetime.now(timezone.utc)
+    existing_state = PlaylistState(
+        state_key="weekly_playlist_2025_W52",
+        week_id="2025-W52",
+        playlist_id="spotify:playlist:existing",
+        created_at=now,
+        track_count=10,
+        source_playlist_id="spotify:playlist:source",
+    )
+    mock_dynamo_client.get_playlist_state.return_value = existing_state
+
+    # Execute
+    result = create_weekly_playlist(
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        source_playlist_id="spotify:playlist:source",
+        lookback_days=7,
+        hot_table_name="test_hot",
+        state_table_name="test_state",
+    )
+
+    # Verify: Returns existing playlist info
+    assert result["playlist_id"] == "spotify:playlist:existing"
+    assert result["tracks_added"] == 10
+    assert result["already_exists"] is True
+
+    # Verify: No Spotify API calls (idempotent skip)
+    mock_spotify_client.get_playlist_tracks.assert_not_called()
+    mock_spotify_client.create_playlist.assert_not_called()
+    mock_spotify_client.add_tracks_to_playlist.assert_not_called()
+
+    # Verify: No state write (already exists)
+    mock_dynamo_client.write_playlist_state.assert_not_called()
+
+
+def test_create_weekly_playlist_empty_source():
+    """Test error handling when source playlist is empty."""
+    from spotify_lifecycle.pipeline.playlists import create_weekly_playlist
+
+    mock_spotify_client = Mock()
+    mock_dynamo_client = Mock()
+
+    # Setup: No existing state
+    mock_dynamo_client.get_playlist_state.return_value = None
+
+    # Setup: Empty source playlist
+    mock_spotify_client.get_playlist_tracks.return_value = []
+
+    # Execute & Verify: Should raise ValueError
+    with pytest.raises(ValueError, match="Source playlist is empty"):
+        create_weekly_playlist(
+            spotify_client=mock_spotify_client,
+            dynamo_client=mock_dynamo_client,
+            source_playlist_id="spotify:playlist:empty",
+            lookback_days=7,
+        )
+
+
+def test_create_weekly_playlist_all_tracks_recent(mock_spotify_client, mock_dynamo_client):
+    """Test playlist creation when all tracks were recently played."""
+    from spotify_lifecycle.pipeline.playlists import create_weekly_playlist
+
+    # Setup: No existing state
+    mock_dynamo_client.get_playlist_state.return_value = None
+
+    # Setup: Source playlist with 3 tracks
+    source_tracks = ["spotify:track:1", "spotify:track:2", "spotify:track:3"]
+    mock_spotify_client.get_playlist_tracks.return_value = source_tracks
+
+    # Setup: All tracks played recently
+    mock_dynamo_client.get_recently_played_track_ids.return_value = set(source_tracks)
+
+    # Setup: Playlist creation returns new playlist
+    mock_spotify_client.create_playlist.return_value = {
+        "id": "empty_playlist",
+        "uri": "spotify:playlist:empty_playlist",
+    }
+
+    # Setup: State write succeeds
+    mock_dynamo_client.write_playlist_state.return_value = True
+
+    # Execute
+    result = create_weekly_playlist(
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        source_playlist_id="spotify:playlist:source",
+        lookback_days=7,
+    )
+
+    # Verify: Empty playlist created
+    assert result["tracks_added"] == 0
+    assert result["candidate_count"] == 0
+
+    # Verify: Playlist created but no tracks added
+    mock_spotify_client.create_playlist.assert_called_once()
+    mock_spotify_client.add_tracks_to_playlist.assert_not_called()
+
+    # Verify: State still written (empty playlist is valid)
+    mock_dynamo_client.write_playlist_state.assert_called_once()

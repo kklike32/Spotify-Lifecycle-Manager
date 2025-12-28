@@ -29,6 +29,7 @@ from spotify_lifecycle.models import (
     ArtistMetadata,
     IngestionState,
     PlayEvent,
+    PlaylistState,
     TrackMetadata,
 )
 
@@ -447,3 +448,144 @@ class DynamoDBClient:
             # First run, no condition
             table.put_item(Item=item)
             return True
+
+    # ==========================================
+    # PLAYLIST OPERATIONS
+    # ==========================================
+
+    def get_recently_played_track_ids(self, table_name: str, lookback_days: int) -> set[str]:
+        """Get set of track IDs played in last N days (from hot store).
+
+        Scans hot store for recent plays and returns unique track IDs.
+        Used by weekly playlist pipeline to filter out recently played tracks.
+
+        Args:
+            table_name: DynamoDB hot store table name
+            lookback_days: Number of days to look back
+
+        Returns:
+            Set of Spotify track URIs played in lookback window
+
+        Cost Impact:
+            - Scan operation (bounded by TTL, max 7 days of data)
+            - For typical usage (30 plays/day × 7 days = 210 items):
+              ~1 RCU (eventually consistent)
+            - Worst case (100 plays/day × 7 days = 700 items):
+              ~3 RCU (eventually consistent)
+
+        Performance:
+            - Hot store is small (<1000 items due to TTL)
+            - Scan completes in <100ms typically
+            - No secondary index needed (bounded data size)
+
+        Notes:
+            - Returns track_id only (not full play events)
+            - Deduplicates automatically via set
+            - Time filtering done by checking played_at timestamps
+        """
+        from spotify_lifecycle.utils.time import days_ago
+
+        table = self.dynamodb.Table(table_name)
+        cutoff_time = days_ago(lookback_days)
+        cutoff_str = cutoff_time.isoformat()
+
+        # Scan hot store (bounded by TTL, safe for small datasets)
+        track_ids = set()
+        response = table.scan(
+            FilterExpression="played_at >= :cutoff",
+            ExpressionAttributeValues={":cutoff": cutoff_str},
+            ProjectionExpression="track_id",  # Only fetch track_id (save bandwidth)
+            ConsistentRead=False,  # Eventually consistent (cheaper)
+        )
+
+        # Collect track IDs
+        for item in response.get("Items", []):
+            track_ids.add(item["track_id"])
+
+        # Handle pagination (if hot store grows beyond 1MB)
+        while "LastEvaluatedKey" in response:
+            response = table.scan(
+                FilterExpression="played_at >= :cutoff",
+                ExpressionAttributeValues={":cutoff": cutoff_str},
+                ProjectionExpression="track_id",
+                ConsistentRead=False,
+                ExclusiveStartKey=response["LastEvaluatedKey"],
+            )
+            for item in response.get("Items", []):
+                track_ids.add(item["track_id"])
+
+        return track_ids
+
+    def get_playlist_state(self, table_name: str, state_key: str) -> Optional["PlaylistState"]:
+        """Get playlist state (check if weekly playlist already created).
+
+        Args:
+            table_name: DynamoDB state table name
+            state_key: Playlist state key (from make_playlist_state_key)
+
+        Returns:
+            PlaylistState if exists, None otherwise
+
+        Cost Impact:
+            - 0.5 RCU per read (eventually consistent)
+        """
+        from spotify_lifecycle.models import PlaylistState
+
+        table = self.dynamodb.Table(table_name)
+        response = table.get_item(Key={"state_key": state_key}, ConsistentRead=False)
+
+        if "Item" not in response:
+            return None
+
+        item = response["Item"]
+        return PlaylistState(
+            state_key=item["state_key"],
+            week_id=item["week_id"],
+            playlist_id=item["playlist_id"],
+            created_at=datetime.fromisoformat(item["created_at"]),
+            track_count=item["track_count"],
+            source_playlist_id=item["source_playlist_id"],
+        )
+
+    def write_playlist_state(self, table_name: str, state: "PlaylistState") -> bool:
+        """Write playlist state with conditional write (idempotency).
+
+        Prevents duplicate playlists from being created on retry.
+
+        Args:
+            table_name: DynamoDB state table name
+            state: PlaylistState to write
+
+        Returns:
+            bool: True if state was written, False if already exists
+
+        Cost Impact:
+            - 1 WCU per write (conditional)
+
+        Idempotency:
+            Conditional write ensures exactly-once playlist creation per week.
+            If pipeline retries, this write fails gracefully and returns False.
+        """
+        table = self.dynamodb.Table(table_name)
+
+        item = {
+            "state_key": state.state_key,
+            "week_id": state.week_id,
+            "playlist_id": state.playlist_id,
+            "created_at": state.created_at.isoformat(),
+            "track_count": state.track_count,
+            "source_playlist_id": state.source_playlist_id,
+            "version": state.version,
+        }
+
+        try:
+            table.put_item(
+                Item=item,
+                ConditionExpression="attribute_not_exists(state_key)",  # Only write if new
+            )
+            return True
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+                # State already exists (idempotent retry)
+                return False
+            raise
