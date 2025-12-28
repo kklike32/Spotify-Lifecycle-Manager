@@ -1,83 +1,186 @@
-"""DynamoDB interactions for storing play events and metadata."""
+"""DynamoDB interactions for storing play events and metadata.
+
+This module provides cost-aware, idempotent storage operations for:
+- Hot storage: Recent play events with TTL-based expiry
+- Metadata cache: Tracks and artists (cache-once strategy)
+- State storage: Pipeline state with race-safe updates
+
+Design Principles:
+- All writes are conditional (idempotent, safe to retry)
+- Hot data expires automatically (TTL prevents unbounded growth)
+- State updates are race-safe (conditional expressions)
+- No unbounded queries (all operations bounded by design)
+
+Cost Considerations:
+- TTL deletions are free (DynamoDB handles automatically)
+- Conditional writes prevent duplicate data (storage cost savings)
+- Cache-once strategy prevents redundant API calls
+"""
 
 import json
+import time
+from datetime import datetime
 from typing import Optional
 
 import boto3
+from botocore.exceptions import ClientError
 
 from spotify_lifecycle.models import ArtistMetadata, PlayEvent, TrackMetadata
 
 
 class DynamoDBClient:
-    """DynamoDB client for storing and querying Spotify data."""
+    """DynamoDB client for storing and querying Spotify data.
+
+    This client implements idempotent, cost-aware storage operations.
+    All writes use conditional expressions to prevent overwrites.
+    TTL is automatically applied to hot data to bound storage costs.
+    """
 
     def __init__(self, region_name: str = "us-east-1"):
         """Initialize DynamoDB client.
 
         Args:
-            region_name: AWS region
+            region_name: AWS region for all DynamoDB operations
         """
         self.dynamodb = boto3.resource("dynamodb", region_name=region_name)
+        self.client = boto3.client("dynamodb", region_name=region_name)
 
-    def write_play_event(self, table_name: str, event: PlayEvent, dedup_key: str) -> None:
-        """Write a play event to DynamoDB with idempotency.
+    def write_play_event(
+        self, table_name: str, event: PlayEvent, dedup_key: str, ttl_days: int = 7
+    ) -> bool:
+        """Write a play event to DynamoDB with TTL and idempotency.
+
+        Uses conditional write to prevent duplicate events. If the dedup_key
+        already exists, the write is skipped (idempotent behavior).
+
+        TTL (Time To Live) is automatically applied to bound storage costs.
+        DynamoDB will delete expired items at no cost.
+
+        Args:
+            table_name: DynamoDB table name for hot storage
+            event: PlayEvent to write
+            dedup_key: Unique key for deduplication (from make_play_id)
+            ttl_days: Number of days before automatic deletion (default: 7)
+
+        Returns:
+            bool: True if event was written, False if already exists (skip)
+
+        Cost Impact:
+            - 1 WCU per write (idempotent, no duplicate storage)
+            - TTL deletion is free (DynamoDB handles automatically)
+        """
+        table = self.dynamodb.Table(table_name)
+
+        # Calculate TTL timestamp (Unix epoch)
+        ttl_timestamp = int(time.time() + (ttl_days * 24 * 60 * 60))
+
+        try:
+            table.put_item(
+                Item={
+                    "dedup_key": dedup_key,
+                    "track_id": event.track_id,
+                    "played_at": event.played_at.isoformat(),
+                    "user_id": event.user_id,
+                    "context": event.context or "",
+                    "ttl": ttl_timestamp,  # TTL attribute (DynamoDB will auto-delete)
+                },
+                ConditionExpression="attribute_not_exists(dedup_key)",  # Only write if new
+            )
+            return True  # Event was written
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+                # Dedup key already exists, skip (idempotent)
+                return False
+            raise  # Unexpected error, propagate
+
+    def exists(self, table_name: str, key_name: str, key_value: str) -> bool:
+        """Check if an item exists in DynamoDB.
+
+        Used for explicit idempotency checks before writes.
 
         Args:
             table_name: DynamoDB table name
-            event: PlayEvent to write
-            dedup_key: Unique key for deduplication
+            key_name: Primary key attribute name
+            key_value: Primary key value to check
+
+        Returns:
+            bool: True if item exists, False otherwise
+
+        Cost Impact:
+            - 0.5 RCU per check (eventually consistent)
         """
         table = self.dynamodb.Table(table_name)
-        table.put_item(
-            Item={
-                "dedup_key": dedup_key,
-                "track_id": event.track_id,
-                "played_at": event.played_at.isoformat(),
-                "user_id": event.user_id,
-                "context": event.context or "",
-            }
-        )
+        response = table.get_item(Key={key_name: key_value}, ConsistentRead=False)
+        return "Item" in response
 
-    def write_track_metadata(self, table_name: str, metadata: TrackMetadata) -> None:
-        """Cache track metadata.
+    def write_track_metadata(self, table_name: str, metadata: TrackMetadata) -> bool:
+        """Cache track metadata with conditional write (cache-once strategy).
 
         Args:
             table_name: DynamoDB table name
             metadata: TrackMetadata to cache
+
+        Returns:
+            bool: True if metadata was written, False if already cached
+
+        Cost Impact:
+            - 1 WCU per write (idempotent, no duplicate storage)
+            - No TTL (metadata never expires, cache-once)
         """
         table = self.dynamodb.Table(table_name)
-        table.put_item(
-            Item={
-                "track_id": metadata.track_id,
-                "name": metadata.name,
-                "artist_ids": metadata.artist_ids,
-                "album_id": metadata.album_id,
-                "album_name": metadata.album_name,
-                "duration_ms": metadata.duration_ms,
-                "explicit": metadata.explicit,
-                "popularity": metadata.popularity,
-                "uri": metadata.uri,
-            }
-        )
+        try:
+            table.put_item(
+                Item={
+                    "track_id": metadata.track_id,
+                    "name": metadata.name,
+                    "artist_ids": metadata.artist_ids,
+                    "album_id": metadata.album_id,
+                    "album_name": metadata.album_name,
+                    "duration_ms": metadata.duration_ms,
+                    "explicit": metadata.explicit,
+                    "popularity": metadata.popularity,
+                    "uri": metadata.uri,
+                },
+                ConditionExpression="attribute_not_exists(track_id)",  # Cache-once
+            )
+            return True
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+                return False  # Already cached
+            raise
 
-    def write_artist_metadata(self, table_name: str, metadata: ArtistMetadata) -> None:
-        """Cache artist metadata.
+    def write_artist_metadata(self, table_name: str, metadata: ArtistMetadata) -> bool:
+        """Cache artist metadata with conditional write (cache-once strategy).
 
         Args:
             table_name: DynamoDB table name
             metadata: ArtistMetadata to cache
+
+        Returns:
+            bool: True if metadata was written, False if already cached
+
+        Cost Impact:
+            - 1 WCU per write (idempotent, no duplicate storage)
+            - No TTL (metadata never expires, cache-once)
         """
         table = self.dynamodb.Table(table_name)
-        table.put_item(
-            Item={
-                "artist_id": metadata.artist_id,
-                "name": metadata.name,
-                "genres": metadata.genres,
-                "popularity": metadata.popularity,
-                "uri": metadata.uri,
-                "images": json.dumps(metadata.images),
-            }
-        )
+        try:
+            table.put_item(
+                Item={
+                    "artist_id": metadata.artist_id,
+                    "name": metadata.name,
+                    "genres": metadata.genres,
+                    "popularity": metadata.popularity,
+                    "uri": metadata.uri,
+                    "images": json.dumps(metadata.images),
+                },
+                ConditionExpression="attribute_not_exists(artist_id)",  # Cache-once
+            )
+            return True
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+                return False  # Already cached
+            raise
 
     def get_track_metadata(self, table_name: str, track_id: str) -> Optional[dict]:
         """Get cached track metadata.
@@ -126,3 +229,142 @@ class DynamoDBClient:
             ExpressionAttributeValues={":start": start_date, ":end": end_date},
         )
         return response.get("Items", [])
+
+    # ==========================================
+    # STATE STORE OPERATIONS (Race-Safe)
+    # ==========================================
+
+    def get_ingestion_cursor(self, table_name: str, user_id: str) -> Optional[str]:
+        """Get the last ingestion cursor (last_played_at timestamp).
+
+        Used by ingestion pipeline to track progress and implement overlap windows.
+
+        Args:
+            table_name: DynamoDB state table name
+            user_id: Spotify user ID (partition key)
+
+        Returns:
+            ISO format timestamp of last play fetched, or None if first run
+
+        Cost Impact:
+            - 0.5 RCU per read (eventually consistent)
+        """
+        table = self.dynamodb.Table(table_name)
+        response = table.get_item(
+            Key={"state_key": f"ingestion_cursor#{user_id}"}, ConsistentRead=False
+        )
+        item = response.get("Item")
+        return item.get("cursor_value") if item else None
+
+    def set_ingestion_cursor(
+        self, table_name: str, user_id: str, cursor: str, prev_cursor: Optional[str] = None
+    ) -> bool:
+        """Set the ingestion cursor with race-safe conditional update.
+
+        Args:
+            table_name: DynamoDB state table name
+            user_id: Spotify user ID (partition key)
+            cursor: New cursor value (ISO timestamp)
+            prev_cursor: Expected previous cursor (for race detection)
+
+        Returns:
+            bool: True if cursor was updated, False if race condition detected
+
+        Cost Impact:
+            - 1 WCU per write (conditional)
+
+        Race Safety:
+            If prev_cursor is provided, update only succeeds if current cursor
+            matches prev_cursor. This prevents concurrent pipeline runs from
+            clobbering each other's progress.
+        """
+        table = self.dynamodb.Table(table_name)
+        state_key = f"ingestion_cursor#{user_id}"
+
+        try:
+            if prev_cursor is not None:
+                # Conditional update: only if cursor matches expected value
+                table.put_item(
+                    Item={
+                        "state_key": state_key,
+                        "cursor_value": cursor,
+                        "updated_at": datetime.utcnow().isoformat(),
+                    },
+                    ConditionExpression="cursor_value = :prev",
+                    ExpressionAttributeValues={":prev": prev_cursor},
+                )
+            else:
+                # Unconditional update (first run or manual reset)
+                table.put_item(
+                    Item={
+                        "state_key": state_key,
+                        "cursor_value": cursor,
+                        "updated_at": datetime.utcnow().isoformat(),
+                    }
+                )
+            return True
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+                # Race condition detected: another pipeline run updated cursor
+                return False
+            raise
+
+    def check_weekly_run_exists(self, table_name: str, week_id: str) -> bool:
+        """Check if a weekly playlist run has already completed.
+
+        Used by weekly playlist pipeline to implement idempotency.
+
+        Args:
+            table_name: DynamoDB state table name
+            week_id: Week identifier (e.g., "2025-W52" from make_week_id)
+
+        Returns:
+            bool: True if weekly run already completed, False otherwise
+
+        Cost Impact:
+            - 0.5 RCU per check (eventually consistent)
+        """
+        table = self.dynamodb.Table(table_name)
+        response = table.get_item(Key={"state_key": f"weekly_run#{week_id}"}, ConsistentRead=False)
+        return "Item" in response
+
+    def record_weekly_run(
+        self, table_name: str, week_id: str, playlist_id: str, track_count: int
+    ) -> bool:
+        """Record a weekly playlist run with conditional write.
+
+        Args:
+            table_name: DynamoDB state table name
+            week_id: Week identifier (e.g., "2025-W52")
+            playlist_id: Spotify playlist ID created
+            track_count: Number of tracks added to playlist
+
+        Returns:
+            bool: True if run was recorded, False if already exists
+
+        Cost Impact:
+            - 1 WCU per write (conditional)
+
+        Idempotency:
+            Conditional write prevents duplicate weekly runs if pipeline
+            is retried or accidentally run multiple times in same week.
+        """
+        table = self.dynamodb.Table(table_name)
+        state_key = f"weekly_run#{week_id}"
+
+        try:
+            table.put_item(
+                Item={
+                    "state_key": state_key,
+                    "playlist_id": playlist_id,
+                    "track_count": track_count,
+                    "created_at": datetime.utcnow().isoformat(),
+                },
+                ConditionExpression="attribute_not_exists(state_key)",
+            )
+            return True
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+                # Weekly run already exists (idempotent retry)
+                return False
+            raise
