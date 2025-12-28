@@ -1,0 +1,95 @@
+# -----------------------------------------------------------------------------
+# Terraform Variables Example
+# -----------------------------------------------------------------------------
+# Copy this file to terraform.tfvars and fill in your values
+# NEVER commit terraform.tfvars to git (it's in .gitignore)
+
+# -----------------------------------------------------------------------------
+# Required Configuration
+# -----------------------------------------------------------------------------
+
+# AWS Region (cost-conscious choice)
+aws_region = "us-east-1"
+
+# Deployment environment
+environment = "production"
+
+# Project name (used as prefix for all resources)
+project_name = "spotify-lifecycle"
+
+# -----------------------------------------------------------------------------
+# Spotify Configuration
+# -----------------------------------------------------------------------------
+
+# Source playlist ID for weekly playlists
+source_playlist_id = ""
+
+# Spotify user ID (default: "me" for current authenticated user)
+user_id = "me"
+
+# Number of days to look back for recent plays
+lookback_days = 7
+
+# -----------------------------------------------------------------------------
+# Cost Guardrails (Optional)
+# -----------------------------------------------------------------------------
+
+# Monthly budget limit (USD)
+budget_limit_monthly = 5
+
+# Budget threshold percentage for alerts (e.g., 80 = alert at 80%)
+budget_threshold_percent = 80
+
+# Email address for budget and alarm notifications
+# Leave empty to disable email notifications
+budget_notification_email = ""
+
+# -----------------------------------------------------------------------------
+# Secrets (Optional - NOT RECOMMENDED)
+# -----------------------------------------------------------------------------
+# WARNING: Do NOT store secrets in this file or Terraform state
+# Instead, create SSM parameters manually using AWS CLI:
+#
+# aws ssm put-parameter \
+#   --name "/spotify-lifecycle/spotify/client_id" \
+#   --value "YOUR_CLIENT_ID" \
+#   --type "SecureString"
+#
+# Only uncomment these if you understand the security implications:
+# spotify_client_id     = ""
+# spotify_client_secret = ""
+# spotify_refresh_token = ""
+
+# -----------------------------------------------------------------------------
+# Advanced Configuration (Optional)
+# -----------------------------------------------------------------------------
+
+# DynamoDB table names (defaults are fine for most users)
+# hot_table_name    = "spotify-play-events"
+# tracks_table_name = "spotify-tracks"
+# artists_table_name = "spotify-artists"
+# state_table_name  = "spotify-state"
+
+# S3 bucket names (account ID will be appended automatically)
+# raw_bucket_name       = "spotify-raw-events"
+# dashboard_bucket_name = "spotify-dashboard"
+
+# Lambda configuration
+# lambda_runtime = "python3.12"
+# ingest_lambda_timeout = 60
+# ingest_lambda_memory  = 256
+# enrich_lambda_timeout = 120
+# enrich_lambda_memory  = 256
+# playlist_lambda_timeout = 180
+# playlist_lambda_memory  = 256
+# aggregate_lambda_timeout = 300
+# aggregate_lambda_memory  = 512
+
+# EventBridge schedules (cron expressions)
+# ingest_schedule    = "rate(1 hour)"
+# enrich_schedule    = "cron(5 * * * ? *)"   # Every hour at 5 minutes past
+# playlist_schedule  = "cron(0 8 ? * MON *)" # Monday 8am UTC
+# aggregate_schedule = "cron(0 2 * * ? *)"   # Daily 2am UTC
+
+# CloudWatch Logs retention (days)
+# log_retention_days = 7
