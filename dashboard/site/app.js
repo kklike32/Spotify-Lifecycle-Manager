@@ -35,6 +35,13 @@ const CONFIG = {
     RETRY_DELAY_MS: 2000
 };
 
+const WINDOW_LABELS = {
+    all_time: 'All Time',
+    year_to_date: 'Year to Date',
+    last_30_days: 'Last 30 Days',
+    last_7_days: 'Last 7 Days'
+};
+
 // ==========================
 // State Management
 // ==========================
@@ -42,6 +49,7 @@ const CONFIG = {
 let dashboardData = null;
 let dailyTrendChart = null;
 let hourlyChart = null;
+let activeWindowKey = null;
 
 // ==========================
 // Initialization
@@ -72,7 +80,8 @@ async function loadDashboard() {
             return;
         }
 
-        renderDashboard(dashboardData);
+        initWindowSelector();
+        renderDashboard(activeWindowKey);
         showMainContent();
 
         console.log('Dashboard loaded successfully');
@@ -106,21 +115,90 @@ async function fetchDashboardData(retries = 0) {
 // Rendering
 // ==========================
 
-function renderDashboard(data) {
-    renderSummaryCards(data.metadata);
-    renderLastUpdated(data.metadata.generated_at);
-    renderDailyTrendChart(data.daily_plays);
-    renderHourlyChart(data.hourly_distribution);
-    renderTopTracks(data.top_tracks);
-    renderTopArtists(data.top_artists);
-    renderTopGenres(data.top_genres);
+function renderDashboard(windowKey) {
+    const windowData = getWindowData(windowKey);
+    const fallbackWindow = dashboardData?.windows
+        ? dashboardData.windows[dashboardData.metadata?.default_window] ||
+          dashboardData.windows[Object.keys(dashboardData.windows)[0]]
+        : null;
+
+    const effectiveWindow = windowData || fallbackWindow || null;
+
+    renderSummaryCards(effectiveWindow, dashboardData.metadata);
+    renderWindowLabel(windowKey || dashboardData?.metadata?.default_window);
+    renderLastUpdated(dashboardData.metadata.generated_at);
+    renderDailyTrendChart(dashboardData.daily_plays);
+    renderHourlyChart(dashboardData.hourly_distribution);
+    renderTopTracks(effectiveWindow?.top_tracks || dashboardData.top_tracks || []);
+    renderTopArtists(effectiveWindow?.top_artists || dashboardData.top_artists || []);
+    renderTopGenres(effectiveWindow?.top_genres || dashboardData.top_genres || []);
 }
 
-function renderSummaryCards(metadata) {
-    document.getElementById('total-plays').textContent = formatNumber(metadata.total_play_count);
-    document.getElementById('unique-tracks').textContent = formatNumber(metadata.unique_track_count);
-    document.getElementById('unique-artists').textContent = formatNumber(metadata.unique_artist_count);
-    document.getElementById('unique-genres').textContent = formatNumber(metadata.genre_count);
+function initWindowSelector() {
+    const control = document.getElementById('window-control');
+    const select = document.getElementById('window-select');
+
+    if (!control || !select) return;
+
+    if (!dashboardData?.windows || Object.keys(dashboardData.windows).length === 0) {
+        control.style.display = 'none';
+        activeWindowKey = null;
+        renderWindowLabel(null);
+        return;
+    }
+
+    control.style.display = 'flex';
+    select.innerHTML = '';
+
+    Object.keys(dashboardData.windows).forEach((key) => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = labelForWindow(key);
+        select.appendChild(option);
+    });
+
+    const defaultKey = dashboardData.metadata?.default_window;
+    const firstKey = Object.keys(dashboardData.windows)[0];
+    activeWindowKey = dashboardData.windows[defaultKey] ? defaultKey : firstKey;
+    select.value = activeWindowKey;
+    renderWindowLabel(activeWindowKey);
+
+    select.onchange = (event) => {
+        activeWindowKey = event.target.value;
+        renderDashboard(activeWindowKey);
+    };
+}
+
+function getWindowData(windowKey) {
+    if (!dashboardData || !dashboardData.windows) {
+        return null;
+    }
+    if (windowKey && dashboardData.windows[windowKey]) {
+        return dashboardData.windows[windowKey];
+    }
+    return null;
+}
+
+function labelForWindow(windowKey) {
+    return WINDOW_LABELS[windowKey] || windowKey || 'All Time';
+}
+
+function renderWindowLabel(windowKey) {
+    const labelEl = document.getElementById('window-active-label');
+    if (!labelEl) return;
+    labelEl.textContent = labelForWindow(windowKey || dashboardData?.metadata?.default_window);
+}
+
+function renderSummaryCards(windowData, metadata) {
+    const plays = windowData?.total_play_count ?? metadata?.total_play_count ?? 0;
+    const tracks = windowData?.unique_track_count ?? metadata?.unique_track_count ?? 0;
+    const artists = windowData?.unique_artist_count ?? metadata?.unique_artist_count ?? 0;
+    const genresCount = (windowData?.top_genres || []).length || metadata?.genre_count || 0;
+
+    document.getElementById('total-plays').textContent = formatNumber(plays);
+    document.getElementById('unique-tracks').textContent = formatNumber(tracks);
+    document.getElementById('unique-artists').textContent = formatNumber(artists);
+    document.getElementById('unique-genres').textContent = formatNumber(genresCount);
 }
 
 function renderLastUpdated(timestamp) {

@@ -18,205 +18,222 @@ Cost Model:
 
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 from spotify_lifecycle.models import DashboardData
 from spotify_lifecycle.storage.dynamo import DynamoDBClient
-from spotify_lifecycle.storage.s3 import S3DashboardStore
+from spotify_lifecycle.storage.s3 import S3ColdStore, S3DashboardStore
+
+PACIFIC_TZ = ZoneInfo("America/Los_Angeles")
 
 
 def build_dashboard_data(
     dynamo_client: DynamoDBClient,
-    s3_client: S3DashboardStore,
+    dashboard_store: S3DashboardStore,
+    cold_store: S3ColdStore,
     hot_table_name: str,
     tracks_table_name: str,
     artists_table_name: str,
+    raw_bucket_name: str,
     dashboard_bucket_name: str,
     lookback_days: int = 90,
+    hourly_lookback_days: int = 7,
 ) -> DashboardData:
-    """Build precomputed dashboard data with full analytics.
+    """Build precomputed dashboard data with multi-window top lists (cost-optimized)."""
+    now = datetime.now(PACIFIC_TZ)
 
-    This function performs all analytics computation in a single pass:
-    1. Query play events from DynamoDB hot storage
-    2. Enrich with cached track/artist metadata
-    3. Compute top tracks, artists, genres
-    4. Build daily trends and hourly distribution
-    5. Validate output with Pydantic model
-    6. Write to S3 as JSON
+    summary_dates = sorted(cold_store.list_daily_summary_dates(raw_bucket_name))
+    summary_start_date = summary_dates[0].date() if summary_dates else now.date()
+    summary_end_date = now.date()
 
-    Args:
-        dynamo_client: DynamoDB client
-        s3_client: S3 dashboard store client
-        hot_table_name: DynamoDB table with play events
-        tracks_table_name: DynamoDB table with track metadata
-        artists_table_name: DynamoDB table with artist metadata
-        dashboard_bucket_name: S3 bucket for dashboard data
-        lookback_days: Number of days to include in aggregates (default: 90)
-
-    Returns:
-        DashboardData: Validated dashboard data model
-
-    Raises:
-        ValueError: If output data fails schema validation
-
-    Cost Impact:
-        - DynamoDB reads: ~1-2 RCU per 1000 plays (scan with filter)
-        - Lambda compute: 1-2 seconds execution (nightly)
-        - S3 write: 1 PUT request (~$0.000005)
-        - Total: < $0.01 per month for 10K plays/month
-
-    Idempotency:
-        Same input data always produces same output. Safe to retry.
-        Output includes generation timestamp but data is deterministic.
-    """
-    # Query recent plays with explicit date range
-    end_date = datetime.now(timezone.utc)
-    start_date = end_date - timedelta(days=lookback_days)
-
-    plays = dynamo_client.query_plays_by_date_range(
-        hot_table_name,
-        start_date.isoformat(),
-        end_date.isoformat(),
+    # Read all available summaries once; cheap (one GET per day with data)
+    all_summaries = cold_store.read_daily_summaries(
+        raw_bucket_name,
+        datetime.combine(summary_start_date, datetime.min.time()).astimezone(timezone.utc),
+        datetime.combine(summary_end_date, datetime.min.time()).astimezone(timezone.utc),
     )
+    summary_lookup = {
+        datetime.fromisoformat(summary["date"]).date(): summary for summary in all_summaries
+    }
 
-    # Build raw aggregates (first pass over plays)
-    track_counts: dict[str, int] = defaultdict(int)
-    artist_counts: dict[str, int] = defaultdict(int)
-    daily_counts: dict[str, int] = defaultdict(int)
-    hourly_counts: dict[int, int] = defaultdict(int)
+    window_specs = {
+        "all_time": {"start": summary_start_date, "end": summary_end_date},
+        "year_to_date": {
+            "start": summary_end_date.replace(month=1, day=1),
+            "end": summary_end_date,
+        },
+        "last_30_days": {"start": summary_end_date - timedelta(days=30), "end": summary_end_date},
+        "last_7_days": {"start": summary_end_date - timedelta(days=7), "end": summary_end_date},
+    }
 
-    for play in plays:
-        track_id = play["track_id"]
-        played_at = datetime.fromisoformat(play["played_at"])
+    window_counts: dict[str, dict] = {}
+    all_track_ids: set[str] = set()
 
-        # Count plays per track
-        track_counts[track_id] += 1
+    for key, spec in window_specs.items():
+        start_date = max(spec["start"], summary_start_date)
+        end_date = min(spec["end"], summary_end_date)
+        if start_date > end_date:
+            start_date = end_date
 
-        # Count plays per day (date only, no time)
-        daily_counts[played_at.date().isoformat()] += 1
+        track_counts: dict[str, int] = defaultdict(int)
+        total_plays = 0
 
-        # Count plays per hour (0-23)
-        hourly_counts[played_at.hour] += 1
+        for summary in all_summaries:
+            summary_date = datetime.fromisoformat(summary["date"]).date()
+            if start_date <= summary_date <= end_date:
+                for track_id, count in summary.get("track_counts", {}).items():
+                    track_counts[track_id] += int(count)
+                total_plays += int(summary.get("total_plays", 0))
 
-    # Enrich top tracks with metadata (limit to top 50)
-    top_track_ids = sorted(track_counts.items(), key=lambda x: x[1], reverse=True)[:50]
-    top_tracks_enriched = []
+        all_track_ids.update(track_counts.keys())
+        window_counts[key] = {
+            "start": start_date,
+            "end": end_date,
+            "track_counts": track_counts,
+            "total_plays": total_plays,
+        }
 
-    for track_id, play_count in top_track_ids:
-        metadata = dynamo_client.get_track_metadata(tracks_table_name, track_id)
-        if metadata:
-            # Get artist names (will be resolved after artist metadata is fetched)
-            artist_ids = metadata.get("artist_ids", [])
-            # Count plays per artist (from track metadata)
-            for artist_id in artist_ids:
-                artist_counts[artist_id] += play_count
+    track_metadata_cache: dict[str, dict] = {}
+    artist_metadata_cache: dict[str, dict] = {}
+    artist_ids: set[str] = set()
 
-            top_tracks_enriched.append(
-                {
-                    "track_id": track_id,
-                    "track_name": metadata.get("name", "Unknown"),
-                    "artist_ids": artist_ids,  # Will resolve to names later
-                    "album_name": metadata.get("album_name", "Unknown"),
-                    "play_count": play_count,
-                }
-            )
-        else:
-            # Track metadata not cached (shouldn't happen if enrichment ran)
-            top_tracks_enriched.append(
-                {
-                    "track_id": track_id,
-                    "track_name": "Unknown",
-                    "artist_ids": [],
-                    "album_name": "Unknown",
-                    "play_count": play_count,
-                }
-            )
+    for track_id in all_track_ids:
+        metadata = dynamo_client.get_track_metadata(tracks_table_name, track_id) or {}
+        track_metadata_cache[track_id] = metadata
+        for artist_id in metadata.get("artist_ids", []):
+            artist_ids.add(artist_id)
 
-    # Enrich top artists with metadata (limit to top 50)
-    top_artist_ids = sorted(artist_counts.items(), key=lambda x: x[1], reverse=True)[:50]
-    top_artists_enriched = []
-    genre_counts: dict[str, int] = defaultdict(int)
+    for artist_id in artist_ids:
+        artist_metadata_cache[artist_id] = (
+            dynamo_client.get_artist_metadata(artists_table_name, artist_id) or {}
+        )
 
-    # Build artist_id -> name mapping for track artist resolution
-    artist_name_map: dict[str, str] = {}
+    def build_window_payload(window_key: str) -> dict:
+        data = window_counts[window_key]
+        track_counts = data["track_counts"]
+        total_plays = data["total_plays"]
+        artist_counts: dict[str, int] = defaultdict(int)
+        genre_counts: dict[str, int] = defaultdict(int)
+        top_tracks: list[dict] = []
 
-    for artist_id, play_count in top_artist_ids:
-        metadata = dynamo_client.get_artist_metadata(artists_table_name, artist_id)
-        if metadata:
-            artist_name = metadata.get("name", "Unknown")
-            genres = metadata.get("genres", [])
-            artist_name_map[artist_id] = artist_name
+        sorted_tracks = sorted(track_counts.items(), key=lambda x: x[1], reverse=True)
+        for track_id, count in sorted_tracks:
+            metadata = track_metadata_cache.get(track_id) or {}
+            artist_ids_for_track = metadata.get("artist_ids", [])
+            artist_names = []
+            for artist_id in artist_ids_for_track:
+                artist_meta = artist_metadata_cache.get(artist_id) or {}
+                artist_counts[artist_id] += count
+                artist_names.append(artist_meta.get("name", "Unknown"))
+                for genre in artist_meta.get("genres", []):
+                    genre_counts[genre] += count
 
-            top_artists_enriched.append(
+            if len(top_tracks) < 50:
+                top_tracks.append(
+                    {
+                        "track_id": track_id,
+                        "track_name": metadata.get("name", "Unknown"),
+                        "artist_name": ", ".join(artist_names) if artist_names else "Unknown",
+                        "album_name": metadata.get("album_name", "Unknown"),
+                        "play_count": count,
+                    }
+                )
+
+        top_artists: list[dict] = []
+        sorted_artists = sorted(artist_counts.items(), key=lambda x: x[1], reverse=True)[:50]
+        for artist_id, play_count in sorted_artists:
+            artist_meta = artist_metadata_cache.get(artist_id) or {}
+            top_artists.append(
                 {
                     "artist_id": artist_id,
-                    "artist_name": artist_name,
-                    "genres": genres,
+                    "artist_name": artist_meta.get("name", "Unknown"),
+                    "genres": artist_meta.get("genres", []),
                     "play_count": play_count,
                 }
             )
 
-            # Count plays per genre (from artist metadata)
-            for genre in genres:
-                genre_counts[genre] += play_count
-        else:
-            artist_name_map[artist_id] = "Unknown"
-            top_artists_enriched.append(
-                {
-                    "artist_id": artist_id,
-                    "artist_name": "Unknown",
-                    "genres": [],
-                    "play_count": play_count,
-                }
-            )
+        top_genres_sorted = sorted(genre_counts.items(), key=lambda x: x[1], reverse=True)[:20]
+        top_genres = [{"genre": genre, "play_count": count} for genre, count in top_genres_sorted]
 
-    # Now resolve artist names in top_tracks
-    for track in top_tracks_enriched:
-        artist_ids = track.pop("artist_ids", [])
-        # Get first artist name, or join multiple
-        artist_names = [artist_name_map.get(aid, "Unknown") for aid in artist_ids]
-        track["artist_name"] = ", ".join(artist_names) if artist_names else "Unknown"
+        return {
+            "label": window_key,
+            "start": datetime.combine(data["start"], datetime.min.time(), tzinfo=PACIFIC_TZ),
+            "end": datetime.combine(data["end"], datetime.min.time(), tzinfo=PACIFIC_TZ),
+            "top_tracks": top_tracks,
+            "top_artists": top_artists,
+            "top_genres": top_genres,
+            "total_play_count": total_plays,
+            "unique_track_count": len(track_counts),
+            "unique_artist_count": len(artist_counts),
+        }
 
-    # Build top genres (limit to top 20)
-    top_genres_sorted = sorted(genre_counts.items(), key=lambda x: x[1], reverse=True)[:20]
-    top_genres = [{"genre": genre, "play_count": count} for genre, count in top_genres_sorted]
+    windows_payload = {key: build_window_payload(key) for key in window_counts.keys()}
 
-    # Build daily plays (ensure all days in range have entries)
-    daily_plays = []
-    current_date = start_date.date()
-    while current_date <= end_date.date():
-        date_str = current_date.isoformat()
-        daily_plays.append({"date": date_str, "play_count": daily_counts.get(date_str, 0)})
+    default_window_order = ["last_30_days", "last_7_days", "year_to_date", "all_time"]
+    default_window = next((w for w in default_window_order if w in windows_payload), "all_time")
+    selected_window = windows_payload.get(default_window, {})
+
+    # Daily plays from summaries (lookback_days inclusive)
+    trend_start_date = summary_end_date - timedelta(days=lookback_days)
+    daily_plays: list[dict] = []
+    current_date = trend_start_date
+    while current_date <= summary_end_date:
+        play_count = summary_lookup.get(current_date, {}).get("total_plays", 0)
+        daily_plays.append({"date": current_date.isoformat(), "play_count": play_count})
         current_date += timedelta(days=1)
 
-    # Build hourly distribution (ensure all hours 0-23 have entries)
+    # Hourly distribution from hot store (bounded by TTL)
+    hourly_start_pacific = now - timedelta(days=min(hourly_lookback_days, lookback_days))
+    hourly_start_utc = hourly_start_pacific.astimezone(timezone.utc)
+    now_utc = now.astimezone(timezone.utc)
+    hourly_counts: dict[int, int] = defaultdict(int)
+    plays_for_hours = dynamo_client.query_plays_by_date_range(
+        hot_table_name, hourly_start_utc.isoformat(), now_utc.isoformat()
+    )
+    for play in plays_for_hours:
+        try:
+            played_at = datetime.fromisoformat(play["played_at"]).astimezone(PACIFIC_TZ)
+        except (KeyError, ValueError):
+            continue
+        hourly_counts[played_at.hour] += 1
+
     hourly_distribution = [
         {"hour": hour, "play_count": hourly_counts.get(hour, 0)} for hour in range(24)
     ]
 
-    # Build metadata (dashboard expects this format)
+    all_time_window = windows_payload.get("all_time", {})
     metadata = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "total_play_count": len(plays),
-        "unique_track_count": len(track_counts),
-        "unique_artist_count": len(artist_counts),
-        "genre_count": len(genre_counts),
-        "date_range_start": start_date.isoformat(),
-        "date_range_end": end_date.isoformat(),
+        "generated_at": now.isoformat(),
+        "total_play_count": all_time_window.get("total_play_count", 0),
+        "unique_track_count": all_time_window.get("unique_track_count", 0),
+        "unique_artist_count": all_time_window.get("unique_artist_count", 0),
+        "genre_count": len(all_time_window.get("top_genres", [])),
+        "date_range_start": datetime.combine(
+            summary_start_date, datetime.min.time(), tzinfo=PACIFIC_TZ
+        ).isoformat(),
+        "date_range_end": datetime.combine(
+            summary_end_date, datetime.min.time(), tzinfo=PACIFIC_TZ
+        ).isoformat(),
+        "default_window": default_window,
     }
 
-    # Build validated dashboard data model
     dashboard_data = DashboardData(
-        generated_at=datetime.now(timezone.utc),
-        time_range={"start": start_date, "end": end_date},
+        generated_at=now,
+        time_range={
+            "start": datetime.combine(summary_start_date, datetime.min.time(), tzinfo=PACIFIC_TZ),
+            "end": datetime.combine(summary_end_date, datetime.min.time(), tzinfo=PACIFIC_TZ),
+        },
         metadata=metadata,
-        top_tracks=top_tracks_enriched,
-        top_artists=top_artists_enriched,
+        top_tracks=selected_window.get("top_tracks", []),
+        top_artists=selected_window.get("top_artists", []),
         daily_plays=daily_plays,
         hourly_distribution=hourly_distribution,
-        top_genres=top_genres,
+        top_genres=selected_window.get("top_genres", []),
+        windows=windows_payload,
     )
 
-    # Write to S3 (validated JSON)
-    s3_client.write_dashboard_data(dashboard_bucket_name, dashboard_data.model_dump(mode="json"))
+    dashboard_store.write_dashboard_data(
+        dashboard_bucket_name, dashboard_data.model_dump(mode="json")
+    )
 
     return dashboard_data

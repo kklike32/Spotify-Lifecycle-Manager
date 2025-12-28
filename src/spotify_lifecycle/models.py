@@ -285,6 +285,7 @@ class DashboardData(BaseModel):
         daily_plays: Last 90 days of daily stats
         hourly_distribution: Plays by hour (0-23)
         top_genres: Top 20 genres by play count
+        windows: Per-window aggregates (all-time, YTD, 30d, 7d)
     """
 
     version: str = Field(default="1.0.0", description="Schema version")
@@ -296,6 +297,7 @@ class DashboardData(BaseModel):
     daily_plays: list[dict[str, Any]] = Field(..., description="Daily play counts")
     hourly_distribution: list[dict[str, int]] = Field(..., description="Hourly distribution")
     top_genres: list[dict[str, Any]] = Field(..., description="Top genres")
+    windows: dict[str, Any] = Field(default_factory=dict, description="Per-window aggregates")
 
     model_config = ConfigDict(
         validate_assignment=True,

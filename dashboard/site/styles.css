@@ -268,6 +268,43 @@ canvas {
 }
 
 /* ==========================
+   Window Selector
+   ========================== */
+
+.window-control {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-lg) 0 var(--spacing-md);
+    padding: var(--spacing-sm);
+    background-color: var(--surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.window-control label {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.window-control select {
+    background-color: var(--surface-light);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.window-pill {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: var(--text-primary);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* ==========================
    Top Lists Section
    ========================== */
 

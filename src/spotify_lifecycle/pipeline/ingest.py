@@ -26,8 +26,10 @@ For detailed architecture, see:
 """
 
 import logging
+from collections import defaultdict
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, Tuple
+from zoneinfo import ZoneInfo
 
 from spotify_lifecycle.models import IngestionState, PlayEvent
 from spotify_lifecycle.spotify.client import SpotifyClient
@@ -41,6 +43,7 @@ logger = logging.getLogger(__name__)
 DEFAULT_FETCH_LIMIT = 50  # Spotify API max
 OVERLAP_WINDOW_SIZE = 5  # Fetch extra events to detect gaps
 STATE_KEY = "ingestion_state"  # DynamoDB state store key
+PACIFIC_TZ = ZoneInfo("America/Los_Angeles")
 
 
 def fetch_with_overlap(
@@ -184,7 +187,9 @@ def write_events_to_storage(
     # Group events by date for cold storage
     events_by_date: Dict[str, List[dict]] = {}
     for event in events:
-        date_key = event.played_at.strftime("%Y-%m-%d")
+        # Bucket by Pacific date to align reporting windows to local time
+        pacific_played_at = event.played_at.astimezone(PACIFIC_TZ)
+        date_key = pacific_played_at.strftime("%Y-%m-%d")
         if date_key not in events_by_date:
             events_by_date[date_key] = []
 
@@ -205,6 +210,12 @@ def write_events_to_storage(
         try:
             date = datetime.strptime(date_str, "%Y-%m-%d")
             s3_client.write_raw_events(raw_bucket_name, date, date_events)
+
+            # Build daily summary (track_id -> play count)
+            track_counts: Dict[str, int] = defaultdict(int)
+            for event_dict in date_events:
+                track_counts[event_dict["track_id"]] += 1
+            s3_client.write_daily_summary(raw_bucket_name, date, track_counts)
             cold_written += len(date_events)
         except Exception as e:
             logger.error(

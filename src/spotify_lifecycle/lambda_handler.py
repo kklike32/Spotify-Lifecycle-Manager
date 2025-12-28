@@ -284,14 +284,17 @@ def aggregate_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         tracks_table_name = os.environ["TRACKS_TABLE_NAME"]
         artists_table_name = os.environ["ARTISTS_TABLE_NAME"]
         dashboard_bucket_name = os.environ["DASHBOARD_BUCKET_NAME"]
+        raw_bucket_name = os.environ["RAW_BUCKET_NAME"]
         lookback_days = int(os.environ.get("LOOKBACK_DAYS", "90"))
 
         dashboard_data = build_dashboard_data(
             dynamo_client=get_dynamo_client(),
-            s3_client=get_s3_dashboard_client(),
+            dashboard_store=get_s3_dashboard_client(),
+            cold_store=get_s3_client(),
             hot_table_name=hot_table_name,
             tracks_table_name=tracks_table_name,
             artists_table_name=artists_table_name,
+            raw_bucket_name=raw_bucket_name,
             dashboard_bucket_name=dashboard_bucket_name,
             lookback_days=lookback_days,
         )

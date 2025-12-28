@@ -67,6 +67,7 @@ def mock_s3_client():
     """Mock S3 client."""
     client = Mock()
     client.write_raw_events = Mock()
+    client.write_daily_summary = Mock()
     return client
 
 
@@ -185,6 +186,7 @@ def test_write_events_to_storage_success(mock_dynamo_client, mock_s3_client, moc
     assert cold_written == 2
     assert mock_dynamo_client.write_play_event.call_count == 2
     assert mock_s3_client.write_raw_events.call_count == 1  # Same date batch
+    assert mock_s3_client.write_daily_summary.call_count == 1
 
 
 def test_write_events_to_storage_dedupe(mock_dynamo_client, mock_s3_client):
@@ -215,6 +217,7 @@ def test_write_events_to_storage_dedupe(mock_dynamo_client, mock_s3_client):
 
     assert hot_written == 0  # Duplicate skipped
     assert cold_written == 1  # Still written to cold (append-only)
+    assert mock_s3_client.write_daily_summary.call_count == 1
 
 
 def test_write_events_to_storage_multiple_dates(mock_dynamo_client, mock_s3_client):
@@ -252,6 +255,7 @@ def test_write_events_to_storage_multiple_dates(mock_dynamo_client, mock_s3_clie
     assert hot_written == 2
     assert cold_written == 2
     assert mock_s3_client.write_raw_events.call_count == 2  # Two date partitions
+    assert mock_s3_client.write_daily_summary.call_count == 2  # Two summaries
 
 
 # Tests for run_ingestion

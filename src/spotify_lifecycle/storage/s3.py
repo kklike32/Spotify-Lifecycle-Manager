@@ -14,8 +14,10 @@ For cost analysis, see: copilot/docs/cost/ANALYTICS_COSTS.md
 
 import json
 import logging
+from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Iterator, Optional
+from zoneinfo import ZoneInfo
 
 import boto3
 from botocore.exceptions import ClientError
@@ -23,6 +25,7 @@ from botocore.exceptions import ClientError
 from spotify_lifecycle.models import PlayEvent
 
 logger = logging.getLogger(__name__)
+PACIFIC_TZ = ZoneInfo("America/Los_Angeles")
 
 
 class S3ColdStore:
@@ -104,6 +107,42 @@ class S3ColdStore:
 
         logger.info(
             "wrote play events to cold storage",
+            extra={
+                "bucket": bucket_name,
+                "key": object_key,
+                "count": len(events),
+                "bytes": len(content.encode("utf-8")),
+            },
+        )
+
+        return object_key
+
+    def write_raw_events(
+        self,
+        bucket_name: str,
+        partition_date: datetime,
+        events: list[dict],
+    ) -> str:
+        """Write raw play events (already dict-serialized) to cold storage."""
+        if not events:
+            raise ValueError("Cannot write empty events list")
+
+        timestamp = datetime.utcnow().strftime("%H%M%S")
+        partition_key = partition_date.strftime("%Y-%m-%d")
+        object_key = f"dt={partition_key}/events_{timestamp}.jsonl"
+
+        jsonl_lines = [json.dumps(event) for event in events]
+        content = "\n".join(jsonl_lines) + "\n"
+
+        self.s3.put_object(
+            Bucket=bucket_name,
+            Key=object_key,
+            Body=content.encode("utf-8"),
+            ContentType="application/x-jsonlines",
+        )
+
+        logger.info(
+            "wrote raw events to cold storage",
             extra={
                 "bucket": bucket_name,
                 "key": object_key,
@@ -273,6 +312,90 @@ class S3ColdStore:
             "total_bytes": total_bytes,
             "avg_bytes_per_partition": avg_bytes,
         }
+
+    # ==========================================
+    # DAILY SUMMARY OPERATIONS
+    # ==========================================
+
+    def write_daily_summary(
+        self, bucket_name: str, partition_date: datetime, track_counts: dict[str, int]
+    ) -> str:
+        """Write or merge a per-day summary (track play counts)."""
+        date_str = partition_date.strftime("%Y-%m-%d")
+        key = f"summaries/dt={date_str}/summary.json"
+
+        merged_counts: dict[str, int] = defaultdict(int)
+
+        existing = self.read_daily_summary(bucket_name, partition_date)
+        if existing and "track_counts" in existing:
+            for track_id, count in existing["track_counts"].items():
+                merged_counts[track_id] += int(count)
+
+        for track_id, count in track_counts.items():
+            merged_counts[track_id] += int(count)
+
+        payload = {
+            "version": "1.0.0",
+            "date": date_str,
+            "generated_at": datetime.now(PACIFIC_TZ).isoformat(),
+            "total_plays": int(sum(merged_counts.values())),
+            "track_counts": merged_counts,
+        }
+
+        self.s3.put_object(
+            Bucket=bucket_name,
+            Key=key,
+            Body=json.dumps(payload).encode("utf-8"),
+            ContentType="application/json",
+        )
+
+        logger.info(
+            "wrote daily summary",
+            extra={"bucket": bucket_name, "key": key, "total_plays": payload["total_plays"]},
+        )
+
+        return key
+
+    def read_daily_summary(self, bucket_name: str, partition_date: datetime) -> Optional[dict]:
+        """Read a single daily summary if it exists."""
+        date_str = partition_date.strftime("%Y-%m-%d")
+        key = f"summaries/dt={date_str}/summary.json"
+        try:
+            response = self.s3.get_object(Bucket=bucket_name, Key=key)
+            content = response["Body"].read().decode("utf-8")
+            return json.loads(content)
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "NoSuchKey":
+                return None
+            raise
+
+    def list_daily_summary_dates(self, bucket_name: str) -> list[datetime]:
+        """List available summary dates from S3."""
+        paginator = self.s3.get_paginator("list_objects_v2")
+        dates: list[datetime] = []
+        prefix = "summaries/"
+        for page in paginator.paginate(Bucket=bucket_name, Prefix=prefix):
+            for obj in page.get("Contents", []):
+                key = obj["Key"]
+                try:
+                    date_part = key.split("/")[1].replace("dt=", "")
+                    dates.append(datetime.strptime(date_part, "%Y-%m-%d"))
+                except (IndexError, ValueError):
+                    continue
+        return dates
+
+    def read_daily_summaries(
+        self, bucket_name: str, start_date: datetime, end_date: datetime
+    ) -> list[dict]:
+        """Read summaries in a date range (inclusive)."""
+        summaries: list[dict] = []
+        current = start_date
+        while current <= end_date:
+            summary = self.read_daily_summary(bucket_name, current)
+            if summary:
+                summaries.append(summary)
+            current += timedelta(days=1)
+        return summaries
 
 
 class S3DashboardStore:
