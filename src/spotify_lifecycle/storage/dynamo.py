@@ -25,7 +25,12 @@ from typing import Optional
 import boto3
 from botocore.exceptions import ClientError
 
-from spotify_lifecycle.models import ArtistMetadata, PlayEvent, TrackMetadata
+from spotify_lifecycle.models import (
+    ArtistMetadata,
+    IngestionState,
+    PlayEvent,
+    TrackMetadata,
+)
 
 
 class DynamoDBClient:
@@ -368,3 +373,77 @@ class DynamoDBClient:
                 # Weekly run already exists (idempotent retry)
                 return False
             raise
+
+    def get_ingestion_state(self, table_name: str, state_key: str) -> Optional["IngestionState"]:
+        """Get current ingestion state (cursor tracking).
+
+        Args:
+            table_name: DynamoDB state table name
+            state_key: State identifier (e.g., "ingestion_state")
+
+        Returns:
+            IngestionState if exists, None otherwise
+        """
+        from spotify_lifecycle.models import IngestionState
+
+        table = self.dynamodb.Table(table_name)
+        response = table.get_item(Key={"state_key": state_key}, ConsistentRead=True)
+
+        if "Item" not in response:
+            return None
+
+        item = response["Item"]
+        return IngestionState(
+            state_key=item["state_key"],
+            last_played_at=datetime.fromisoformat(item["last_played_at"]),
+            last_run_at=datetime.fromisoformat(item["last_run_at"]),
+            last_event_count=item["last_event_count"],
+            status=item["status"],
+        )
+
+    def update_ingestion_state(
+        self,
+        table_name: str,
+        state: "IngestionState",
+        prev_cursor: Optional[datetime] = None,
+    ) -> bool:
+        """Update ingestion state with conditional write.
+
+        Args:
+            table_name: DynamoDB state table name
+            state: New ingestion state
+            prev_cursor: Previous cursor for conditional update (optional)
+
+        Returns:
+            bool: True if state was updated, False if condition failed
+        """
+        table = self.dynamodb.Table(table_name)
+
+        item = {
+            "state_key": state.state_key,
+            "last_played_at": state.last_played_at.isoformat(),
+            "last_run_at": state.last_run_at.isoformat(),
+            "last_event_count": state.last_event_count,
+            "status": state.status,
+            "version": state.version,
+        }
+
+        # Conditional write to prevent race conditions
+        if prev_cursor:
+            try:
+                table.put_item(
+                    Item=item,
+                    ConditionExpression="last_played_at = :prev_cursor",
+                    ExpressionAttributeValues={
+                        ":prev_cursor": prev_cursor.isoformat(),
+                    },
+                )
+                return True
+            except ClientError as e:
+                if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+                    return False
+                raise
+        else:
+            # First run, no condition
+            table.put_item(Item=item)
+            return True

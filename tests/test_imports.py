@@ -8,7 +8,7 @@ def test_imports():
     assert __version__ == "0.1.0"
 
     from spotify_lifecycle.config import load_config
-    from spotify_lifecycle.pipeline.ingest import compute_dedup_key
+    from spotify_lifecycle.pipeline.ingest import run_ingestion
 
     assert callable(load_config)
-    assert callable(compute_dedup_key)
+    assert callable(run_ingestion)
