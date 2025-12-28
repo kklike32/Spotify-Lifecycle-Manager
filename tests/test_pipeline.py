@@ -697,3 +697,470 @@ def test_create_weekly_playlist_all_tracks_recent(mock_spotify_client, mock_dyna
 
     # Verify: State still written (empty playlist is valid)
     mock_dynamo_client.write_playlist_state.assert_called_once()
+
+
+# ==========================================
+# ENRICHMENT PIPELINE TESTS
+# ==========================================
+
+
+@pytest.fixture
+def mock_track_metadata():
+    """Mock track metadata from Spotify API."""
+    return {
+        "id": "abc123",
+        "name": "Test Song",
+        "artists": [
+            {"id": "artist1", "name": "Artist One"},
+            {"id": "artist2", "name": "Artist Two"},
+        ],
+        "album": {
+            "id": "album1",
+            "name": "Test Album",
+            "release_date": "2025-01-01",
+        },
+        "duration_ms": 180000,
+        "explicit": False,
+        "popularity": 75,
+    }
+
+
+@pytest.fixture
+def mock_artist_metadata():
+    """Mock artist metadata from Spotify API."""
+    return {
+        "id": "artist1",
+        "name": "Artist One",
+        "genres": ["pop", "rock"],
+        "popularity": 80,
+        "followers": {"total": 1000000},
+        "images": [{"url": "https://example.com/image.jpg", "width": 640, "height": 640}],
+    }
+
+
+def test_enrich_track_cache_hit(mock_spotify_client, mock_dynamo_client):
+    """Test track enrichment when metadata is already cached."""
+    from spotify_lifecycle.pipeline.enrich import enrich_track
+
+    # Setup: Track already in cache
+    mock_dynamo_client.get_track_metadata.return_value = {
+        "track_id": "spotify:track:abc123",
+        "name": "Cached Song",
+        "artist_ids": ["spotify:artist:artist1"],
+        "artist_names": ["Artist One"],
+        "album_id": "spotify:album:album1",
+        "album_name": "Cached Album",
+        "duration_ms": 180000,
+        "explicit": False,
+        "popularity": 75,
+        "release_date": "2025-01-01",
+        "uri": "spotify:track:abc123",
+        "cached_at": "2025-01-01T00:00:00+00:00",
+    }
+
+    # Execute
+    result = enrich_track(
+        track_id="spotify:track:abc123",
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        tracks_table="tracks",
+    )
+
+    # Verify: Metadata returned from cache
+    assert result is not None
+    assert result.track_id == "spotify:track:abc123"
+    assert result.name == "Cached Song"
+
+    # Verify: No API call made (cache hit)
+    mock_spotify_client.get_track.assert_not_called()
+
+    # Verify: No write to cache (already exists)
+    mock_dynamo_client.write_track_metadata.assert_not_called()
+
+
+def test_enrich_track_cache_miss(mock_spotify_client, mock_dynamo_client, mock_track_metadata):
+    """Test track enrichment when metadata needs to be fetched from API."""
+    from spotify_lifecycle.pipeline.enrich import enrich_track
+
+    # Setup: Track NOT in cache
+    mock_dynamo_client.get_track_metadata.return_value = None
+
+    # Setup: Spotify API returns track metadata
+    mock_spotify_client.get_track.return_value = mock_track_metadata
+
+    # Setup: Cache write succeeds
+    mock_dynamo_client.write_track_metadata.return_value = True
+
+    # Execute
+    result = enrich_track(
+        track_id="spotify:track:abc123",
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        tracks_table="tracks",
+    )
+
+    # Verify: Metadata returned
+    assert result is not None
+    assert result.track_id == "spotify:track:abc123"
+    assert result.name == "Test Song"
+    assert result.artist_ids == ["spotify:artist:artist1", "spotify:artist:artist2"]
+    assert result.artist_names == ["Artist One", "Artist Two"]
+
+    # Verify: API call made (cache miss)
+    mock_spotify_client.get_track.assert_called_once_with("abc123")
+
+    # Verify: Metadata written to cache
+    mock_dynamo_client.write_track_metadata.assert_called_once()
+
+
+def test_enrich_track_api_failure(mock_spotify_client, mock_dynamo_client):
+    """Test track enrichment when Spotify API fails."""
+    from spotify_lifecycle.pipeline.enrich import enrich_track
+
+    # Setup: Track NOT in cache
+    mock_dynamo_client.get_track_metadata.return_value = None
+
+    # Setup: Spotify API throws exception
+    mock_spotify_client.get_track.side_effect = Exception("API Error")
+
+    # Execute
+    result = enrich_track(
+        track_id="spotify:track:abc123",
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        tracks_table="tracks",
+    )
+
+    # Verify: None returned (failure is non-blocking)
+    assert result is None
+
+    # Verify: API call attempted
+    mock_spotify_client.get_track.assert_called_once()
+
+    # Verify: No write to cache (no data to cache)
+    mock_dynamo_client.write_track_metadata.assert_not_called()
+
+
+def test_enrich_artist_cache_hit(mock_spotify_client, mock_dynamo_client):
+    """Test artist enrichment when metadata is already cached."""
+    from spotify_lifecycle.pipeline.enrich import enrich_artist
+
+    # Setup: Artist already in cache
+    mock_dynamo_client.get_artist_metadata.return_value = {
+        "artist_id": "spotify:artist:artist1",
+        "name": "Cached Artist",
+        "genres": ["pop"],
+        "popularity": 80,
+        "followers": 1000000,
+        "uri": "spotify:artist:artist1",
+        "images": "[]",
+        "cached_at": "2025-01-01T00:00:00+00:00",
+    }
+
+    # Execute
+    result = enrich_artist(
+        artist_id="spotify:artist:artist1",
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        artists_table="artists",
+    )
+
+    # Verify: Metadata returned from cache
+    assert result is not None
+    assert result.artist_id == "spotify:artist:artist1"
+    assert result.name == "Cached Artist"
+
+    # Verify: No API call made (cache hit)
+    mock_spotify_client.get_artist.assert_not_called()
+
+    # Verify: No write to cache (already exists)
+    mock_dynamo_client.write_artist_metadata.assert_not_called()
+
+
+def test_enrich_artist_cache_miss(mock_spotify_client, mock_dynamo_client, mock_artist_metadata):
+    """Test artist enrichment when metadata needs to be fetched from API."""
+    from spotify_lifecycle.pipeline.enrich import enrich_artist
+
+    # Setup: Artist NOT in cache
+    mock_dynamo_client.get_artist_metadata.return_value = None
+
+    # Setup: Spotify API returns artist metadata
+    mock_spotify_client.get_artist.return_value = mock_artist_metadata
+
+    # Setup: Cache write succeeds
+    mock_dynamo_client.write_artist_metadata.return_value = True
+
+    # Execute
+    result = enrich_artist(
+        artist_id="spotify:artist:artist1",
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        artists_table="artists",
+    )
+
+    # Verify: Metadata returned
+    assert result is not None
+    assert result.artist_id == "spotify:artist:artist1"
+    assert result.name == "Artist One"
+    assert result.genres == ["pop", "rock"]
+    assert result.followers == 1000000
+
+    # Verify: API call made (cache miss)
+    mock_spotify_client.get_artist.assert_called_once_with("artist1")
+
+    # Verify: Metadata written to cache
+    mock_dynamo_client.write_artist_metadata.assert_called_once()
+
+
+def test_enrich_artist_api_failure(mock_spotify_client, mock_dynamo_client):
+    """Test artist enrichment when Spotify API fails."""
+    from spotify_lifecycle.pipeline.enrich import enrich_artist
+
+    # Setup: Artist NOT in cache
+    mock_dynamo_client.get_artist_metadata.return_value = None
+
+    # Setup: Spotify API throws exception
+    mock_spotify_client.get_artist.side_effect = Exception("API Error")
+
+    # Execute
+    result = enrich_artist(
+        artist_id="spotify:artist:artist1",
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        artists_table="artists",
+    )
+
+    # Verify: None returned (failure is non-blocking)
+    assert result is None
+
+    # Verify: API call attempted
+    mock_spotify_client.get_artist.assert_called_once()
+
+    # Verify: No write to cache (no data to cache)
+    mock_dynamo_client.write_artist_metadata.assert_not_called()
+
+
+def test_enrich_play_events_deduplication(
+    mock_spotify_client, mock_dynamo_client, mock_track_metadata, mock_artist_metadata
+):
+    """Test that duplicate track IDs are deduplicated before enrichment."""
+    from spotify_lifecycle.pipeline.enrich import enrich_play_events
+
+    # Setup: Same track played multiple times
+    track_ids = [
+        "spotify:track:abc123",
+        "spotify:track:abc123",  # Duplicate
+        "spotify:track:abc123",  # Duplicate
+    ]
+
+    # Setup: Track NOT in cache
+    mock_dynamo_client.get_track_metadata.return_value = None
+
+    # Setup: Artist NOT in cache
+    mock_dynamo_client.get_artist_metadata.return_value = None
+
+    # Setup: Spotify API returns metadata
+    mock_spotify_client.get_track.return_value = mock_track_metadata
+    mock_spotify_client.get_artist.return_value = mock_artist_metadata
+
+    # Setup: Cache writes succeed
+    mock_dynamo_client.write_track_metadata.return_value = True
+    mock_dynamo_client.write_artist_metadata.return_value = True
+
+    # Execute
+    summary = enrich_play_events(
+        track_ids=track_ids,
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        tracks_table="tracks",
+        artists_table="artists",
+    )
+
+    # Verify: Only 1 unique track processed
+    assert summary["tracks_processed"] == 1
+    assert summary["tracks_fetched"] == 1
+
+    # Verify: Only 1 API call made (deduplication works)
+    assert mock_spotify_client.get_track.call_count == 1
+
+
+def test_enrich_play_events_batch_summary(
+    mock_spotify_client, mock_dynamo_client, mock_track_metadata, mock_artist_metadata
+):
+    """Test batch enrichment returns accurate summary."""
+    from spotify_lifecycle.pipeline.enrich import enrich_play_events
+
+    # Setup: Multiple unique tracks
+    track_ids = ["spotify:track:1", "spotify:track:2", "spotify:track:3"]
+
+    # Setup: Track 1 cached, Track 2-3 NOT cached
+    def get_track_side_effect(table, track_id):
+        if track_id == "spotify:track:1":
+            return {
+                "track_id": track_id,
+                "name": "Cached",
+                "artist_ids": ["spotify:artist:artist1"],
+                "artist_names": ["Artist"],
+                "album_id": "spotify:album:album1",
+                "album_name": "Album",
+                "duration_ms": 180000,
+                "explicit": False,
+                "popularity": 75,
+                "release_date": "2025-01-01",
+                "uri": track_id,
+                "cached_at": "2025-01-01T00:00:00+00:00",
+            }
+        return None
+
+    mock_dynamo_client.get_track_metadata.side_effect = get_track_side_effect
+
+    # Setup: Artist NOT in cache
+    mock_dynamo_client.get_artist_metadata.return_value = None
+
+    # Setup: Spotify API returns metadata
+    mock_spotify_client.get_track.return_value = mock_track_metadata
+    mock_spotify_client.get_artist.return_value = mock_artist_metadata
+
+    # Setup: Cache writes succeed
+    mock_dynamo_client.write_track_metadata.return_value = True
+    mock_dynamo_client.write_artist_metadata.return_value = True
+
+    # Execute
+    summary = enrich_play_events(
+        track_ids=track_ids,
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        tracks_table="tracks",
+        artists_table="artists",
+    )
+
+    # Verify: Summary counts
+    assert summary["tracks_processed"] == 3
+    assert summary["tracks_cached"] == 1  # Track 1 was cached
+    assert summary["tracks_fetched"] == 2  # Track 2-3 fetched from API
+    assert summary["tracks_failed"] == 0
+
+
+def test_enrich_play_events_partial_failure(
+    mock_spotify_client, mock_dynamo_client, mock_track_metadata, mock_artist_metadata
+):
+    """Test batch enrichment continues despite individual failures."""
+    from spotify_lifecycle.pipeline.enrich import enrich_play_events
+
+    # Setup: Multiple unique tracks
+    track_ids = ["spotify:track:1", "spotify:track:2", "spotify:track:3"]
+
+    # Setup: Tracks NOT in cache
+    mock_dynamo_client.get_track_metadata.return_value = None
+
+    # Setup: Artist NOT in cache
+    mock_dynamo_client.get_artist_metadata.return_value = None
+
+    # Setup: Track 2 API call fails
+    def get_track_side_effect(track_id):
+        if track_id == "2":
+            raise Exception("API Error for track 2")
+        return mock_track_metadata
+
+    mock_spotify_client.get_track.side_effect = get_track_side_effect
+    mock_spotify_client.get_artist.return_value = mock_artist_metadata
+
+    # Setup: Cache writes succeed
+    mock_dynamo_client.write_track_metadata.return_value = True
+    mock_dynamo_client.write_artist_metadata.return_value = True
+
+    # Execute
+    summary = enrich_play_events(
+        track_ids=track_ids,
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        tracks_table="tracks",
+        artists_table="artists",
+    )
+
+    # Verify: Partial success
+    assert summary["tracks_processed"] == 3
+    assert summary["tracks_fetched"] == 2  # Track 1 and 3 succeeded
+    assert summary["tracks_failed"] == 1  # Track 2 failed
+
+    # Verify: All API calls attempted despite failure
+    assert mock_spotify_client.get_track.call_count == 3
+
+
+def test_run_enrichment_no_plays(mock_spotify_client, mock_dynamo_client):
+    """Test enrichment pipeline when hot store is empty."""
+    from spotify_lifecycle.pipeline.enrich import run_enrichment
+
+    # Setup: Hot store table returns empty scan
+    mock_table = Mock()
+    mock_table.scan.return_value = {"Items": []}
+    mock_dynamo_client.dynamodb.Table.return_value = mock_table
+
+    # Execute
+    summary = run_enrichment(
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        hot_table="plays",
+        tracks_table="tracks",
+        artists_table="artists",
+        lookback_days=7,
+    )
+
+    # Verify: Empty summary (no plays to enrich)
+    assert summary["tracks_processed"] == 0
+    assert summary["tracks_fetched"] == 0
+
+    # Verify: No API calls made
+    mock_spotify_client.get_track.assert_not_called()
+    mock_spotify_client.get_artist.assert_not_called()
+
+
+def test_run_enrichment_with_plays(
+    mock_spotify_client, mock_dynamo_client, mock_track_metadata, mock_artist_metadata
+):
+    """Test enrichment pipeline with plays in hot store."""
+    from spotify_lifecycle.pipeline.enrich import run_enrichment
+
+    # Setup: Hot store table returns plays
+    mock_table = Mock()
+    mock_table.scan.return_value = {
+        "Items": [
+            {"track_id": "spotify:track:1"},
+            {"track_id": "spotify:track:2"},
+            {"track_id": "spotify:track:1"},  # Duplicate
+        ]
+    }
+    mock_dynamo_client.dynamodb.Table.return_value = mock_table
+
+    # Setup: Tracks NOT in cache
+    mock_dynamo_client.get_track_metadata.return_value = None
+
+    # Setup: Artists NOT in cache
+    mock_dynamo_client.get_artist_metadata.return_value = None
+
+    # Setup: Spotify API returns metadata
+    mock_spotify_client.get_track.return_value = mock_track_metadata
+    mock_spotify_client.get_artist.return_value = mock_artist_metadata
+
+    # Setup: Cache writes succeed
+    mock_dynamo_client.write_track_metadata.return_value = True
+    mock_dynamo_client.write_artist_metadata.return_value = True
+
+    # Execute
+    summary = run_enrichment(
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        hot_table="plays",
+        tracks_table="tracks",
+        artists_table="artists",
+        lookback_days=7,
+    )
+
+    # Verify: 2 unique tracks processed (deduplication)
+    assert summary["tracks_processed"] == 2
+    assert summary["tracks_fetched"] == 2
+
+    # Verify: Scan called with correct filter
+    mock_table.scan.assert_called_once()
+    call_args = mock_table.scan.call_args
+    assert "FilterExpression" in call_args[1]
