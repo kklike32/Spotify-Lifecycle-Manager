@@ -84,7 +84,7 @@ def fetch_with_overlap(
         raise RuntimeError(f"Spotify API failed: {e}") from e
 
     items = response.get("items", [])
-    cursors = response.get("cursors", {})
+    cursors = response.get("cursors") or {}
     next_cursor = cursors.get("before")  # Unix ms for next page
 
     if not items:
@@ -125,12 +125,17 @@ def parse_play_event(item: dict, user_id: str) -> PlayEvent:
     track = item["track"]
     played_at = datetime.fromisoformat(item["played_at"].replace("Z", "+00:00"))
 
+    # Normalize track URI (fallback to ID if URI missing)
+    track_uri = track.get("uri") or f"spotify:track:{track['id']}"
+    if not track_uri.startswith("spotify:track:") and "id" in track:
+        track_uri = f"spotify:track:{track['id']}"
+
     # Generate play_id (deterministic)
-    play_id = make_play_id(played_at, track["id"])
+    play_id = make_play_id(played_at, track_uri)
 
     return PlayEvent(
         play_id=play_id,
-        track_id=track["id"],  # Already in spotify:track:xxx format from API
+        track_id=track_uri,  # spotify:track:xxx format from API
         played_at=played_at,
         user_id=user_id,
         context=item.get("context", {}).get("uri") if item.get("context") else None,

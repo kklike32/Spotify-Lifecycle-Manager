@@ -279,23 +279,23 @@ class DashboardData(BaseModel):
         version: Schema version (semantic versioning)
         generated_at: When this JSON was created
         time_range: Data coverage period
-        summary: High-level statistics
+        metadata: High-level statistics (matches dashboard expectations)
         top_tracks: Top 50 tracks by play count
         top_artists: Top 50 artists by play count
-        daily_trends: Last 90 days of daily stats
+        daily_plays: Last 90 days of daily stats
         hourly_distribution: Plays by hour (0-23)
-        genre_breakdown: Top 20 genres by play count
+        top_genres: Top 20 genres by play count
     """
 
     version: str = Field(default="1.0.0", description="Schema version")
     generated_at: datetime = Field(..., description="Generation timestamp")
     time_range: dict[str, datetime] = Field(..., description="Data coverage period")
-    summary: dict[str, Any] = Field(..., description="High-level stats")
+    metadata: dict[str, Any] = Field(..., description="High-level stats for dashboard")
     top_tracks: list[dict[str, Any]] = Field(..., description="Top tracks")
     top_artists: list[dict[str, Any]] = Field(..., description="Top artists")
-    daily_trends: list[dict[str, Any]] = Field(..., description="Daily stats")
+    daily_plays: list[dict[str, Any]] = Field(..., description="Daily play counts")
     hourly_distribution: list[dict[str, int]] = Field(..., description="Hourly distribution")
-    genre_breakdown: list[dict[str, Any]] = Field(..., description="Genre stats")
+    top_genres: list[dict[str, Any]] = Field(..., description="Top genres")
 
     model_config = ConfigDict(
         validate_assignment=True,

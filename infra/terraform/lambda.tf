@@ -2,20 +2,10 @@
 # Lambda Deployment Package (shared across all functions)
 # -----------------------------------------------------------------------------
 
-# Package the Lambda code (assuming deployment from repository root)
-data "archive_file" "lambda_package" {
-  type        = "zip"
-  source_dir  = "${path.module}/../../src"
-  output_path = "${path.module}/.terraform/lambda_package.zip"
-
-  excludes = [
-    "__pycache__",
-    "*.pyc",
-    "*.pyo",
-    ".pytest_cache",
-    ".ruff_cache",
-    "tests"
-  ]
+# Use pre-built Lambda package with dependencies
+# Run: ./build_lambda_package.sh before terraform apply
+locals {
+  lambda_package_path = "${path.module}/.terraform/lambda_package.zip"
 }
 
 # -----------------------------------------------------------------------------
@@ -30,8 +20,8 @@ resource "aws_lambda_function" "ingest" {
   timeout       = var.ingest_lambda_timeout
   memory_size   = var.ingest_lambda_memory
 
-  filename         = data.archive_file.lambda_package.output_path
-  source_code_hash = data.archive_file.lambda_package.output_base64sha256
+  filename         = local.lambda_package_path
+  source_code_hash = filebase64sha256(local.lambda_package_path)
 
   environment {
     variables = {
@@ -42,7 +32,6 @@ resource "aws_lambda_function" "ingest" {
       STATE_TABLE_NAME         = aws_dynamodb_table.state.name
       RAW_BUCKET_NAME          = aws_s3_bucket.raw_events.id
       DASHBOARD_BUCKET_NAME    = aws_s3_bucket.dashboard.id
-      AWS_REGION               = var.aws_region
       LOOKBACK_DAYS            = var.lookback_days
       SOURCE_PLAYLIST_ID       = var.source_playlist_id
       USER_ID                  = var.user_id
@@ -65,7 +54,7 @@ resource "aws_cloudwatch_log_group" "ingest" {
 
   tags = {
     Name        = "${var.project_name}-ingest-logs"
-    Description = "Logs for ingestion Lambda (${var.log_retention_days}-day retention)"
+    Description = "Logs for ingestion Lambda with ${var.log_retention_days}-day retention"
   }
 }
 
@@ -81,8 +70,8 @@ resource "aws_lambda_function" "enrich" {
   timeout       = var.enrich_lambda_timeout
   memory_size   = var.enrich_lambda_memory
 
-  filename         = data.archive_file.lambda_package.output_path
-  source_code_hash = data.archive_file.lambda_package.output_base64sha256
+  filename         = local.lambda_package_path
+  source_code_hash = filebase64sha256(local.lambda_package_path)
 
   environment {
     variables = {
@@ -93,7 +82,6 @@ resource "aws_lambda_function" "enrich" {
       STATE_TABLE_NAME         = aws_dynamodb_table.state.name
       RAW_BUCKET_NAME          = aws_s3_bucket.raw_events.id
       DASHBOARD_BUCKET_NAME    = aws_s3_bucket.dashboard.id
-      AWS_REGION               = var.aws_region
       LOOKBACK_DAYS            = var.lookback_days
       SOURCE_PLAYLIST_ID       = var.source_playlist_id
       USER_ID                  = var.user_id
@@ -115,7 +103,7 @@ resource "aws_cloudwatch_log_group" "enrich" {
 
   tags = {
     Name        = "${var.project_name}-enrich-logs"
-    Description = "Logs for enrichment Lambda (${var.log_retention_days}-day retention)"
+    Description = "Logs for enrichment Lambda with ${var.log_retention_days}-day retention"
   }
 }
 
@@ -131,8 +119,8 @@ resource "aws_lambda_function" "playlist" {
   timeout       = var.playlist_lambda_timeout
   memory_size   = var.playlist_lambda_memory
 
-  filename         = data.archive_file.lambda_package.output_path
-  source_code_hash = data.archive_file.lambda_package.output_base64sha256
+  filename         = local.lambda_package_path
+  source_code_hash = filebase64sha256(local.lambda_package_path)
 
   environment {
     variables = {
@@ -143,7 +131,6 @@ resource "aws_lambda_function" "playlist" {
       STATE_TABLE_NAME         = aws_dynamodb_table.state.name
       RAW_BUCKET_NAME          = aws_s3_bucket.raw_events.id
       DASHBOARD_BUCKET_NAME    = aws_s3_bucket.dashboard.id
-      AWS_REGION               = var.aws_region
       LOOKBACK_DAYS            = var.lookback_days
       SOURCE_PLAYLIST_ID       = var.source_playlist_id
       USER_ID                  = var.user_id
@@ -165,7 +152,7 @@ resource "aws_cloudwatch_log_group" "playlist" {
 
   tags = {
     Name        = "${var.project_name}-playlist-logs"
-    Description = "Logs for playlist Lambda (${var.log_retention_days}-day retention)"
+    Description = "Logs for playlist Lambda with ${var.log_retention_days}-day retention"
   }
 }
 
@@ -181,8 +168,8 @@ resource "aws_lambda_function" "aggregate" {
   timeout       = 180  # 3 minutes (down from 300s)
   memory_size   = 256  # 256 MB (down from 512MB)
 
-  filename         = data.archive_file.lambda_package.output_path
-  source_code_hash = data.archive_file.lambda_package.output_base64sha256
+  filename         = local.lambda_package_path
+  source_code_hash = filebase64sha256(local.lambda_package_path)
 
   environment {
     variables = {
@@ -193,7 +180,6 @@ resource "aws_lambda_function" "aggregate" {
       STATE_TABLE_NAME         = aws_dynamodb_table.state.name
       RAW_BUCKET_NAME          = aws_s3_bucket.raw_events.id
       DASHBOARD_BUCKET_NAME    = aws_s3_bucket.dashboard.id
-      AWS_REGION               = var.aws_region
       LOOKBACK_DAYS            = var.lookback_days
       SOURCE_PLAYLIST_ID       = var.source_playlist_id
       USER_ID                  = var.user_id
@@ -215,6 +201,6 @@ resource "aws_cloudwatch_log_group" "aggregate" {
 
   tags = {
     Name        = "${var.project_name}-aggregate-logs"
-    Description = "Logs for aggregation Lambda (${var.log_retention_days}-day retention)"
+    Description = "Logs for aggregation Lambda with ${var.log_retention_days}-day retention"
   }
 }

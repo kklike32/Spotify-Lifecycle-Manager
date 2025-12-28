@@ -2,7 +2,9 @@
 
 from typing import Optional
 
+import requests
 import spotipy
+from requests.auth import HTTPBasicAuth
 from spotipy.oauth2 import SpotifyOAuth
 
 
@@ -36,18 +38,32 @@ class SpotifyClient:
         Returns:
             Authenticated Spotipy client
         """
-        auth_manager = SpotifyOAuth(
-            client_id=self.client_id,
-            client_secret=self.client_secret,
-            redirect_uri=self.redirect_uri,
-            scope="user-read-recently-played playlist-modify-private" " playlist-modify-public",
-        )
-
         if refresh_token:
-            # Reuse existing token
-            auth_manager.refresh_access_token(refresh_token)
-            self.sp = spotipy.Spotify(auth_manager=auth_manager)
+            # Non-interactive refresh: exchange refresh token for access token
+            token_url = "https://accounts.spotify.com/api/token"
+            payload = {
+                "grant_type": "refresh_token",
+                "refresh_token": refresh_token,
+            }
+
+            response = requests.post(
+                token_url,
+                data=payload,
+                auth=HTTPBasicAuth(self.client_id, self.client_secret),
+                timeout=10,
+            )
+            response.raise_for_status()
+            access_token = response.json()["access_token"]
+            self.sp = spotipy.Spotify(auth=access_token)
         else:
+            # Fallback to interactive code flow if no refresh token was provided
+            auth_manager = SpotifyOAuth(
+                client_id=self.client_id,
+                client_secret=self.client_secret,
+                redirect_uri=self.redirect_uri,
+                scope="user-read-recently-played playlist-modify-private" " playlist-modify-public",
+                open_browser=False,
+            )
             self.sp = spotipy.Spotify(auth_manager=auth_manager)
 
         return self.sp

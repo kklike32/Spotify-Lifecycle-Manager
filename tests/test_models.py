@@ -319,16 +319,24 @@ class TestDashboardData:
                 "start": datetime(2025, 1, 1, tzinfo=timezone.utc),
                 "end": datetime(2025, 12, 27, tzinfo=timezone.utc),
             },
-            summary={"total_plays": 5000, "unique_tracks": 1200},
+            metadata={"total_play_count": 5000, "unique_track_count": 1200},
             top_tracks=[{"track_id": "spotify:track:123", "play_count": 50}],
             top_artists=[{"artist_id": "spotify:artist:456", "play_count": 100}],
-            daily_trends=[{"date": "2025-12-27", "play_count": 20}],
+            daily_plays=[{"date": "2025-12-27", "play_count": 20}],
             hourly_distribution=[{"hour": 0, "play_count": 5}],
-            genre_breakdown=[{"genre": "pop", "play_count": 500}],
+            top_genres=[{"genre": "pop", "play_count": 500}],
+            time_periods={
+                "all_time": {
+                    "top_tracks": [],
+                    "top_artists": [],
+                    "top_genres": [],
+                    "total_plays": 5000,
+                }
+            },
         )
 
         assert data.version == "1.0.0"
-        assert data.summary["total_plays"] == 5000
+        assert data.metadata["total_play_count"] == 5000
         assert len(data.top_tracks) == 1
 
     def test_dashboard_data_json_serialization(self):
@@ -339,12 +347,20 @@ class TestDashboardData:
                 "start": datetime(2025, 1, 1, tzinfo=timezone.utc),
                 "end": datetime(2025, 12, 27, tzinfo=timezone.utc),
             },
-            summary={"total_plays": 5000},
+            metadata={"total_play_count": 5000},
             top_tracks=[],
             top_artists=[],
-            daily_trends=[],
+            daily_plays=[],
             hourly_distribution=[],
-            genre_breakdown=[],
+            top_genres=[],
+            time_periods={
+                "all_time": {
+                    "top_tracks": [],
+                    "top_artists": [],
+                    "top_genres": [],
+                    "total_plays": 5000,
+                }
+            },
         )
 
         # Serialize
@@ -353,4 +369,4 @@ class TestDashboardData:
         # Deserialize
         data_restored = DashboardData.model_validate_json(json_data)
 
-        assert data_restored.summary["total_plays"] == 5000
+        assert data_restored.metadata["total_play_count"] == 5000

@@ -122,7 +122,7 @@ def test_parse_play_event():
     """Test parsing Spotify API item into PlayEvent."""
     now = datetime.now(timezone.utc)
     item = {
-        "track": {"id": "spotify:track:123", "name": "Test Song"},
+        "track": {"id": "123", "name": "Test Song"},  # Spotify API returns just ID, not full URI
         "played_at": now.isoformat().replace("+00:00", "Z"),
         "context": {"uri": "spotify:playlist:abc"},
     }

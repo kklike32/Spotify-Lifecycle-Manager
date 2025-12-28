@@ -50,6 +50,12 @@ check_prerequisites() {
     log_info "All prerequisites satisfied"
 }
 
+build_lambda_package() {
+    log_info "Building Lambda package (with dependencies)..."
+    cd "${TERRAFORM_DIR}"
+    ./build_lambda_package.sh
+}
+
 check_tfvars() {
     if [ ! -f "${TERRAFORM_DIR}/terraform.tfvars" ]; then
         log_warn "terraform.tfvars not found"
@@ -135,6 +141,7 @@ main() {
     
     check_prerequisites
     check_tfvars
+    build_lambda_package
     terraform_init
     terraform_validate
     terraform_plan

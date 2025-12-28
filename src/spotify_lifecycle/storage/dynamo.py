@@ -52,11 +52,11 @@ class DynamoDBClient:
         self.client = boto3.client("dynamodb", region_name=region_name)
 
     def write_play_event(
-        self, table_name: str, event: PlayEvent, dedup_key: str, ttl_days: int = 7
+        self, table_name: str, event: PlayEvent, play_id: str, ttl_days: int = 7
     ) -> bool:
         """Write a play event to DynamoDB with TTL and idempotency.
 
-        Uses conditional write to prevent duplicate events. If the dedup_key
+        Uses conditional write to prevent duplicate events. If the play_id
         already exists, the write is skipped (idempotent behavior).
 
         TTL (Time To Live) is automatically applied to bound storage costs.
@@ -65,7 +65,7 @@ class DynamoDBClient:
         Args:
             table_name: DynamoDB table name for hot storage
             event: PlayEvent to write
-            dedup_key: Unique key for deduplication (from make_play_id)
+            play_id: Unique key for deduplication (from make_play_id)
             ttl_days: Number of days before automatic deletion (default: 7)
 
         Returns:
@@ -83,7 +83,7 @@ class DynamoDBClient:
         try:
             table.put_item(
                 Item={
-                    "dedup_key": dedup_key,
+                    "dedup_key": play_id,  # Use dedup_key as table hash key
                     "track_id": event.track_id,
                     "played_at": event.played_at.isoformat(),
                     "user_id": event.user_id,
@@ -331,7 +331,7 @@ class DynamoDBClient:
             - 0.5 RCU per check (eventually consistent)
         """
         table = self.dynamodb.Table(table_name)
-        response = table.get_item(Key={"state_key": f"weekly_run#{week_id}"}, ConsistentRead=False)
+        response = table.get_item(Key={"key": f"weekly_run#{week_id}"}, ConsistentRead=False)
         return "Item" in response
 
     def record_weekly_run(
@@ -361,12 +361,12 @@ class DynamoDBClient:
         try:
             table.put_item(
                 Item={
-                    "state_key": state_key,
+                    "key": state_key,
                     "playlist_id": playlist_id,
                     "track_count": track_count,
                     "created_at": datetime.utcnow().isoformat(),
                 },
-                ConditionExpression="attribute_not_exists(state_key)",
+                ConditionExpression="attribute_not_exists(key)",
             )
             return True
         except ClientError as e:
@@ -388,14 +388,14 @@ class DynamoDBClient:
         from spotify_lifecycle.models import IngestionState
 
         table = self.dynamodb.Table(table_name)
-        response = table.get_item(Key={"state_key": state_key}, ConsistentRead=True)
+        response = table.get_item(Key={"key": state_key}, ConsistentRead=True)
 
         if "Item" not in response:
             return None
 
         item = response["Item"]
         return IngestionState(
-            state_key=item["state_key"],
+            state_key=item["key"],
             last_played_at=datetime.fromisoformat(item["last_played_at"]),
             last_run_at=datetime.fromisoformat(item["last_run_at"]),
             last_event_count=item["last_event_count"],
@@ -421,7 +421,7 @@ class DynamoDBClient:
         table = self.dynamodb.Table(table_name)
 
         item = {
-            "state_key": state.state_key,
+            "key": state.state_key,
             "last_played_at": state.last_played_at.isoformat(),
             "last_run_at": state.last_run_at.isoformat(),
             "last_event_count": state.last_event_count,
@@ -532,14 +532,14 @@ class DynamoDBClient:
         from spotify_lifecycle.models import PlaylistState
 
         table = self.dynamodb.Table(table_name)
-        response = table.get_item(Key={"state_key": state_key}, ConsistentRead=False)
+        response = table.get_item(Key={"key": state_key}, ConsistentRead=False)
 
         if "Item" not in response:
             return None
 
         item = response["Item"]
         return PlaylistState(
-            state_key=item["state_key"],
+            state_key=item["key"],
             week_id=item["week_id"],
             playlist_id=item["playlist_id"],
             created_at=datetime.fromisoformat(item["created_at"]),

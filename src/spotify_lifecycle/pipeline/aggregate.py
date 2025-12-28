@@ -104,26 +104,28 @@ def build_dashboard_data(
     for track_id, play_count in top_track_ids:
         metadata = dynamo_client.get_track_metadata(tracks_table_name, track_id)
         if metadata:
+            # Get artist names (will be resolved after artist metadata is fetched)
+            artist_ids = metadata.get("artist_ids", [])
+            # Count plays per artist (from track metadata)
+            for artist_id in artist_ids:
+                artist_counts[artist_id] += play_count
+
             top_tracks_enriched.append(
                 {
                     "track_id": track_id,
-                    "name": metadata.get("name", "Unknown"),
-                    "artist_names": metadata.get("artist_ids", []),  # Will fix below
+                    "track_name": metadata.get("name", "Unknown"),
+                    "artist_ids": artist_ids,  # Will resolve to names later
                     "album_name": metadata.get("album_name", "Unknown"),
                     "play_count": play_count,
                 }
             )
-
-            # Count plays per artist (from track metadata)
-            for artist_id in metadata.get("artist_ids", []):
-                artist_counts[artist_id] += play_count
         else:
             # Track metadata not cached (shouldn't happen if enrichment ran)
             top_tracks_enriched.append(
                 {
                     "track_id": track_id,
-                    "name": "Unknown",
-                    "artist_names": [],
+                    "track_name": "Unknown",
+                    "artist_ids": [],
                     "album_name": "Unknown",
                     "play_count": play_count,
                 }
@@ -134,16 +136,20 @@ def build_dashboard_data(
     top_artists_enriched = []
     genre_counts: dict[str, int] = defaultdict(int)
 
+    # Build artist_id -> name mapping for track artist resolution
+    artist_name_map: dict[str, str] = {}
+
     for artist_id, play_count in top_artist_ids:
         metadata = dynamo_client.get_artist_metadata(artists_table_name, artist_id)
         if metadata:
             artist_name = metadata.get("name", "Unknown")
             genres = metadata.get("genres", [])
+            artist_name_map[artist_id] = artist_name
 
             top_artists_enriched.append(
                 {
                     "artist_id": artist_id,
-                    "name": artist_name,
+                    "artist_name": artist_name,
                     "genres": genres,
                     "play_count": play_count,
                 }
@@ -153,25 +159,33 @@ def build_dashboard_data(
             for genre in genres:
                 genre_counts[genre] += play_count
         else:
+            artist_name_map[artist_id] = "Unknown"
             top_artists_enriched.append(
                 {
                     "artist_id": artist_id,
-                    "name": "Unknown",
+                    "artist_name": "Unknown",
                     "genres": [],
                     "play_count": play_count,
                 }
             )
 
-    # Build genre breakdown (limit to top 20)
-    top_genres = sorted(genre_counts.items(), key=lambda x: x[1], reverse=True)[:20]
-    genre_breakdown = [{"genre": genre, "play_count": count} for genre, count in top_genres]
+    # Now resolve artist names in top_tracks
+    for track in top_tracks_enriched:
+        artist_ids = track.pop("artist_ids", [])
+        # Get first artist name, or join multiple
+        artist_names = [artist_name_map.get(aid, "Unknown") for aid in artist_ids]
+        track["artist_name"] = ", ".join(artist_names) if artist_names else "Unknown"
 
-    # Build daily trends (ensure all days in range have entries)
-    daily_trends = []
+    # Build top genres (limit to top 20)
+    top_genres_sorted = sorted(genre_counts.items(), key=lambda x: x[1], reverse=True)[:20]
+    top_genres = [{"genre": genre, "play_count": count} for genre, count in top_genres_sorted]
+
+    # Build daily plays (ensure all days in range have entries)
+    daily_plays = []
     current_date = start_date.date()
     while current_date <= end_date.date():
         date_str = current_date.isoformat()
-        daily_trends.append({"date": date_str, "play_count": daily_counts.get(date_str, 0)})
+        daily_plays.append({"date": date_str, "play_count": daily_counts.get(date_str, 0)})
         current_date += timedelta(days=1)
 
     # Build hourly distribution (ensure all hours 0-23 have entries)
@@ -179,25 +193,27 @@ def build_dashboard_data(
         {"hour": hour, "play_count": hourly_counts.get(hour, 0)} for hour in range(24)
     ]
 
-    # Build summary statistics
-    summary = {
-        "total_plays": len(plays),
-        "unique_tracks": len(track_counts),
-        "unique_artists": len(artist_counts),
-        "unique_genres": len(genre_counts),
-        "date_range_days": lookback_days,
+    # Build metadata (dashboard expects this format)
+    metadata = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "total_play_count": len(plays),
+        "unique_track_count": len(track_counts),
+        "unique_artist_count": len(artist_counts),
+        "genre_count": len(genre_counts),
+        "date_range_start": start_date.isoformat(),
+        "date_range_end": end_date.isoformat(),
     }
 
     # Build validated dashboard data model
     dashboard_data = DashboardData(
         generated_at=datetime.now(timezone.utc),
         time_range={"start": start_date, "end": end_date},
-        summary=summary,
+        metadata=metadata,
         top_tracks=top_tracks_enriched,
         top_artists=top_artists_enriched,
-        daily_trends=daily_trends,
+        daily_plays=daily_plays,
         hourly_distribution=hourly_distribution,
-        genre_breakdown=genre_breakdown,
+        top_genres=top_genres,
     )
 
     # Write to S3 (validated JSON)

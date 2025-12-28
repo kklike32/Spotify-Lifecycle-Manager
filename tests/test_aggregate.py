@@ -124,10 +124,10 @@ class TestAggregationLogic:
         )
 
         # Verify: All 4 days present (today + 3 days back = 4 days)
-        assert len(result.daily_trends) == 4
+        assert len(result.daily_plays) == 4
 
         # Verify: Day 2 has zero plays
-        day_counts = {trend["date"]: trend["play_count"] for trend in result.daily_trends}
+        day_counts = {trend["date"]: trend["play_count"] for trend in result.daily_plays}
         day_2 = (base_time - timedelta(days=1)).date().isoformat()
         assert day_counts[day_2] == 0
 
@@ -234,7 +234,7 @@ class TestAggregationLogic:
         )
 
         # Verify: Genres extracted correctly
-        genre_names = [g["genre"] for g in result.genre_breakdown]
+        genre_names = [g["genre"] for g in result.top_genres]
         assert "rock" in genre_names
         assert "indie" in genre_names
         assert "jazz" in genre_names
@@ -290,7 +290,7 @@ class TestAggregationLogic:
         # Verify: Limits enforced
         assert len(result.top_tracks) == 50  # Limit to 50
         assert len(result.top_artists) == 50  # Limit to 50
-        assert len(result.genre_breakdown) <= 20  # Limit to 20
+        assert len(result.top_genres) <= 20  # Limit to 20
 
     def test_schema_validation_with_pydantic(self):
         """Verify output conforms to DashboardData schema."""
@@ -347,13 +347,13 @@ class TestAggregationLogic:
         )
 
         # Verify: Valid output with zero counts
-        assert result.summary["total_plays"] == 0
-        assert result.summary["unique_tracks"] == 0
+        assert result.metadata["total_play_count"] == 0
+        assert result.metadata["unique_track_count"] == 0
         assert len(result.top_tracks) == 0
         assert len(result.top_artists) == 0
-        assert len(result.genre_breakdown) == 0
+        assert len(result.top_genres) == 0
         # Daily trends still present (all zeros)
-        assert len(result.daily_trends) == 8  # 7 days + today
+        assert len(result.daily_plays) == 8  # 7 days + today
         # Hourly distribution still present (all zeros)
         assert len(result.hourly_distribution) == 24
 
@@ -385,7 +385,7 @@ class TestAggregationLogic:
 
         # Verify: Output includes placeholder values
         assert len(result.top_tracks) == 1
-        assert result.top_tracks[0]["name"] == "Unknown"
+        assert result.top_tracks[0]["track_name"] == "Unknown"
         assert result.top_tracks[0]["album_name"] == "Unknown"
 
     def test_idempotency_same_input_same_output(self):
@@ -427,8 +427,19 @@ class TestAggregationLogic:
         )
 
         # Verify: Same data (excluding timestamps)
-        assert result1.summary == result2.summary
+        # Compare metadata excluding timestamps
+        meta1 = {
+            k: v
+            for k, v in result1.metadata.items()
+            if k not in ["generated_at", "date_range_start", "date_range_end"]
+        }
+        meta2 = {
+            k: v
+            for k, v in result2.metadata.items()
+            if k not in ["generated_at", "date_range_start", "date_range_end"]
+        }
+        assert meta1 == meta2
         assert result1.top_tracks == result2.top_tracks
         assert result1.top_artists == result2.top_artists
-        assert result1.daily_trends == result2.daily_trends
+        assert result1.daily_plays == result2.daily_plays
         assert result1.hourly_distribution == result2.hourly_distribution
