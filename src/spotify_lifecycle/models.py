@@ -109,25 +109,25 @@ class TrackMetadata(BaseModel):
     @field_validator("track_id", "uri")
     @classmethod
     def validate_track_uri(cls, v: str) -> str:
-        """Validate Spotify track URI format."""
-        if not v.startswith("spotify:track:"):
+        """Validate Spotify track URI format (including local files)."""
+        if not (v.startswith("spotify:track:") or v.startswith("spotify:local:")):
             raise ValueError(f"Invalid track URI format: {v}")
         return v
 
     @field_validator("album_id")
     @classmethod
     def validate_album_uri(cls, v: str) -> str:
-        """Validate Spotify album URI format."""
-        if not v.startswith("spotify:album:"):
+        """Validate Spotify album URI format (including local files)."""
+        if not (v.startswith("spotify:album:") or v.startswith("spotify:local:")):
             raise ValueError(f"Invalid album URI format: {v}")
         return v
 
     @field_validator("artist_ids")
     @classmethod
     def validate_artist_uris(cls, v: list[str]) -> list[str]:
-        """Validate all artist URIs."""
+        """Validate all artist URIs (including local files)."""
         for uri in v:
-            if not uri.startswith("spotify:artist:"):
+            if not (uri.startswith("spotify:artist:") or uri.startswith("spotify:local:")):
                 raise ValueError(f"Invalid artist URI format: {uri}")
         return v
 

@@ -293,6 +293,7 @@ class TestAggregationLogic:
         assert len(result.hourly_distribution) == 24
 
     def test_missing_metadata_handled_gracefully(self):
+        """Test that tracks with missing metadata are skipped when no spotify_client provided."""
         base_time = datetime.now(ZoneInfo("America/Los_Angeles"))
         summaries = [make_summary(base_time, {"spotify:track:track1": 1})]
 
@@ -311,10 +312,12 @@ class TestAggregationLogic:
             raw_bucket_name="raw",
             dashboard_bucket_name="dash",
             lookback_days=1,
+            spotify_client=None,  # No auto-enrichment
         )
 
-        assert result.top_tracks[0]["track_name"] == "Unknown"
-        assert result.windows["all_time"]["top_tracks"][0]["track_name"] == "Unknown"
+        # When no spotify_client provided and metadata missing, track should be skipped
+        assert len(result.top_tracks) == 0
+        assert len(result.windows["all_time"]["top_tracks"]) == 0
 
     def test_idempotency_same_input_same_output(self):
         fixed_time = datetime(2025, 1, 1, 12, 0, 0, tzinfo=timezone.utc)

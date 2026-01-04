@@ -26,7 +26,6 @@ For detailed architecture, see:
 """
 
 import logging
-from collections import defaultdict
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, Tuple
 from zoneinfo import ZoneInfo

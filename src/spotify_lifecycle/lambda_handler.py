@@ -297,6 +297,7 @@ def aggregate_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             raw_bucket_name=raw_bucket_name,
             dashboard_bucket_name=dashboard_bucket_name,
             lookback_days=lookback_days,
+            spotify_client=get_spotify_client(),  # Enable auto-enrichment
         )
 
         # Convert Pydantic model to dict for summary

@@ -23,6 +23,8 @@ from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 from spotify_lifecycle.models import DashboardData
+from spotify_lifecycle.pipeline.enrich import enrich_artist, enrich_track
+from spotify_lifecycle.spotify.client import SpotifyClient
 from spotify_lifecycle.storage.dynamo import DynamoDBClient
 from spotify_lifecycle.storage.s3 import S3ColdStore, S3DashboardStore
 
@@ -41,24 +43,34 @@ def build_dashboard_data(
     dashboard_bucket_name: str,
     lookback_days: int = 90,
     hourly_lookback_days: int = 7,
+    spotify_client: SpotifyClient | None = None,
 ) -> DashboardData:
     """Build precomputed dashboard data with multi-window top lists (cost-optimized)."""
     now = datetime.now(PACIFIC_TZ)
 
-    def _is_summary_plausible(summary: dict, max_total_per_day: int = 2000, max_single_track: int = 600) -> bool:
+    def _is_summary_plausible(
+        summary: dict, max_total_per_day: int = 2000, max_single_track: int = 600
+    ) -> bool:
         """Validate a summary is within reasonable bounds to avoid multiplied totals."""
         total = int(summary.get("total_plays", 0))
         counts: dict[str, int] = summary.get("track_counts", {}) or {}
         track_count = len(counts)
 
         if total < 0:
-            logger.warning("summary rejected: negative total", extra={"summary_date": summary.get("date"), "total": total})
+            logger.warning(
+                "summary rejected: negative total",
+                extra={"summary_date": summary.get("date"), "total": total},
+            )
             return False
 
         if total > max_total_per_day:
             logger.warning(
                 "summary rejected: total exceeds max",
-                extra={"summary_date": summary.get("date"), "total": total, "max_total_per_day": max_total_per_day},
+                extra={
+                    "summary_date": summary.get("date"),
+                    "total": total,
+                    "max_total_per_day": max_total_per_day,
+                },
             )
             return False
 
@@ -75,7 +87,11 @@ def build_dashboard_data(
             if max_track_total > max_single_track:
                 logger.warning(
                     "summary rejected: single-track total exceeds max",
-                    extra={"summary_date": summary.get("date"), "total": total, "max_single_track": max_single_track},
+                    extra={
+                        "summary_date": summary.get("date"),
+                        "total": total,
+                        "max_single_track": max_single_track,
+                    },
                 )
                 return False
             return True
@@ -85,7 +101,12 @@ def build_dashboard_data(
         if avg_per_track > max_single_track:
             logger.warning(
                 "summary rejected: average per track exceeds max_single_track",
-                extra={"summary_date": summary.get("date"), "average": avg_per_track, "track_count": track_count, "max_single_track": max_single_track},
+                extra={
+                    "summary_date": summary.get("date"),
+                    "average": avg_per_track,
+                    "track_count": track_count,
+                    "max_single_track": max_single_track,
+                },
             )
             return False
 
@@ -159,16 +180,69 @@ def build_dashboard_data(
     track_metadata_cache: dict[str, dict] = {}
     artist_metadata_cache: dict[str, dict] = {}
     artist_ids: set[str] = set()
+    enriched_count = 0
 
     for track_id in all_track_ids:
         metadata = dynamo_client.get_track_metadata(tracks_table_name, track_id) or {}
+
+        # If metadata is missing and we have a Spotify client, enrich it on-the-fly
+        if (not metadata or not metadata.get("name")) and spotify_client:
+            logger.info(
+                f"Track metadata missing for {track_id}, enriching on-the-fly",
+                extra={"track_id": track_id},
+            )
+            enriched_metadata = enrich_track(
+                track_id=track_id,
+                spotify_client=spotify_client,
+                dynamo_client=dynamo_client,
+                tracks_table=tracks_table_name,
+            )
+            if enriched_metadata:
+                # Convert Pydantic model to dict for cache
+                metadata = enriched_metadata.model_dump()
+                enriched_count += 1
+                logger.info(
+                    f"Successfully enriched track: {metadata.get('name')}",
+                    extra={"track_id": track_id, "track_name": metadata.get("name")},
+                )
+            else:
+                logger.error(f"Failed to enrich track {track_id}", extra={"track_id": track_id})
+
         track_metadata_cache[track_id] = metadata
         for artist_id in metadata.get("artist_ids", []):
             artist_ids.add(artist_id)
 
     for artist_id in artist_ids:
-        artist_metadata_cache[artist_id] = (
-            dynamo_client.get_artist_metadata(artists_table_name, artist_id) or {}
+        artist_meta = dynamo_client.get_artist_metadata(artists_table_name, artist_id) or {}
+
+        # If artist metadata is missing and we have a Spotify client, enrich it
+        if (not artist_meta or not artist_meta.get("name")) and spotify_client:
+            logger.info(
+                f"Artist metadata missing for {artist_id}, enriching on-the-fly",
+                extra={"artist_id": artist_id},
+            )
+            enriched_artist = enrich_artist(
+                artist_id=artist_id,
+                spotify_client=spotify_client,
+                dynamo_client=dynamo_client,
+                artists_table=artists_table_name,
+            )
+            if enriched_artist:
+                artist_meta = enriched_artist.model_dump()
+                enriched_count += 1
+                logger.info(
+                    f"Successfully enriched artist: {artist_meta.get('name')}",
+                    extra={"artist_id": artist_id, "artist_name": artist_meta.get("name")},
+                )
+            else:
+                logger.error(f"Failed to enrich artist {artist_id}", extra={"artist_id": artist_id})
+
+        artist_metadata_cache[artist_id] = artist_meta
+
+    if enriched_count > 0:
+        logger.info(
+            f"Auto-enriched {enriched_count} missing metadata entries",
+            extra={"enriched_count": enriched_count},
         )
 
     def build_window_payload(window_key: str) -> dict:
@@ -182,22 +256,41 @@ def build_dashboard_data(
         sorted_tracks = sorted(track_counts.items(), key=lambda x: x[1], reverse=True)
         for track_id, count in sorted_tracks:
             metadata = track_metadata_cache.get(track_id) or {}
+
+            # Skip tracks with no metadata (not enriched yet)
+            if not metadata or not metadata.get("name"):
+                logger.warning(
+                    f"Skipping track {track_id} - no metadata in cache",
+                    extra={"track_id": track_id, "play_count": count},
+                )
+                continue
+
             artist_ids_for_track = metadata.get("artist_ids", [])
             artist_names = []
             for artist_id in artist_ids_for_track:
                 artist_meta = artist_metadata_cache.get(artist_id) or {}
                 artist_counts[artist_id] += count
-                artist_names.append(artist_meta.get("name", "Unknown"))
+                artist_name = artist_meta.get("name", "")
+                if artist_name:  # Only add if we have a real name
+                    artist_names.append(artist_name)
                 for genre in artist_meta.get("genres", []):
                     genre_counts[genre] += count
+
+            # Skip if we don't have artist names (corrupted data)
+            if not artist_names:
+                logger.warning(
+                    f"Skipping track {metadata.get('name')} - no artist names",
+                    extra={"track_id": track_id, "track_name": metadata.get("name")},
+                )
+                continue
 
             if len(top_tracks) < 50:
                 top_tracks.append(
                     {
                         "track_id": track_id,
-                        "track_name": metadata.get("name", "Unknown"),
-                        "artist_name": ", ".join(artist_names) if artist_names else "Unknown",
-                        "album_name": metadata.get("album_name", "Unknown"),
+                        "track_name": metadata.get("name"),
+                        "artist_name": ", ".join(artist_names),
+                        "album_name": metadata.get("album_name", ""),
                         "play_count": count,
                     }
                 )
@@ -206,10 +299,20 @@ def build_dashboard_data(
         sorted_artists = sorted(artist_counts.items(), key=lambda x: x[1], reverse=True)[:50]
         for artist_id, play_count in sorted_artists:
             artist_meta = artist_metadata_cache.get(artist_id) or {}
+            artist_name = artist_meta.get("name", "")
+
+            # Skip artists with no name (corrupted/missing data)
+            if not artist_name:
+                logger.warning(
+                    f"Skipping artist {artist_id} - no name in cache",
+                    extra={"artist_id": artist_id, "play_count": play_count},
+                )
+                continue
+
             top_artists.append(
                 {
                     "artist_id": artist_id,
-                    "artist_name": artist_meta.get("name", "Unknown"),
+                    "artist_name": artist_name,
                     "genres": artist_meta.get("genres", []),
                     "play_count": play_count,
                 }
@@ -304,10 +407,13 @@ def build_dashboard_data(
         "date_range_end": metadata["date_range_end"],
     }
     print(json.dumps(metric_event))  # EMF format for auto metric creation
-    logger.info("aggregate_completed", extra={
-        "total_play_count": metadata["total_play_count"],
-        "unique_track_count": metadata["unique_track_count"],
-    })
+    logger.info(
+        "aggregate_completed",
+        extra={
+            "total_play_count": metadata["total_play_count"],
+            "unique_track_count": metadata["unique_track_count"],
+        },
+    )
 
     dashboard_data = DashboardData(
         generated_at=now,

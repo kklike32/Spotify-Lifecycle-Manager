@@ -358,14 +358,13 @@ class S3ColdStore:
                 )
                 return key
 
-            logger.info(
-                "daily summary updated with recalculated counts from all raw events",
+            logger.warning(
+                "daily summary mismatch detected; replacing with incoming counts",
                 extra={
                     "bucket": bucket_name,
                     "key": key,
-                    "previous_total": existing.get("total_plays", 0),
-                    "current_total": incoming_total,
-                    "status": "recalculated",
+                    "existing_total": existing.get("total_plays", 0),
+                    "incoming_total": incoming_total,
                 },
             )
 
@@ -460,9 +459,9 @@ class S3DashboardStore:
         precomputed analytics (no live querying required).
 
         Cache Strategy:
-        - Cache-Control: max-age=300 (5 minutes)
-        - Short cache for nightly data updates
-        - No manual invalidation needed
+        - Cache-Control: max-age=300, must-revalidate (5 minutes)
+        - Forces CloudFront to revalidate with origin after 5 minutes
+        - Prevents stale data served from edge locations
 
         Args:
             bucket_name: S3 bucket name for dashboard
@@ -478,7 +477,7 @@ class S3DashboardStore:
             Key="dashboard_data.json",
             Body=json.dumps(dashboard_json, indent=2).encode("utf-8"),
             ContentType="application/json",
-            CacheControl="max-age=300",  # 5 minutes
+            CacheControl="max-age=300, must-revalidate",  # 5 minutes, must check origin
         )
 
         logger.info(

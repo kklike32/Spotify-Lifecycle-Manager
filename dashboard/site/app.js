@@ -93,7 +93,18 @@ async function loadDashboard() {
 
 async function fetchDashboardData(retries = 0) {
     try {
-        const response = await fetch(CONFIG.DATA_URL);
+        // Add cache-busting timestamp to force fresh data
+        // Rounds to nearest 5 minutes to allow some browser caching
+        const cacheBuster = Math.floor(Date.now() / (5 * 60 * 1000));
+        const url = `${CONFIG.DATA_URL}?t=${cacheBuster}`;
+
+        const response = await fetch(url, {
+            cache: 'no-cache',  // Always revalidate with server
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
+            }
+        });
 
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);

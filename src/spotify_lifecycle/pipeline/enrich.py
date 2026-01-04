@@ -33,6 +33,179 @@ from spotify_lifecycle.storage.dynamo import DynamoDBClient
 logger = logging.getLogger(__name__)
 
 
+# =============================================================================
+# LOCAL FILE SUPPORT (DISABLED - FUTURE USE)
+# =============================================================================
+# NOTE: Spotify's recently_played() API does NOT return local files.
+# Per Spotify docs: "Local files aren't returned from Spotify's Web API."
+# These functions are preserved for future use when playlist-based ingestion
+# is implemented to detect and track local files (e.g., Juice WRLD unreleased).
+#
+# To enable local file tracking:
+# 1. Implement playlist endpoint scanning in ingest.py
+# 2. Uncomment _parse_local_file_metadata() and _send_unreleased_track_alert()
+# 3. Uncomment local file check in enrich_track() (line ~273)
+# 4. Deploy SNS infrastructure (infra/terraform/sns.tf)
+# =============================================================================
+
+
+# def _parse_local_file_metadata(track_uri: str) -> TrackMetadata:
+#     """Parse metadata from local file URI.
+#
+#     Local file URIs follow format: spotify:local:artist:album:track:duration
+#     All fields are URL-encoded (+ for spaces, %XX for special chars).
+#     Empty strings indicate missing metadata (not null).
+#
+#     Per Spotify docs: https://developer.spotify.com/documentation/web-api/concepts/playlists#local-files
+#     Example: spotify:local:Juice+WRLD::Eye+Contact:249
+#
+#     Args:
+#         track_uri: Local file URI (spotify:local:...)
+#
+#     Returns:
+#         TrackMetadata with parsed fields
+#     """
+#     from urllib.parse import unquote_plus
+#
+#     # Split URI - format: spotify:local:artist:album:track:duration
+#     parts = track_uri.split(":")
+#
+#     # Extract duration (last field, always numeric in seconds)
+#     duration_ms = 0
+#     if len(parts) > 2 and parts[-1].isdigit():
+#         duration_ms = int(parts[-1]) * 1000  # Convert seconds to ms
+#         parts = parts[:-1]  # Remove duration
+#
+#     # Parse artist:album:track from remaining parts
+#     # Format: ['spotify', 'local', artist, album, track]
+#     if len(parts) >= 5:
+#         # Standard format with all fields
+#         artist_name = unquote_plus(parts[2]) if parts[2] else "Unknown Artist"
+#         album_name = unquote_plus(parts[3]) if parts[3] else "Local Files"
+#         track_name = unquote_plus(":".join(parts[4:])) if any(parts[4:]) else "Unknown Track"
+#     elif len(parts) >= 3:
+#         # Fallback: join everything after 'local' and split
+#         remaining = ":".join(parts[2:])
+#         remaining_parts = remaining.split(":")
+#         artist_name = unquote_plus(remaining_parts[0]) if remaining_parts[0] else "Unknown Artist"
+#         album_name = (
+#             unquote_plus(remaining_parts[1])
+#             if len(remaining_parts) > 1 and remaining_parts[1]
+#             else "Local Files"
+#         )
+#         track_name = (
+#             unquote_plus(":".join(remaining_parts[2:]))
+#             if len(remaining_parts) > 2 and any(remaining_parts[2:])
+#             else "Unknown Track"
+#         )
+#     else:
+#         artist_name = "Unknown Artist"
+#         album_name = "Local Files"
+#         track_name = "Unknown Track"
+#
+#     logger.info(
+#         f"Parsed local file: '{track_name}' by '{artist_name}' from '{album_name}'",
+#         extra={
+#             "track_uri": track_uri,
+#             "parsed_artist": artist_name,
+#             "parsed_track": track_name,
+#             "parsed_album": album_name,
+#             "duration_ms": duration_ms,
+#         },
+#     )
+#
+#     # Check if this is an unreleased Juice WRLD track
+#     unreleased_tracks = [
+#         "Alkaline",
+#         "Autograph (On My Line)",
+#         "Bottle",
+#         "Confide",
+#         "Eye Contact",
+#         "Let Her Leave",
+#         "London Tipton",
+#         "Lost Her",
+#         "Moonlight",
+#         "My Fault",
+#         "No Love No Trust",
+#         "Old Me",
+#         "Paranoid",
+#         "Rainbow",
+#         "Soda Pop",
+#         "Worth It",
+#         "You Don't Love Me",
+#     ]
+#
+#     if "Juice WRLD" in artist_name or "juice wrld" in artist_name.lower():
+#         # Check if track name matches any unreleased track
+#         for unreleased in unreleased_tracks:
+#             if unreleased.lower() in track_name.lower():
+#                 logger.info(
+#                     f"UNRELEASED TRACK DETECTED: {track_name} by {artist_name}",
+#                     extra={
+#                         "track_uri": track_uri,
+#                         "track_name": track_name,
+#                         "artist": artist_name,
+#                     },
+#                 )
+#                 _send_unreleased_track_alert(track_name, artist_name, track_uri)
+#                 break
+#
+#     return TrackMetadata(
+#         track_id=track_uri,
+#         name=track_name,
+#         artist_ids=["spotify:local:artist"],  # Local files don't have real artist IDs
+#         artist_names=[artist_name],
+#         album_id="spotify:local:album",  # Local files don't have real album IDs
+#         album_name=album_name,
+#         duration_ms=duration_ms,
+#         explicit=False,  # Can't determine from URI
+#         popularity=0,  # Local files have no popularity
+#         release_date="",  # Can't determine from URI
+#         uri=track_uri,
+#     )
+
+
+# def _send_unreleased_track_alert(track_name: str, artist_name: str, track_uri: str) -> None:
+#     """Send SNS alert for unreleased track detection.
+#
+#     Args:
+#         track_name: Name of the detected unreleased track
+#         artist_name: Artist name
+#         track_uri: Full Spotify local URI
+#     """
+#     import os
+#     import boto3
+#
+#     sns_topic_arn = os.getenv("UNRELEASED_TRACKS_SNS_TOPIC")
+#     if not sns_topic_arn:
+#         logger.warning(
+#             "UNRELEASED_TRACKS_SNS_TOPIC not configured, skipping alert"
+#         )
+#         return
+#
+#     try:
+#         sns = boto3.client("sns")
+#         message = f"""🎵 Unreleased Track Detected!
+#
+# Track: {track_name}
+# Artist: {artist_name}
+# URI: {track_uri}
+#
+# This unreleased Juice WRLD track was just played and logged.
+#
+# Timestamp: {datetime.now(timezone.utc).isoformat()}
+# """
+#
+#         sns.publish(
+#             TopicArn=sns_topic_arn,
+#             Subject=f"🎵 Unreleased Track: {track_name}",
+#             Message=message,
+#         )
+#         logger.info(f"SNS alert sent for unreleased track: {track_name}")
+#     except Exception as e:
+#         logger.error(f"Failed to send SNS alert: {e}")
+
+
 def enrich_track(
     track_id: str,
     spotify_client: SpotifyClient,
@@ -75,18 +248,31 @@ def enrich_track(
         logger.debug(f"Track cache hit: {track_id}")
         # Handle corrupted cache data (empty artist_names)
         artist_names = cached.get("artist_names", [])
+        artist_ids = cached.get("artist_ids", [])
+
         if not artist_names:
             logger.error(
                 f"CORRUPTED CACHE: Track {track_id} has empty artist_names",
-                extra={"track_id": track_id, "cached_data": cached}
+                extra={"track_id": track_id, "cached_data": cached},
             )
             # Use track name as identifier
             artist_names = [f"[Cached - No Artist - {cached.get('name', 'Unknown')}]"]
-        
+            artist_ids = ["spotify:artist:unknown"]
+        elif not artist_ids:
+            # artist_names exists but artist_ids missing
+            artist_ids = ["spotify:artist:unknown"] * len(artist_names)
+        elif len(artist_ids) != len(artist_names):
+            # Mismatch in lengths - pad to match
+            logger.warning(f"artist_ids/names length mismatch for {track_id}")
+            if len(artist_ids) < len(artist_names):
+                artist_ids += ["spotify:artist:unknown"] * (len(artist_names) - len(artist_ids))
+            else:
+                artist_names += ["Unknown Artist"] * (len(artist_ids) - len(artist_names))
+
         return TrackMetadata(
             track_id=cached["track_id"],
             name=cached["name"],
-            artist_ids=cached.get("artist_ids", ["spotify:artist:unknown"]),
+            artist_ids=artist_ids,
             artist_names=artist_names,
             album_id=cached.get("album_id", "spotify:album:unknown"),
             album_name=cached.get("album_name", "Unknown Album"),
@@ -104,6 +290,13 @@ def enrich_track(
 
     # Step 2: Cache miss - fetch from Spotify API
     logger.debug(f"Track cache miss: {track_id} - fetching from API")
+
+    # NOTE: Local file support disabled (recently_played API doesn't return local files)
+    # If you see spotify:local: URIs here, they came from playlist endpoints (future use)
+    # if track_id.startswith("spotify:local:"):
+    #     logger.info(f"Local file detected: {track_id}")
+    #     return _parse_local_file_metadata(track_id)
+
     try:
         # Extract track ID from URI (spotify:track:abc123 -> abc123)
         track_id_only = track_id.split(":")[-1] if ":" in track_id else track_id
@@ -112,7 +305,7 @@ def enrich_track(
         # Handle edge case: tracks with no artists (rare, but happens)
         artist_ids = [f"spotify:artist:{a['id']}" for a in raw_track["artists"]]
         artist_names = [a["name"] for a in raw_track["artists"]]
-        
+
         # Spotify tracks should always have artists - if empty, this is abnormal
         # Could be: podcast episode, unavailable track, deleted track, or API issue
         if not artist_names:
@@ -126,7 +319,7 @@ def enrich_track(
                     "available_markets": len(raw_track.get("available_markets", [])),
                     "album_name": raw_track.get("album", {}).get("name", "UNKNOWN"),
                     "raw_artists_field": raw_track.get("artists", []),
-                }
+                },
             )
             # Use track name as identifier since we can't rely on artist
             artist_names = [f"[No Artist - {raw_track.get('name', 'Unknown Track')}]"]
