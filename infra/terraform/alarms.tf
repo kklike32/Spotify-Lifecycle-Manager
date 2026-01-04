@@ -124,3 +124,96 @@ resource "aws_sns_topic_subscription" "alarms_email" {
   protocol  = "email"
   endpoint  = var.budget_notification_email
 }
+
+# -----------------------------------------------------------------------------
+# CloudWatch Log Metric Filters (Aggregate Lambda)
+# -----------------------------------------------------------------------------
+
+# Aggregate total play count alarm (uses EMF auto-created metric)
+resource "aws_cloudwatch_metric_alarm" "aggregate_total_play_count_high" {
+  alarm_name          = "${var.project_name}-aggregate-total-play-count-high"
+  alarm_description   = "Alert when aggregate total_play_count exceeds expected threshold"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "aggregate_total_play_count"
+  namespace           = var.project_name
+  period              = 300
+  statistic           = "Maximum"
+  threshold           = 2000
+  treat_missing_data  = "notBreaching"
+
+  alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []
+
+  tags = {
+    Name        = "${var.project_name}-aggregate-total-play-count-high"
+    Description = "Aggregate Lambda total_play_count anomaly"
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "aggregate_summary_rejected" {
+  name           = "${var.project_name}-aggregate-summary-rejected"
+  log_group_name = aws_cloudwatch_log_group.aggregate.name
+  pattern        = "\"summary rejected\""
+
+  metric_transformation {
+    name      = "aggregate_summary_rejected"
+    namespace = var.project_name
+    value     = "1"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "aggregate_summary_rejected_alarm" {
+  alarm_name          = "${var.project_name}-aggregate-summary-rejected"
+  alarm_description   = "Alert when aggregate drops implausible summaries"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = aws_cloudwatch_log_metric_filter.aggregate_summary_rejected.metric_transformation[0].name
+  namespace           = var.project_name
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 1
+  treat_missing_data  = "notBreaching"
+
+  alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []
+
+  tags = {
+    Name        = "${var.project_name}-aggregate-summary-rejected"
+    Description = "Aggregate summary rejection alarm"
+  }
+}
+
+# -----------------------------------------------------------------------------
+# CloudWatch Log Metric Filters (Ingest Lambda) for daily summary mismatch
+# -----------------------------------------------------------------------------
+
+resource "aws_cloudwatch_log_metric_filter" "ingest_summary_mismatch" {
+  name           = "${var.project_name}-ingest-summary-mismatch"
+  log_group_name = aws_cloudwatch_log_group.ingest.name
+  pattern        = "\"daily summary mismatch detected\""
+
+  metric_transformation {
+    name      = "ingest_summary_mismatch"
+    namespace = var.project_name
+    value     = "1"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "ingest_summary_mismatch_alarm" {
+  alarm_name          = "${var.project_name}-ingest-summary-mismatch"
+  alarm_description   = "Alert when ingest rewrites daily summaries due to mismatches"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = aws_cloudwatch_log_metric_filter.ingest_summary_mismatch.metric_transformation[0].name
+  namespace           = var.project_name
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 1
+  treat_missing_data  = "notBreaching"
+
+  alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []
+
+  tags = {
+    Name        = "${var.project_name}-ingest-summary-mismatch"
+    Description = "Ingest daily summary mismatch alarm"
+  }
+}

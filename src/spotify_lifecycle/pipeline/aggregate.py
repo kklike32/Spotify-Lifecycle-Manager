@@ -16,6 +16,8 @@ Cost Model:
 - Reads: Free via S3 static website or CloudFront
 """
 
+import json
+import logging
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
@@ -25,6 +27,7 @@ from spotify_lifecycle.storage.dynamo import DynamoDBClient
 from spotify_lifecycle.storage.s3 import S3ColdStore, S3DashboardStore
 
 PACIFIC_TZ = ZoneInfo("America/Los_Angeles")
+logger = logging.getLogger(__name__)
 
 
 def build_dashboard_data(
@@ -42,6 +45,52 @@ def build_dashboard_data(
     """Build precomputed dashboard data with multi-window top lists (cost-optimized)."""
     now = datetime.now(PACIFIC_TZ)
 
+    def _is_summary_plausible(summary: dict, max_total_per_day: int = 2000, max_single_track: int = 600) -> bool:
+        """Validate a summary is within reasonable bounds to avoid multiplied totals."""
+        total = int(summary.get("total_plays", 0))
+        counts: dict[str, int] = summary.get("track_counts", {}) or {}
+        track_count = len(counts)
+
+        if total < 0:
+            logger.warning("summary rejected: negative total", extra={"summary_date": summary.get("date"), "total": total})
+            return False
+
+        if total > max_total_per_day:
+            logger.warning(
+                "summary rejected: total exceeds max",
+                extra={"summary_date": summary.get("date"), "total": total, "max_total_per_day": max_total_per_day},
+            )
+            return False
+
+        if track_count == 0 and total > 0:
+            logger.warning(
+                "summary rejected: total present with zero tracks",
+                extra={"summary_date": summary.get("date"), "total": total},
+            )
+            return False
+
+        # Allow heavy repeat listening of a single track (e.g., 50+ plays).
+        if track_count == 1:
+            max_track_total = int(next(iter(counts.values()), 0))
+            if max_track_total > max_single_track:
+                logger.warning(
+                    "summary rejected: single-track total exceeds max",
+                    extra={"summary_date": summary.get("date"), "total": total, "max_single_track": max_single_track},
+                )
+                return False
+            return True
+
+        # For multi-track days, flag extreme averages that hint at duplicated merges.
+        avg_per_track = total / track_count if track_count else 0
+        if avg_per_track > max_single_track:
+            logger.warning(
+                "summary rejected: average per track exceeds max_single_track",
+                extra={"summary_date": summary.get("date"), "average": avg_per_track, "track_count": track_count, "max_single_track": max_single_track},
+            )
+            return False
+
+        return True
+
     summary_dates = sorted(cold_store.list_daily_summary_dates(raw_bucket_name))
     summary_start_date = summary_dates[0].date() if summary_dates else now.date()
     summary_end_date = now.date()
@@ -52,8 +101,22 @@ def build_dashboard_data(
         datetime.combine(summary_start_date, datetime.min.time()).astimezone(timezone.utc),
         datetime.combine(summary_end_date, datetime.min.time()).astimezone(timezone.utc),
     )
+    validated_summaries: list[dict] = []
+    for summary in all_summaries:
+        summary_date = summary.get("date")
+        if not summary_date:
+            logger.warning("summary rejected: missing date", extra={"summary": summary})
+            continue
+        if _is_summary_plausible(summary):
+            validated_summaries.append(summary)
+        else:
+            logger.error(
+                "dropping implausible summary",
+                extra={"summary_date": summary_date, "total_plays": summary.get("total_plays")},
+            )
+
     summary_lookup = {
-        datetime.fromisoformat(summary["date"]).date(): summary for summary in all_summaries
+        datetime.fromisoformat(summary["date"]).date(): summary for summary in validated_summaries
     }
 
     window_specs = {
@@ -78,7 +141,7 @@ def build_dashboard_data(
         track_counts: dict[str, int] = defaultdict(int)
         total_plays = 0
 
-        for summary in all_summaries:
+        for summary in validated_summaries:
             summary_date = datetime.fromisoformat(summary["date"]).date()
             if start_date <= summary_date <= end_date:
                 for track_id, count in summary.get("track_counts", {}).items():
@@ -216,6 +279,35 @@ def build_dashboard_data(
         ).isoformat(),
         "default_window": default_window,
     }
+
+    # Emit CloudWatch Embedded Metric Format (EMF) for metric extraction
+    metric_event = {
+        "_aws": {
+            "Timestamp": int(now.timestamp() * 1000),
+            "CloudWatchMetrics": [
+                {
+                    "Namespace": "spotify-lifecycle",
+                    "Dimensions": [[]],
+                    "Metrics": [
+                        {"Name": "aggregate_total_play_count", "Unit": "None"},
+                        {"Name": "aggregate_unique_tracks", "Unit": "None"},
+                    ],
+                }
+            ],
+        },
+        "event": "aggregate_completed",
+        "aggregate_total_play_count": metadata["total_play_count"],
+        "aggregate_unique_tracks": metadata["unique_track_count"],
+        "unique_artist_count": metadata["unique_artist_count"],
+        "summary_days": len(validated_summaries),
+        "date_range_start": metadata["date_range_start"],
+        "date_range_end": metadata["date_range_end"],
+    }
+    print(json.dumps(metric_event))  # EMF format for auto metric creation
+    logger.info("aggregate_completed", extra={
+        "total_play_count": metadata["total_play_count"],
+        "unique_track_count": metadata["unique_track_count"],
+    })
 
     dashboard_data = DashboardData(
         generated_at=now,

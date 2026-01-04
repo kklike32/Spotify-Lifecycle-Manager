@@ -766,6 +766,80 @@ def test_dashboard_store_write_and_read():
     assert data == dashboard_data
 
 
+def test_daily_summary_idempotent_replace():
+    """Daily summary writes are idempotent on identical input."""
+    from unittest.mock import MagicMock
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()
+
+    memory: dict[str, dict] = {}
+
+    def fake_put_object(Bucket, Key, Body, ContentType):
+        memory[Key] = json.loads(Body.decode("utf-8"))
+
+    store.s3.put_object.side_effect = fake_put_object
+
+    def fake_read(bucket_name, partition_date):
+        return memory.get(store._daily_summary_key(partition_date))
+
+    store.read_daily_summary = fake_read
+
+    bucket = "test-bucket"
+    partition_date = datetime(2025, 1, 1)
+    counts = {"track_a": 5, "track_b": 3}
+
+    key = store.write_daily_summary(bucket, partition_date, counts)
+    first = memory[key]
+
+    # Second write with identical counts should be a no-op
+    store.write_daily_summary(bucket, partition_date, counts)
+
+    assert first["total_plays"] == 8
+    assert memory[key]["total_plays"] == 8
+    assert store.s3.put_object.call_count == 1  # second call skipped
+
+
+def test_daily_summary_replaces_on_mismatch():
+    """Daily summary replaces (does not merge) when counts differ."""
+    from unittest.mock import MagicMock
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()
+
+    memory: dict[str, dict] = {}
+
+    def fake_put_object(Bucket, Key, Body, ContentType):
+        memory[Key] = json.loads(Body.decode("utf-8"))
+
+    store.s3.put_object.side_effect = fake_put_object
+
+    def fake_read(bucket_name, partition_date):
+        return memory.get(store._daily_summary_key(partition_date))
+
+    store.read_daily_summary = fake_read
+
+    bucket = "test-bucket"
+    partition_date = datetime(2025, 1, 2)
+    initial_counts = {"track_a": 2}
+    updated_counts = {"track_a": 2, "track_b": 4}
+
+    key = store.write_daily_summary(bucket, partition_date, initial_counts)
+    first_total = memory[key]["total_plays"]
+
+    # Mismatched counts should trigger replacement, not additive merge
+    store.write_daily_summary(bucket, partition_date, updated_counts)
+    replaced_total = memory[key]["total_plays"]
+
+    assert first_total == 2
+    assert replaced_total == 6
+    assert store.s3.put_object.call_count == 2  # second call executed
+
+
 def test_dashboard_store_read_missing():
     """Test reading missing dashboard data returns None."""
     from unittest.mock import MagicMock

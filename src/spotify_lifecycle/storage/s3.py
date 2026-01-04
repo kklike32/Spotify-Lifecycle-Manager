@@ -317,29 +317,64 @@ class S3ColdStore:
     # DAILY SUMMARY OPERATIONS
     # ==========================================
 
+    def _daily_summary_key(self, partition_date: datetime) -> str:
+        """Return deterministic summary key for a given date."""
+        date_str = partition_date.strftime("%Y-%m-%d")
+        return f"summaries/dt={date_str}/summary.json"
+
+    def _counts_match(self, current: dict[str, int], existing: dict[str, int]) -> bool:
+        """Check whether two count maps are identical (idempotency helper)."""
+        if len(current) != len(existing):
+            return False
+        for track_id, count in current.items():
+            if int(existing.get(track_id, -1)) != int(count):
+                return False
+        return True
+
     def write_daily_summary(
         self, bucket_name: str, partition_date: datetime, track_counts: dict[str, int]
     ) -> str:
-        """Write or merge a per-day summary (track play counts)."""
-        date_str = partition_date.strftime("%Y-%m-%d")
-        key = f"summaries/dt={date_str}/summary.json"
+        """Write daily play summary (idempotent: replace, never merge).
 
-        merged_counts: dict[str, int] = defaultdict(int)
+        This function can be called many times per day (hourly ingest retries).
+        It must not accumulate prior counts, otherwise totals will multiply.
+        """
+        key = self._daily_summary_key(partition_date)
+
+        normalized_counts = {track_id: int(count) for track_id, count in track_counts.items()}
+        incoming_total = int(sum(normalized_counts.values()))
 
         existing = self.read_daily_summary(bucket_name, partition_date)
         if existing and "track_counts" in existing:
-            for track_id, count in existing["track_counts"].items():
-                merged_counts[track_id] += int(count)
+            if self._counts_match(normalized_counts, existing["track_counts"]):
+                logger.info(
+                    "daily summary already up to date",
+                    extra={
+                        "bucket": bucket_name,
+                        "key": key,
+                        "total_plays": existing.get("total_plays", 0),
+                        "status": "unchanged",
+                    },
+                )
+                return key
 
-        for track_id, count in track_counts.items():
-            merged_counts[track_id] += int(count)
+            logger.info(
+                "daily summary updated with recalculated counts from all raw events",
+                extra={
+                    "bucket": bucket_name,
+                    "key": key,
+                    "previous_total": existing.get("total_plays", 0),
+                    "current_total": incoming_total,
+                    "status": "recalculated",
+                },
+            )
 
         payload = {
-            "version": "1.0.0",
-            "date": date_str,
+            "version": "2.0.0",
+            "date": partition_date.strftime("%Y-%m-%d"),
             "generated_at": datetime.now(PACIFIC_TZ).isoformat(),
-            "total_plays": int(sum(merged_counts.values())),
-            "track_counts": merged_counts,
+            "total_plays": incoming_total,
+            "track_counts": normalized_counts,
         }
 
         self.s3.put_object(
@@ -351,15 +386,19 @@ class S3ColdStore:
 
         logger.info(
             "wrote daily summary",
-            extra={"bucket": bucket_name, "key": key, "total_plays": payload["total_plays"]},
+            extra={
+                "bucket": bucket_name,
+                "key": key,
+                "total_plays": payload["total_plays"],
+                "status": "replaced" if existing else "created",
+            },
         )
 
         return key
 
     def read_daily_summary(self, bucket_name: str, partition_date: datetime) -> Optional[dict]:
         """Read a single daily summary if it exists."""
-        date_str = partition_date.strftime("%Y-%m-%d")
-        key = f"summaries/dt={date_str}/summary.json"
+        key = self._daily_summary_key(partition_date)
         try:
             response = self.s3.get_object(Bucket=bucket_name, Key=key)
             content = response["Body"].read().decode("utf-8")
@@ -415,10 +454,15 @@ class S3DashboardStore:
         self.region_name = region_name
 
     def write_dashboard_data(self, bucket_name: str, dashboard_json: dict) -> None:
-        """Write dashboard data JSON artifact.
+        """Write dashboard data JSON artifact with short cache.
 
         This file is read by the static dashboard website. It contains
         precomputed analytics (no live querying required).
+
+        Cache Strategy:
+        - Cache-Control: max-age=300 (5 minutes)
+        - Short cache for nightly data updates
+        - No manual invalidation needed
 
         Args:
             bucket_name: S3 bucket name for dashboard
@@ -434,6 +478,7 @@ class S3DashboardStore:
             Key="dashboard_data.json",
             Body=json.dumps(dashboard_json, indent=2).encode("utf-8"),
             ContentType="application/json",
+            CacheControl="max-age=300",  # 5 minutes
         )
 
         logger.info(

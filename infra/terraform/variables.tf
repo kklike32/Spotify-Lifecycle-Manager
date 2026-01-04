@@ -70,13 +70,13 @@ variable "hot_table_ttl_days" {
 variable "raw_bucket_name" {
   description = "S3 bucket name for cold storage (partitioned JSONL)"
   type        = string
-  default     = "spotify-raw-events"
+  default     = "spotify-raw-events-kk"
 }
 
 variable "dashboard_bucket_name" {
   description = "S3 bucket name for static dashboard files"
   type        = string
-  default     = "spotify-dashboard"
+  default     = "spotify-dashboard-kk"
 }
 
 # -----------------------------------------------------------------------------

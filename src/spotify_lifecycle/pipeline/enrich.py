@@ -73,18 +73,28 @@ def enrich_track(
     cached = dynamo_client.get_track_metadata(tracks_table, track_id)
     if cached:
         logger.debug(f"Track cache hit: {track_id}")
+        # Handle corrupted cache data (empty artist_names)
+        artist_names = cached.get("artist_names", [])
+        if not artist_names:
+            logger.error(
+                f"CORRUPTED CACHE: Track {track_id} has empty artist_names",
+                extra={"track_id": track_id, "cached_data": cached}
+            )
+            # Use track name as identifier
+            artist_names = [f"[Cached - No Artist - {cached.get('name', 'Unknown')}]"]
+        
         return TrackMetadata(
             track_id=cached["track_id"],
             name=cached["name"],
-            artist_ids=cached["artist_ids"],
-            artist_names=cached.get("artist_names", []),
-            album_id=cached["album_id"],
-            album_name=cached["album_name"],
-            duration_ms=cached["duration_ms"],
-            explicit=cached["explicit"],
-            popularity=cached["popularity"],
+            artist_ids=cached.get("artist_ids", ["spotify:artist:unknown"]),
+            artist_names=artist_names,
+            album_id=cached.get("album_id", "spotify:album:unknown"),
+            album_name=cached.get("album_name", "Unknown Album"),
+            duration_ms=cached.get("duration_ms", 0),
+            explicit=cached.get("explicit", False),
+            popularity=cached.get("popularity", 0),
             release_date=cached.get("release_date", ""),
-            uri=cached["uri"],
+            uri=cached.get("uri", track_id),
             cached_at=(
                 datetime.fromisoformat(cached["cached_at"])
                 if "cached_at" in cached
@@ -99,12 +109,35 @@ def enrich_track(
         track_id_only = track_id.split(":")[-1] if ":" in track_id else track_id
         raw_track = spotify_client.get_track(track_id_only)
 
+        # Handle edge case: tracks with no artists (rare, but happens)
+        artist_ids = [f"spotify:artist:{a['id']}" for a in raw_track["artists"]]
+        artist_names = [a["name"] for a in raw_track["artists"]]
+        
+        # Spotify tracks should always have artists - if empty, this is abnormal
+        # Could be: podcast episode, unavailable track, deleted track, or API issue
+        if not artist_names:
+            logger.error(
+                f"Track {track_id} has NO ARTISTS - Investigate!",
+                extra={
+                    "track_id": track_id,
+                    "track_name": raw_track.get("name", "UNKNOWN"),
+                    "track_type": raw_track.get("type", "UNKNOWN"),
+                    "is_playable": raw_track.get("is_playable", "UNKNOWN"),
+                    "available_markets": len(raw_track.get("available_markets", [])),
+                    "album_name": raw_track.get("album", {}).get("name", "UNKNOWN"),
+                    "raw_artists_field": raw_track.get("artists", []),
+                }
+            )
+            # Use track name as identifier since we can't rely on artist
+            artist_names = [f"[No Artist - {raw_track.get('name', 'Unknown Track')}]"]
+            artist_ids = ["spotify:artist:unknown"]
+
         # Parse API response into TrackMetadata model
         metadata = TrackMetadata(
             track_id=track_id,
             name=raw_track["name"],
-            artist_ids=[f"spotify:artist:{a['id']}" for a in raw_track["artists"]],
-            artist_names=[a["name"] for a in raw_track["artists"]],
+            artist_ids=artist_ids,
+            artist_names=artist_names,
             album_id=f"spotify:album:{raw_track['album']['id']}",
             album_name=raw_track["album"]["name"],
             duration_ms=raw_track["duration_ms"],

@@ -211,11 +211,8 @@ def write_events_to_storage(
             date = datetime.strptime(date_str, "%Y-%m-%d")
             s3_client.write_raw_events(raw_bucket_name, date, date_events)
 
-            # Build daily summary (track_id -> play count)
-            track_counts: Dict[str, int] = defaultdict(int)
-            for event_dict in date_events:
-                track_counts[event_dict["track_id"]] += 1
-            s3_client.write_daily_summary(raw_bucket_name, date, track_counts)
+            # Write daily summary (reads all events for the day from S3)
+            s3_client.write_daily_summary(raw_bucket_name, date)
             cold_written += len(date_events)
         except Exception as e:
             logger.error(

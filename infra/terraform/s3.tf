@@ -3,7 +3,7 @@
 # -----------------------------------------------------------------------------
 
 resource "aws_s3_bucket" "raw_events" {
-  bucket = "${var.raw_bucket_name}-${data.aws_caller_identity.current.account_id}"
+  bucket = var.raw_bucket_name
 
   tags = {
     Name        = "${var.project_name}-raw-events"
@@ -69,7 +69,7 @@ resource "aws_s3_bucket_public_access_block" "raw_events" {
 # -----------------------------------------------------------------------------
 
 resource "aws_s3_bucket" "dashboard" {
-  bucket = "${var.dashboard_bucket_name}-${data.aws_caller_identity.current.account_id}"
+  bucket = var.dashboard_bucket_name
 
   tags = {
     Name        = "${var.project_name}-dashboard"
@@ -94,6 +94,18 @@ resource "aws_s3_bucket_website_configuration" "dashboard" {
 
   error_document {
     key = "index.html"
+  }
+}
+
+resource "aws_s3_bucket_cors_configuration" "dashboard" {
+  bucket = aws_s3_bucket.dashboard.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "HEAD"]
+    allowed_origins = ["*"]
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3600
   }
 }
 

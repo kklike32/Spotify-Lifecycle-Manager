@@ -15,10 +15,10 @@
 // ==========================
 
 const CONFIG = {
-    // Use relative URL to avoid CORS issues
-    // Data file has Cache-Control: max-age=300 (5 min) for nightly updates
+    // S3 bucket URL (CloudFront distribution for caching)
+    // Data file has short cache (5 min) for nightly updates
     // Static assets (HTML/JS/CSS) cached longer (invalidate on deploy)
-    DATA_URL: 'dashboard_data.json',
+    DATA_URL: 'https://spotify-dashboard-075863585632.s3.us-east-1.amazonaws.com/dashboard_data.json',
 
     // Chart colors (Spotify theme)
     COLORS: {
