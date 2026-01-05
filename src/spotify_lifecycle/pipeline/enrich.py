@@ -33,6 +33,109 @@ from spotify_lifecycle.storage.dynamo import DynamoDBClient
 logger = logging.getLogger(__name__)
 
 
+# -----------------------------------------------------------------------------
+# Internal helpers
+# -----------------------------------------------------------------------------
+
+
+def _is_corrupted_track_cache(cached: dict) -> bool:
+    """Detect missing or malformed track metadata entries."""
+    artist_names = cached.get("artist_names") or []
+    artist_ids = cached.get("artist_ids") or []
+    release_date = cached.get("release_date")
+
+    return (
+        len(artist_names) == 0
+        or len(artist_ids) == 0
+        or len(artist_ids) != len(artist_names)
+        or release_date is None
+    )
+
+
+def _fetch_track_metadata_from_api(track_id: str, spotify_client: SpotifyClient) -> TrackMetadata:
+    """Fetch track metadata from Spotify API and normalize to TrackMetadata."""
+    # Extract track ID from URI (spotify:track:abc123 -> abc123)
+    track_id_only = track_id.split(":")[-1] if ":" in track_id else track_id
+    raw_track = spotify_client.get_track(track_id_only)
+
+    artist_ids = [f"spotify:artist:{a['id']}" for a in raw_track["artists"]]
+    artist_names = [a["name"] for a in raw_track["artists"]]
+
+    if not artist_names:
+        logger.error(
+            f"Track {track_id} has NO ARTISTS - Investigate!",
+            extra={
+                "track_id": track_id,
+                "track_name": raw_track.get("name", "UNKNOWN"),
+                "track_type": raw_track.get("type", "UNKNOWN"),
+                "is_playable": raw_track.get("is_playable", "UNKNOWN"),
+                "available_markets": len(raw_track.get("available_markets", [])),
+                "album_name": raw_track.get("album", {}).get("name", "UNKNOWN"),
+                "raw_artists_field": raw_track.get("artists", []),
+            },
+        )
+        artist_names = [f"[No Artist - {raw_track.get('name', 'Unknown Track')}]"]
+        artist_ids = ["spotify:artist:unknown"]
+
+    return TrackMetadata(
+        track_id=track_id,
+        name=raw_track["name"],
+        artist_ids=artist_ids,
+        artist_names=artist_names,
+        album_id=f"spotify:album:{raw_track['album']['id']}",
+        album_name=raw_track["album"]["name"],
+        duration_ms=raw_track["duration_ms"],
+        explicit=raw_track.get("explicit", False),
+        popularity=raw_track.get("popularity", 0),
+        release_date=raw_track["album"].get("release_date", ""),
+        uri=track_id,
+    )
+
+
+def _fetch_and_cache_track(
+    track_id: str,
+    spotify_client: SpotifyClient,
+    dynamo_client: DynamoDBClient,
+    tracks_table: str,
+    overwrite_existing: bool = False,
+) -> Optional[TrackMetadata]:
+    """Fetch track metadata from API and cache it (optionally overwriting)."""
+    try:
+        metadata = _fetch_track_metadata_from_api(track_id, spotify_client)
+
+        was_written = dynamo_client.write_track_metadata(
+            tracks_table, metadata, overwrite_existing=overwrite_existing
+        )
+        if was_written:
+            action = "repaired" if overwrite_existing else "cached"
+            logger.debug(f"Track metadata {action}: {track_id}")
+        else:
+            logger.debug(f"Track metadata already cached (race): {track_id}")
+
+        return metadata
+    except Exception as e:
+        logger.error(f"Failed to enrich track {track_id}: {e}")
+        return None
+
+
+def _repair_track_cache(
+    track_id: str,
+    spotify_client: SpotifyClient,
+    dynamo_client: DynamoDBClient,
+    tracks_table: str,
+) -> Optional[TrackMetadata]:
+    """Repair corrupted track cache by refetching from Spotify and overwriting."""
+    repaired = _fetch_and_cache_track(
+        track_id, spotify_client, dynamo_client, tracks_table, overwrite_existing=True
+    )
+    if repaired:
+        logger.info(
+            "Repaired corrupted track cache entry",
+            extra={"track_id": track_id, "artist_ids": repaired.artist_ids},
+        )
+    return repaired
+
+
 # =============================================================================
 # LOCAL FILE SUPPORT (DISABLED - FUTURE USE)
 # =============================================================================
@@ -245,29 +348,16 @@ def enrich_track(
     # Step 1: Check cache (read-through pattern)
     cached = dynamo_client.get_track_metadata(tracks_table, track_id)
     if cached:
-        logger.debug(f"Track cache hit: {track_id}")
-        # Handle corrupted cache data (empty artist_names)
-        artist_names = cached.get("artist_names", [])
-        artist_ids = cached.get("artist_ids", [])
-
-        if not artist_names:
+        if _is_corrupted_track_cache(cached):
             logger.error(
-                f"CORRUPTED CACHE: Track {track_id} has empty artist_names",
+                f"CORRUPTED CACHE: Track {track_id} has incomplete metadata",
                 extra={"track_id": track_id, "cached_data": cached},
             )
-            # Use track name as identifier
-            artist_names = [f"[Cached - No Artist - {cached.get('name', 'Unknown')}]"]
-            artist_ids = ["spotify:artist:unknown"]
-        elif not artist_ids:
-            # artist_names exists but artist_ids missing
-            artist_ids = ["spotify:artist:unknown"] * len(artist_names)
-        elif len(artist_ids) != len(artist_names):
-            # Mismatch in lengths - pad to match
-            logger.warning(f"artist_ids/names length mismatch for {track_id}")
-            if len(artist_ids) < len(artist_names):
-                artist_ids += ["spotify:artist:unknown"] * (len(artist_names) - len(artist_ids))
-            else:
-                artist_names += ["Unknown Artist"] * (len(artist_ids) - len(artist_names))
+            return _repair_track_cache(track_id, spotify_client, dynamo_client, tracks_table)
+
+        logger.debug(f"Track cache hit: {track_id}")
+        artist_names = cached.get("artist_names", [])
+        artist_ids = cached.get("artist_ids", [])
 
         return TrackMetadata(
             track_id=cached["track_id"],
@@ -286,6 +376,7 @@ def enrich_track(
                 if "cached_at" in cached
                 else datetime.now(timezone.utc)
             ),
+            version=cached.get("version", "1.0.0"),
         )
 
     # Step 2: Cache miss - fetch from Spotify API
@@ -297,62 +388,7 @@ def enrich_track(
     #     logger.info(f"Local file detected: {track_id}")
     #     return _parse_local_file_metadata(track_id)
 
-    try:
-        # Extract track ID from URI (spotify:track:abc123 -> abc123)
-        track_id_only = track_id.split(":")[-1] if ":" in track_id else track_id
-        raw_track = spotify_client.get_track(track_id_only)
-
-        # Handle edge case: tracks with no artists (rare, but happens)
-        artist_ids = [f"spotify:artist:{a['id']}" for a in raw_track["artists"]]
-        artist_names = [a["name"] for a in raw_track["artists"]]
-
-        # Spotify tracks should always have artists - if empty, this is abnormal
-        # Could be: podcast episode, unavailable track, deleted track, or API issue
-        if not artist_names:
-            logger.error(
-                f"Track {track_id} has NO ARTISTS - Investigate!",
-                extra={
-                    "track_id": track_id,
-                    "track_name": raw_track.get("name", "UNKNOWN"),
-                    "track_type": raw_track.get("type", "UNKNOWN"),
-                    "is_playable": raw_track.get("is_playable", "UNKNOWN"),
-                    "available_markets": len(raw_track.get("available_markets", [])),
-                    "album_name": raw_track.get("album", {}).get("name", "UNKNOWN"),
-                    "raw_artists_field": raw_track.get("artists", []),
-                },
-            )
-            # Use track name as identifier since we can't rely on artist
-            artist_names = [f"[No Artist - {raw_track.get('name', 'Unknown Track')}]"]
-            artist_ids = ["spotify:artist:unknown"]
-
-        # Parse API response into TrackMetadata model
-        metadata = TrackMetadata(
-            track_id=track_id,
-            name=raw_track["name"],
-            artist_ids=artist_ids,
-            artist_names=artist_names,
-            album_id=f"spotify:album:{raw_track['album']['id']}",
-            album_name=raw_track["album"]["name"],
-            duration_ms=raw_track["duration_ms"],
-            explicit=raw_track.get("explicit", False),
-            popularity=raw_track.get("popularity", 0),
-            release_date=raw_track["album"].get("release_date", ""),
-            uri=track_id,
-        )
-
-        # Step 3: Write to cache (conditional write, cache-once)
-        was_written = dynamo_client.write_track_metadata(tracks_table, metadata)
-        if was_written:
-            logger.debug(f"Track metadata cached: {track_id}")
-        else:
-            logger.debug(f"Track metadata already cached (race): {track_id}")
-
-        return metadata
-
-    except Exception as e:
-        # API failure - log and return None (non-blocking)
-        logger.error(f"Failed to enrich track {track_id}: {e}")
-        return None
+    return _fetch_and_cache_track(track_id, spotify_client, dynamo_client, tracks_table)
 
 
 def enrich_artist(
@@ -537,10 +573,23 @@ def enrich_play_events(
         else:
             summary["tracks_failed"] += 1
 
+    # Filter out placeholder/invalid artist IDs before enrichment
+    filtered_artist_ids = {
+        artist_id
+        for artist_id in unique_artist_ids
+        if artist_id.startswith("spotify:artist:") and not artist_id.endswith(":unknown")
+    }
+    skipped_artists = unique_artist_ids - filtered_artist_ids
+    if skipped_artists:
+        logger.warning(
+            "Skipping placeholder/invalid artist IDs",
+            extra={"skipped_artist_ids": list(skipped_artists)},
+        )
+
     # Step 2: Enrich all artists (deduplicated)
-    summary["artists_processed"] = len(unique_artist_ids)
-    logger.info(f"Enriching {len(unique_artist_ids)} unique artists")
-    for artist_id in unique_artist_ids:
+    summary["artists_processed"] = len(filtered_artist_ids)
+    logger.info(f"Enriching {len(filtered_artist_ids)} unique artists")
+    for artist_id in filtered_artist_ids:
         # Check if already cached before fetching
         was_cached = dynamo_client.get_artist_metadata(artists_table, artist_id) is not None
         if was_cached:

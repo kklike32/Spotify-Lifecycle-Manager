@@ -846,6 +846,44 @@ def test_enrich_track_cache_miss(mock_spotify_client, mock_dynamo_client, mock_t
     mock_dynamo_client.write_track_metadata.assert_called_once()
 
 
+def test_enrich_track_repairs_corrupted_cache(
+    mock_spotify_client, mock_dynamo_client, mock_track_metadata
+):
+    """Track cache entries missing artist data are repaired from Spotify API."""
+    from spotify_lifecycle.pipeline.enrich import enrich_track
+
+    mock_dynamo_client.get_track_metadata.return_value = {
+        "track_id": "spotify:track:abc123",
+        "name": "Broken Song",
+        "artist_ids": ["spotify:artist:artist1"],
+        # artist_names intentionally missing to simulate corruption
+        "album_id": "spotify:album:album1",
+        "album_name": "Broken Album",
+        "duration_ms": 180000,
+        "explicit": False,
+        "popularity": 10,
+        "uri": "spotify:track:abc123",
+    }
+
+    mock_spotify_client.get_track.return_value = mock_track_metadata
+    mock_dynamo_client.write_track_metadata.return_value = True
+
+    result = enrich_track(
+        track_id="spotify:track:abc123",
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        tracks_table="tracks",
+    )
+
+    assert result is not None
+    assert result.artist_names == ["Artist One", "Artist Two"]
+    mock_spotify_client.get_track.assert_called_once_with("abc123")
+    args, kwargs = mock_dynamo_client.write_track_metadata.call_args
+    assert kwargs["overwrite_existing"] is True
+    assert args[0] == "tracks"
+    assert isinstance(args[1].artist_names, list)
+
+
 def test_enrich_track_api_failure(mock_spotify_client, mock_dynamo_client):
     """Test track enrichment when Spotify API fails."""
     from spotify_lifecycle.pipeline.enrich import enrich_track
@@ -1118,6 +1156,41 @@ def test_enrich_play_events_partial_failure(
 
     # Verify: All API calls attempted despite failure
     assert mock_spotify_client.get_track.call_count == 3
+
+
+def test_enrich_play_events_skips_placeholder_artists(mock_spotify_client, mock_dynamo_client):
+    """Artist enrichment skips placeholder IDs derived from API edge cases."""
+    from spotify_lifecycle.pipeline.enrich import enrich_play_events
+
+    track_ids = ["spotify:track:abc123"]
+
+    mock_dynamo_client.get_track_metadata.return_value = None
+    mock_dynamo_client.get_artist_metadata.return_value = None
+    mock_dynamo_client.write_track_metadata.return_value = True
+    mock_dynamo_client.write_artist_metadata.return_value = True
+
+    mock_spotify_client.get_track.return_value = {
+        "id": "abc123",
+        "name": "No Artist Song",
+        "artists": [],  # Forces fallback to spotify:artist:unknown
+        "album": {"id": "album1", "name": "Album", "release_date": "2025-01-01"},
+        "duration_ms": 180000,
+        "explicit": False,
+        "popularity": 10,
+    }
+
+    summary = enrich_play_events(
+        track_ids=track_ids,
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        tracks_table="tracks",
+        artists_table="artists",
+    )
+
+    assert summary["tracks_processed"] == 1
+    assert summary["tracks_failed"] == 0
+    assert summary["artists_processed"] == 0  # Placeholder artist filtered out
+    mock_spotify_client.get_artist.assert_not_called()
 
 
 def test_run_enrichment_no_plays(mock_spotify_client, mock_dynamo_client):

@@ -14,6 +14,7 @@ For cost analysis, see: copilot/docs/cost/ANALYTICS_COSTS.md
 
 import json
 import logging
+from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Iterator, Optional
 from zoneinfo import ZoneInfo
@@ -330,8 +331,39 @@ class S3ColdStore:
                 return False
         return True
 
+    def _calculate_daily_track_counts(
+        self, bucket_name: str, partition_date: datetime
+    ) -> dict[str, int]:
+        """Aggregate track counts for a day by reading raw event files.
+
+        Deduplicates by play_id to avoid double-counting overlapping ingest runs.
+        """
+        object_keys = self._list_partition_keys(bucket_name, partition_date, partition_date)
+        counts: dict[str, int] = defaultdict(int)
+        seen_play_ids: set[str] = set()
+
+        for key in object_keys:
+            try:
+                for event in self._read_jsonl_file(bucket_name, key):
+                    play_id = getattr(event, "play_id", None)
+                    if play_id and play_id in seen_play_ids:
+                        continue  # skip duplicate events across files
+                    if play_id:
+                        seen_play_ids.add(play_id)
+                    counts[getattr(event, "track_id", "")] += 1
+            except Exception as e:
+                logger.error(
+                    "failed to read events while calculating summary",
+                    extra={"bucket": bucket_name, "key": key, "error": str(e)},
+                )
+
+        return counts
+
     def write_daily_summary(
-        self, bucket_name: str, partition_date: datetime, track_counts: dict[str, int]
+        self,
+        bucket_name: str,
+        partition_date: datetime,
+        track_counts: Optional[dict[str, int]] = None,
     ) -> str:
         """Write daily play summary (idempotent: replace, never merge).
 
@@ -339,6 +371,20 @@ class S3ColdStore:
         It must not accumulate prior counts, otherwise totals will multiply.
         """
         key = self._daily_summary_key(partition_date)
+
+        if track_counts is None:
+            track_counts = self._calculate_daily_track_counts(bucket_name, partition_date)
+            logger.info(
+                "calculated daily summary counts from raw events",
+                extra={
+                    "bucket": bucket_name,
+                    "key": key,
+                    "partition_date": partition_date.strftime("%Y-%m-%d"),
+                    "event_files": len(
+                        self._list_partition_keys(bucket_name, partition_date, partition_date)
+                    ),
+                },
+            )
 
         normalized_counts = {track_id: int(count) for track_id, count in track_counts.items()}
         incoming_total = int(sum(normalized_counts.values()))

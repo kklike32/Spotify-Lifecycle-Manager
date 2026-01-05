@@ -167,6 +167,44 @@ def test_write_track_metadata_once():
     assert len(store.tracks) == 1
 
 
+def test_write_track_metadata_overwrite_repairs_missing_fields():
+    """Existing track cache entries can be repaired with overwrite flag."""
+    store = InMemoryHotStore()
+
+    original = TrackMetadata(
+        track_id="spotify:track:3n3Ppam7vgaVa1iaRUc9Lp",
+        name="Test Song",
+        artist_ids=["spotify:artist:4Z8W4fKeB5YxbusRsdQVPb"],
+        artist_names=["Test Artist"],
+        album_id="spotify:album:2ODvWsOgouMbaA5xf0RkJe",
+        album_name="Test Album",
+        release_date="2025-01-01",
+        duration_ms=180000,
+        explicit=False,
+        popularity=75,
+        uri="spotify:track:3n3Ppam7vgaVa1iaRUc9Lp",
+    )
+
+    store.write_track_metadata("tracks_table", original)
+
+    repaired = original.model_copy(
+        update={
+            "artist_names": ["Fixed Artist"],
+            "release_date": "2025-02-02",
+            "popularity": 80,
+        }
+    )
+
+    # Overwrite existing entry
+    result = store.write_track_metadata("tracks_table", repaired, overwrite_existing=True)
+
+    cached = store.get_track_metadata("tracks_table", original.track_id)
+    assert result is True
+    assert cached["artist_names"] == ["Fixed Artist"]
+    assert cached["release_date"] == "2025-02-02"
+    assert cached["popularity"] == 80
+
+
 def test_write_artist_metadata_once():
     """Test that artist metadata is cached only once (cache-once strategy)."""
     store = InMemoryHotStore()
@@ -838,6 +876,91 @@ def test_daily_summary_replaces_on_mismatch():
     assert first_total == 2
     assert replaced_total == 6
     assert store.s3.put_object.call_count == 2  # second call executed
+
+
+def test_daily_summary_recalculates_counts_when_missing():
+    """Daily summary computes track counts from raw events when not provided."""
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()
+
+    # Capture payload written to S3
+    memory: dict[str, dict] = {}
+
+    def fake_put_object(Bucket, Key, Body, ContentType):
+        memory[Key] = json.loads(Body.decode("utf-8"))
+
+    store.s3.put_object.side_effect = fake_put_object
+
+    # No existing summary
+    store.read_daily_summary = MagicMock(return_value=None)
+
+    # Simulate two raw event files with 3 total plays (2 for track_a, 1 for track_b)
+    store._list_partition_keys = MagicMock(
+        return_value=["dt=2025-01-03/events_1.jsonl", "dt=2025-01-03/events_2.jsonl"]
+    )
+
+    def fake_read_jsonl(bucket, key):
+        if key.endswith("events_1.jsonl"):
+            yield SimpleNamespace(track_id="spotify:track:a")
+            yield SimpleNamespace(track_id="spotify:track:a")
+        else:
+            yield SimpleNamespace(track_id="spotify:track:b")
+
+    store._read_jsonl_file = fake_read_jsonl
+
+    bucket = "test-bucket"
+    partition_date = datetime(2025, 1, 3)
+
+    key = store.write_daily_summary(bucket, partition_date)
+    payload = memory[key]
+
+    assert payload["total_plays"] == 3
+    assert payload["track_counts"]["spotify:track:a"] == 2
+    assert payload["track_counts"]["spotify:track:b"] == 1
+    store.s3.put_object.assert_called_once()
+
+
+def test_daily_summary_deduplicates_play_ids_across_files():
+    """Recomputed summaries should not double-count the same play_id across files."""
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()
+
+    memory: dict[str, dict] = {}
+    store.s3.put_object.side_effect = lambda Bucket, Key, Body, ContentType: memory.update(
+        {Key: json.loads(Body.decode("utf-8"))}
+    )
+    store.read_daily_summary = MagicMock(return_value=None)
+
+    # Two files containing the same play_id (should count once)
+    store._list_partition_keys = MagicMock(
+        return_value=["dt=2025-01-04/events_a.jsonl", "dt=2025-01-04/events_b.jsonl"]
+    )
+
+    def fake_read_jsonl(bucket, key):
+        yield SimpleNamespace(track_id="spotify:track:a", play_id="p1")
+        if key.endswith("events_b.jsonl"):
+            yield SimpleNamespace(track_id="spotify:track:a", play_id="p1")  # duplicate
+
+    store._read_jsonl_file = fake_read_jsonl
+
+    bucket = "test-bucket"
+    partition_date = datetime(2025, 1, 4)
+    key = store.write_daily_summary(bucket, partition_date)
+
+    payload = memory[key]
+    assert payload["total_plays"] == 1  # deduped
+    assert payload["track_counts"]["spotify:track:a"] == 1
+    store.s3.put_object.assert_called_once()
 
 
 def test_dashboard_store_read_missing():

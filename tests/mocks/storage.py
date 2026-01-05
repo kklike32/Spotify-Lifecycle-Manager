@@ -78,29 +78,36 @@ class InMemoryHotStore:
             return key_value in self.artists
         return False
 
-    def write_track_metadata(self, table_name: str, metadata: TrackMetadata) -> bool:
+    def write_track_metadata(
+        self, table_name: str, metadata: TrackMetadata, overwrite_existing: bool = False
+    ) -> bool:
         """Cache track metadata with conditional write.
 
         Args:
             table_name: Ignored (in-memory)
             metadata: TrackMetadata to cache
+            overwrite_existing: If True, overwrite existing entry (used for repairs)
 
         Returns:
             bool: True if written, False if already exists
         """
-        if metadata.track_id in self.tracks:
+        if metadata.track_id in self.tracks and not overwrite_existing:
             return False  # Already cached
 
         self.tracks[metadata.track_id] = {
             "track_id": metadata.track_id,
             "name": metadata.name,
             "artist_ids": metadata.artist_ids,
+            "artist_names": metadata.artist_names,
             "album_id": metadata.album_id,
             "album_name": metadata.album_name,
             "duration_ms": metadata.duration_ms,
             "explicit": metadata.explicit,
             "popularity": metadata.popularity,
+            "release_date": metadata.release_date,
             "uri": metadata.uri,
+            "cached_at": metadata.cached_at.isoformat(),
+            "version": metadata.version,
         }
         return True
 

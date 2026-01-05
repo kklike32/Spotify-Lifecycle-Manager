@@ -119,12 +119,15 @@ class DynamoDBClient:
         response = table.get_item(Key={key_name: key_value}, ConsistentRead=False)
         return "Item" in response
 
-    def write_track_metadata(self, table_name: str, metadata: TrackMetadata) -> bool:
+    def write_track_metadata(
+        self, table_name: str, metadata: TrackMetadata, overwrite_existing: bool = False
+    ) -> bool:
         """Cache track metadata with conditional write (cache-once strategy).
 
         Args:
             table_name: DynamoDB table name
             metadata: TrackMetadata to cache
+            overwrite_existing: If True, overwrite existing record (used for repairs)
 
         Returns:
             bool: True if metadata was written, False if already cached
@@ -135,20 +138,26 @@ class DynamoDBClient:
         """
         table = self.dynamodb.Table(table_name)
         try:
-            table.put_item(
-                Item={
-                    "track_id": metadata.track_id,
-                    "name": metadata.name,
-                    "artist_ids": metadata.artist_ids,
-                    "album_id": metadata.album_id,
-                    "album_name": metadata.album_name,
-                    "duration_ms": metadata.duration_ms,
-                    "explicit": metadata.explicit,
-                    "popularity": metadata.popularity,
-                    "uri": metadata.uri,
-                },
-                ConditionExpression="attribute_not_exists(track_id)",  # Cache-once
-            )
+            item = {
+                "track_id": metadata.track_id,
+                "name": metadata.name,
+                "artist_ids": metadata.artist_ids,
+                "artist_names": metadata.artist_names,
+                "album_id": metadata.album_id,
+                "album_name": metadata.album_name,
+                "duration_ms": metadata.duration_ms,
+                "explicit": metadata.explicit,
+                "popularity": metadata.popularity,
+                "release_date": metadata.release_date,
+                "uri": metadata.uri,
+                "cached_at": metadata.cached_at.isoformat(),
+                "version": metadata.version,
+            }
+            kwargs = {"Item": item}
+            if not overwrite_existing:
+                kwargs["ConditionExpression"] = "attribute_not_exists(track_id)"  # Cache-once
+
+            table.put_item(**kwargs)
             return True
         except ClientError as e:
             if e.response["Error"]["Code"] == "ConditionalCheckFailedException":

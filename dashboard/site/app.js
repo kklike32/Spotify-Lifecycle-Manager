@@ -241,12 +241,16 @@ function renderDailyTrendChart(dailyPlays) {
         dailyTrendChart.destroy();
     }
 
-    const sortedData = [...dailyPlays].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const parseLocalDate = (dateStr) => {
+        const [y, m, d] = dateStr.split('-').map(Number);
+        return new Date(y, m - 1, d); // construct in local time to avoid UTC shift
+    };
 
-    const labels = sortedData.map((item) => {
-        const date = new Date(item.date);
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    });
+    const sortedData = [...dailyPlays].sort((a, b) => a.date.localeCompare(b.date));
+
+    const labels = sortedData.map((item) =>
+        parseLocalDate(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    );
 
     const data = sortedData.map((item) => item.play_count);
 
