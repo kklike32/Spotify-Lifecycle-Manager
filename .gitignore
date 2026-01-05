@@ -13,3 +13,4 @@ env/
 .ruff_cache/
 tmp/
 .env
+dashboard/site/dist/

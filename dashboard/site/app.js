@@ -1,13 +1,6 @@
 /**
- * Spotify Lifecycle Dashboard - Main Application
- * 
- * Architecture:
- * - Fetches pre-computed dashboard_data.json from S3
- * - Zero live queries, zero backend calls
- * - Renders charts and lists using Chart.js
- * - Handles loading, error, and empty states
- * 
- * Cost: Zero compute cost (static site, pre-computed data)
+ * Spotify Lifecycle Dashboard - refreshed UI
+ * Static site rendering pre-computed listening insights.
  */
 
 // ==========================
@@ -15,22 +8,15 @@
 // ==========================
 
 const CONFIG = {
-    // Use relative URL to avoid CORS issues
-    // Data file has Cache-Control: max-age=300 (5 min) for nightly updates
-    // Static assets (HTML/JS/CSS) cached longer (invalidate on deploy)
     DATA_URL: 'dashboard_data.json',
-
-    // Chart colors (Spotify theme)
     COLORS: {
-        primary: '#1db954',
-        primaryDark: '#1ed760',
-        background: '#121212',
-        text: '#ffffff',
-        textSecondary: '#b3b3b3',
-        grid: '#282828'
+        accent: '#0f766e',
+        accentSoft: 'rgba(15, 118, 110, 0.12)',
+        text: '#0f172a',
+        textMuted: '#6b7280',
+        grid: '#e3e8f1',
+        surface: '#ffffff'
     },
-
-    // Retry configuration
     MAX_RETRIES: 3,
     RETRY_DELAY_MS: 2000
 };
@@ -43,66 +29,70 @@ const WINDOW_LABELS = {
 };
 
 // ==========================
-// State Management
+// State
 // ==========================
 
-let dashboardData = null;
+const state = {
+    data: null,
+    activeWindow: null,
+    filters: {
+        search: '',
+        sortKey: 'play_count',
+        sortDirection: 'desc'
+    }
+};
+
 let dailyTrendChart = null;
 let hourlyChart = null;
-let activeWindowKey = null;
 
 // ==========================
-// Initialization
+// Init
 // ==========================
 
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('Dashboard initializing...');
-    await loadDashboard();
-});
+document.addEventListener('DOMContentLoaded', initDashboard);
 
-// ==========================
-// Data Loading
-// ==========================
-
-async function loadDashboard() {
+async function initDashboard() {
     showLoadingState();
 
     try {
-        dashboardData = await fetchDashboardData();
+        state.data = await fetchData();
 
-        if (!dashboardData || !dashboardData.metadata) {
+        if (!state.data?.metadata) {
             throw new Error('Invalid dashboard data format');
         }
 
-        // Check if data is empty (no plays)
-        if (dashboardData.metadata.total_play_count === 0) {
+        if (state.data.metadata.total_play_count === 0) {
             showEmptyState();
             return;
         }
 
-        initWindowSelector();
-        renderDashboard(activeWindowKey);
+        state.activeWindow = resolveWindowKey(state.data);
+        renderSummary();
+        renderFilters();
+        renderTable();
+        renderSupportingLists();
+        renderCharts();
         showMainContent();
-
-        console.log('Dashboard loaded successfully');
     } catch (error) {
         console.error('Failed to load dashboard:', error);
         showErrorState(error.message);
     }
 }
 
-async function fetchDashboardData(retries = 0) {
-    try {
-        // Add cache-busting timestamp to force fresh data
-        // Rounds to nearest 5 minutes to allow some browser caching
-        const cacheBuster = Math.floor(Date.now() / (5 * 60 * 1000));
-        const url = `${CONFIG.DATA_URL}?t=${cacheBuster}`;
+// ==========================
+// Data loading
+// ==========================
 
+async function fetchData(retries = 0) {
+    const cacheBuster = Math.floor(Date.now() / (5 * 60 * 1000));
+    const url = `${CONFIG.DATA_URL}?t=${cacheBuster}`;
+
+    try {
         const response = await fetch(url, {
-            cache: 'no-cache',  // Always revalidate with server
+            cache: 'no-cache',
             headers: {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'Pragma': 'no-cache'
+                Pragma: 'no-cache'
             }
         });
 
@@ -110,13 +100,11 @@ async function fetchDashboardData(retries = 0) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();
     } catch (error) {
         if (retries < CONFIG.MAX_RETRIES) {
-            console.warn(`Fetch failed (attempt ${retries + 1}/${CONFIG.MAX_RETRIES + 1}), retrying...`);
             await sleep(CONFIG.RETRY_DELAY_MS);
-            return fetchDashboardData(retries + 1);
+            return fetchData(retries + 1);
         }
         throw error;
     }
@@ -126,81 +114,10 @@ async function fetchDashboardData(retries = 0) {
 // Rendering
 // ==========================
 
-function renderDashboard(windowKey) {
-    const windowData = getWindowData(windowKey);
-    const fallbackWindow = dashboardData?.windows
-        ? dashboardData.windows[dashboardData.metadata?.default_window] ||
-        dashboardData.windows[Object.keys(dashboardData.windows)[0]]
-        : null;
+function renderSummary() {
+    const windowData = getWindowData();
+    const metadata = state.data.metadata;
 
-    const effectiveWindow = windowData || fallbackWindow || null;
-
-    renderSummaryCards(effectiveWindow, dashboardData.metadata);
-    renderWindowLabel(windowKey || dashboardData?.metadata?.default_window);
-    renderLastUpdated(dashboardData.metadata.generated_at);
-    renderDailyTrendChart(dashboardData.daily_plays);
-    renderHourlyChart(dashboardData.hourly_distribution);
-    renderTopTracks(effectiveWindow?.top_tracks || dashboardData.top_tracks || []);
-    renderTopArtists(effectiveWindow?.top_artists || dashboardData.top_artists || []);
-    renderTopGenres(effectiveWindow?.top_genres || dashboardData.top_genres || []);
-}
-
-function initWindowSelector() {
-    const control = document.getElementById('window-control');
-    const select = document.getElementById('window-select');
-
-    if (!control || !select) return;
-
-    if (!dashboardData?.windows || Object.keys(dashboardData.windows).length === 0) {
-        control.style.display = 'none';
-        activeWindowKey = null;
-        renderWindowLabel(null);
-        return;
-    }
-
-    control.style.display = 'flex';
-    select.innerHTML = '';
-
-    Object.keys(dashboardData.windows).forEach((key) => {
-        const option = document.createElement('option');
-        option.value = key;
-        option.textContent = labelForWindow(key);
-        select.appendChild(option);
-    });
-
-    const defaultKey = dashboardData.metadata?.default_window;
-    const firstKey = Object.keys(dashboardData.windows)[0];
-    activeWindowKey = dashboardData.windows[defaultKey] ? defaultKey : firstKey;
-    select.value = activeWindowKey;
-    renderWindowLabel(activeWindowKey);
-
-    select.onchange = (event) => {
-        activeWindowKey = event.target.value;
-        renderDashboard(activeWindowKey);
-    };
-}
-
-function getWindowData(windowKey) {
-    if (!dashboardData || !dashboardData.windows) {
-        return null;
-    }
-    if (windowKey && dashboardData.windows[windowKey]) {
-        return dashboardData.windows[windowKey];
-    }
-    return null;
-}
-
-function labelForWindow(windowKey) {
-    return WINDOW_LABELS[windowKey] || windowKey || 'All Time';
-}
-
-function renderWindowLabel(windowKey) {
-    const labelEl = document.getElementById('window-active-label');
-    if (!labelEl) return;
-    labelEl.textContent = labelForWindow(windowKey || dashboardData?.metadata?.default_window);
-}
-
-function renderSummaryCards(windowData, metadata) {
     const plays = windowData?.total_play_count ?? metadata?.total_play_count ?? 0;
     const tracks = windowData?.unique_track_count ?? metadata?.unique_track_count ?? 0;
     const artists = windowData?.unique_artist_count ?? metadata?.unique_artist_count ?? 0;
@@ -210,9 +127,421 @@ function renderSummaryCards(windowData, metadata) {
     document.getElementById('unique-tracks').textContent = formatNumber(tracks);
     document.getElementById('unique-artists').textContent = formatNumber(artists);
     document.getElementById('unique-genres').textContent = formatNumber(genresCount);
+
+    renderWindowLabel(state.activeWindow);
+    renderLastUpdated(metadata?.generated_at);
+}
+
+function renderFilters() {
+    const hasWindows = state.data?.windows && Object.keys(state.data.windows).length > 0;
+    const control = document.getElementById('window-control');
+    const select = document.getElementById('window-select');
+    const searchInput = document.getElementById('search-input');
+    const sortButtons = document.querySelectorAll('#sort-buttons .pill-btn');
+
+    if (hasWindows && control && select) {
+        control.style.display = 'block';
+        select.innerHTML = '';
+
+        Object.keys(state.data.windows).forEach((key) => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = labelForWindow(key);
+            select.appendChild(option);
+        });
+
+        select.value = state.activeWindow;
+        select.onchange = (event) => {
+            state.activeWindow = event.target.value;
+            renderSummary();
+            renderTable();
+            renderSupportingLists();
+        };
+    } else if (control) {
+        control.style.display = 'none';
+    }
+
+    if (searchInput) {
+        searchInput.value = state.filters.search;
+        searchInput.addEventListener('input', (event) => {
+            state.filters.search = event.target.value;
+            renderTable();
+        });
+    }
+
+    sortButtons.forEach((button) => {
+        button.dataset.label = button.dataset.label || button.textContent.trim();
+        button.addEventListener('click', () => {
+            const sortKey = button.dataset.sort;
+            const defaultDirection = button.dataset.direction || 'asc';
+
+            if (state.filters.sortKey === sortKey) {
+                state.filters.sortDirection = state.filters.sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                state.filters.sortKey = sortKey;
+                state.filters.sortDirection = defaultDirection;
+            }
+
+            updateSortButtons();
+            renderTable();
+        });
+    });
+
+    updateSortButtons();
+}
+
+function renderTable() {
+    const tableBody = document.querySelector('#tracks-table tbody');
+    const resultCount = document.getElementById('result-count');
+
+    if (!tableBody) return;
+
+    const baseTracks = getActiveTracks();
+    const tracks = applyFiltersAndSort(baseTracks);
+
+    tableBody.innerHTML = '';
+
+    if (tracks.length === 0) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 5;
+        cell.textContent = 'No tracks match your filters.';
+        cell.className = 'muted';
+        row.appendChild(cell);
+        tableBody.appendChild(row);
+    } else {
+        tracks.forEach((track, index) => {
+            tableBody.appendChild(buildTrackRow(track, index));
+        });
+    }
+
+    if (resultCount) {
+        resultCount.textContent = `Showing ${tracks.length} of ${baseTracks.length} tracks`;
+    }
+}
+
+function renderSupportingLists() {
+    const windowData = getWindowData();
+    renderTopArtists(windowData?.top_artists || state.data.top_artists || []);
+    renderTopGenres(windowData?.top_genres || state.data.top_genres || []);
+}
+
+function renderCharts() {
+    renderDailyTrendChart(state.data.daily_plays || []);
+    renderHourlyChart(state.data.hourly_distribution || []);
+}
+
+function renderDailyTrendChart(dailyPlays) {
+    const canvas = document.getElementById('daily-trend-chart');
+    if (!canvas || !Array.isArray(dailyPlays)) return;
+
+    const ctx = canvas.getContext('2d');
+
+    if (dailyTrendChart) {
+        dailyTrendChart.destroy();
+    }
+
+    const sortedData = [...dailyPlays].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    const labels = sortedData.map((item) => {
+        const date = new Date(item.date);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    });
+
+    const data = sortedData.map((item) => item.play_count);
+
+    dailyTrendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Plays',
+                    data,
+                    borderColor: CONFIG.COLORS.accent,
+                    backgroundColor: CONFIG.COLORS.accentSoft,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 2,
+                    pointHoverRadius: 5
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: '#0f172a',
+                    titleColor: '#ffffff',
+                    bodyColor: '#ffffff',
+                    borderColor: CONFIG.COLORS.accent,
+                    borderWidth: 1
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        color: '#d7dee9',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: '#334155',
+                        maxRotation: 0,
+                        minRotation: 0,
+                        maxTicksLimit: 8,
+                        autoSkip: true,
+                        font: { size: 13 }
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#d7dee9',
+                        drawBorder: false
+                    },
+                    ticks: { color: '#334155', precision: 0, font: { size: 13 } }
+                }
+            },
+            interaction: { mode: 'nearest', axis: 'x', intersect: false }
+        }
+    });
+}
+
+function renderHourlyChart(hourlyDistribution) {
+    const canvas = document.getElementById('hourly-chart');
+    if (!canvas || !Array.isArray(hourlyDistribution)) return;
+
+    const ctx = canvas.getContext('2d');
+
+    if (hourlyChart) {
+        hourlyChart.destroy();
+    }
+
+    const labels = hourlyDistribution.map((item) => `${item.hour}:00`);
+    const data = hourlyDistribution.map((item) => item.play_count);
+
+    hourlyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Plays',
+                    data,
+                    backgroundColor: CONFIG.COLORS.accent,
+                    borderWidth: 0,
+                    borderRadius: 6
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: '#0f172a',
+                    titleColor: '#ffffff',
+                    bodyColor: '#ffffff',
+                    borderColor: CONFIG.COLORS.accent,
+                    borderWidth: 1
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false, drawBorder: false },
+                    ticks: { color: '#334155', font: { size: 13 }, maxRotation: 0, minRotation: 0 }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#d7dee9',
+                        drawBorder: false
+                    },
+                    ticks: { color: '#334155', precision: 0, font: { size: 13 } }
+                }
+            }
+        }
+    });
+}
+
+// ==========================
+// Data helpers
+// ==========================
+
+function resolveWindowKey(data) {
+    const windows = data?.windows;
+    if (!windows || Object.keys(windows).length === 0) return null;
+
+    const defaultKey = data.metadata?.default_window;
+    if (defaultKey && windows[defaultKey]) return defaultKey;
+
+    return Object.keys(windows)[0];
+}
+
+function getWindowData() {
+    if (!state.data?.windows || !state.activeWindow) return null;
+    return state.data.windows[state.activeWindow] || null;
+}
+
+function getActiveTracks() {
+    const windowData = getWindowData();
+    return windowData?.top_tracks || state.data.top_tracks || [];
+}
+
+function applyFiltersAndSort(tracks) {
+    const searchTerm = state.filters.search.trim().toLowerCase();
+    const enriched = tracks.map((track, index) => ({ ...track, _index: index }));
+
+    const filtered = searchTerm
+        ? enriched.filter((track) => {
+              const haystack = [
+                  track.track_name || '',
+                  track.artist_name || '',
+                  track.album_name || ''
+              ]
+                  .join(' ')
+                  .toLowerCase();
+              return haystack.includes(searchTerm);
+          })
+        : enriched;
+
+    const direction = state.filters.sortDirection === 'asc' ? 1 : -1;
+    const sortKey = state.filters.sortKey;
+
+    return filtered.sort((a, b) => {
+        const aVal = a[sortKey];
+        const bVal = b[sortKey];
+
+        if (sortKey === 'play_count') {
+            return ((aVal ?? 0) - (bVal ?? 0)) * direction || a._index - b._index;
+        }
+
+        const aStr = (aVal || '').toString().toLowerCase();
+        const bStr = (bVal || '').toString().toLowerCase();
+        const comparison = aStr.localeCompare(bStr);
+
+        return comparison * direction || a._index - b._index;
+    });
+}
+
+function buildTrackRow(track, index) {
+    const row = document.createElement('tr');
+
+    const rankCell = document.createElement('td');
+    rankCell.textContent = (track._index ?? index) + 1;
+    rankCell.setAttribute('aria-label', `Rank ${(track._index ?? index) + 1}`);
+
+    const titleCell = document.createElement('td');
+    titleCell.textContent = track.track_name || 'Unknown Track';
+    titleCell.title = track.track_name || 'Unknown Track';
+    titleCell.className = 'truncate';
+
+    const artistCell = document.createElement('td');
+    artistCell.textContent = track.artist_name || 'Unknown Artist';
+    artistCell.title = track.artist_name || 'Unknown Artist';
+    artistCell.className = 'truncate';
+
+    const albumCell = document.createElement('td');
+    albumCell.textContent = track.album_name || 'Unknown Album';
+    albumCell.title = track.album_name || 'Unknown Album';
+    albumCell.className = 'truncate';
+
+    const playsCell = document.createElement('td');
+    playsCell.className = 'numeric';
+    playsCell.textContent = formatNumber(track.play_count ?? 0);
+
+    row.append(rankCell, titleCell, artistCell, albumCell, playsCell);
+    return row;
+}
+
+function renderTopArtists(artists) {
+    const container = document.getElementById('top-artists-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    artists.forEach((artist, index) => {
+        const row = createListRow(
+            index + 1,
+            artist.artist_name || 'Unknown Artist',
+            `${formatNumber(artist.play_count ?? 0)} plays`
+        );
+        container.appendChild(row);
+    });
+}
+
+function renderTopGenres(genres) {
+    const container = document.getElementById('top-genres-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    genres.forEach((genre, index) => {
+        const row = createListRow(
+            index + 1,
+            genre.genre || 'Unknown Genre',
+            `${formatNumber(genre.play_count ?? 0)} plays`
+        );
+        container.appendChild(row);
+    });
+}
+
+function createListRow(rank, name, meta) {
+    const row = document.createElement('div');
+    row.className = 'list-row';
+
+    const rankSpan = document.createElement('span');
+    rankSpan.className = 'list-rank';
+    rankSpan.textContent = `#${rank}`;
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'list-name truncate';
+    nameSpan.textContent = name;
+    nameSpan.title = name;
+
+    const metaSpan = document.createElement('span');
+    metaSpan.className = 'list-count';
+    metaSpan.textContent = meta;
+
+    row.append(rankSpan, nameSpan, metaSpan);
+    return row;
+}
+
+// ==========================
+// UI state
+// ==========================
+
+function updateSortButtons() {
+    const sortButtons = document.querySelectorAll('#sort-buttons .pill-btn');
+    sortButtons.forEach((button) => {
+        const label = button.dataset.label || '';
+        const isActive = button.dataset.sort === state.filters.sortKey;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+
+        if (isActive) {
+            const dirIcon = state.filters.sortDirection === 'asc' ? '↑' : '↓';
+            button.textContent = `${label} ${dirIcon}`;
+        } else {
+            button.textContent = label;
+        }
+    });
+}
+
+function renderWindowLabel(windowKey) {
+    const labelEl = document.getElementById('window-active-label');
+    if (!labelEl) return;
+    labelEl.textContent = labelForWindow(windowKey);
 }
 
 function renderLastUpdated(timestamp) {
+    if (!timestamp) return;
     const date = new Date(timestamp);
     const formatted = date.toLocaleString('en-US', {
         year: 'numeric',
@@ -222,231 +551,8 @@ function renderLastUpdated(timestamp) {
         minute: '2-digit',
         timeZoneName: 'short'
     });
-    document.getElementById('last-updated').textContent = `Last updated: ${formatted}`;
+    document.getElementById('last-updated').textContent = `Last updated ${formatted}`;
 }
-
-function renderDailyTrendChart(dailyPlays) {
-    const ctx = document.getElementById('daily-trend-chart').getContext('2d');
-
-    // Destroy existing chart if it exists
-    if (dailyTrendChart) {
-        dailyTrendChart.destroy();
-    }
-
-    // Sort by date ascending
-    const sortedData = dailyPlays.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    const labels = sortedData.map(item => {
-        const date = new Date(item.date);
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    });
-
-    const data = sortedData.map(item => item.play_count);
-
-    dailyTrendChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Plays',
-                data: data,
-                borderColor: CONFIG.COLORS.primary,
-                backgroundColor: `${CONFIG.COLORS.primary}33`,
-                borderWidth: 2,
-                fill: true,
-                tension: 0.4,
-                pointRadius: 2,
-                pointHoverRadius: 5
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    backgroundColor: CONFIG.COLORS.background,
-                    titleColor: CONFIG.COLORS.text,
-                    bodyColor: CONFIG.COLORS.text,
-                    borderColor: CONFIG.COLORS.primary,
-                    borderWidth: 1
-                }
-            },
-            scales: {
-                x: {
-                    grid: {
-                        color: CONFIG.COLORS.grid,
-                        drawBorder: false
-                    },
-                    ticks: {
-                        color: CONFIG.COLORS.textSecondary,
-                        maxRotation: 45,
-                        minRotation: 45
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: CONFIG.COLORS.grid,
-                        drawBorder: false
-                    },
-                    ticks: {
-                        color: CONFIG.COLORS.textSecondary,
-                        precision: 0
-                    }
-                }
-            },
-            interaction: {
-                mode: 'nearest',
-                axis: 'x',
-                intersect: false
-            }
-        }
-    });
-}
-
-function renderHourlyChart(hourlyDistribution) {
-    const ctx = document.getElementById('hourly-chart').getContext('2d');
-
-    // Destroy existing chart if it exists
-    if (hourlyChart) {
-        hourlyChart.destroy();
-    }
-
-    const labels = hourlyDistribution.map(item => {
-        const hour = item.hour;
-        return `${hour}:00`;
-    });
-
-    const data = hourlyDistribution.map(item => item.play_count);
-
-    hourlyChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Plays',
-                data: data,
-                backgroundColor: CONFIG.COLORS.primary,
-                borderWidth: 0,
-                borderRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    backgroundColor: CONFIG.COLORS.background,
-                    titleColor: CONFIG.COLORS.text,
-                    bodyColor: CONFIG.COLORS.text,
-                    borderColor: CONFIG.COLORS.primary,
-                    borderWidth: 1
-                }
-            },
-            scales: {
-                x: {
-                    grid: {
-                        display: false,
-                        drawBorder: false
-                    },
-                    ticks: {
-                        color: CONFIG.COLORS.textSecondary
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: CONFIG.COLORS.grid,
-                        drawBorder: false
-                    },
-                    ticks: {
-                        color: CONFIG.COLORS.textSecondary,
-                        precision: 0
-                    }
-                }
-            }
-        }
-    });
-}
-
-function renderTopTracks(topTracks) {
-    const container = document.getElementById('top-tracks-list');
-    container.innerHTML = '';
-
-    topTracks.forEach((track, index) => {
-        const item = createListItem(
-            index + 1,
-            track.track_name || 'Unknown Track',
-            track.play_count
-        );
-        container.appendChild(item);
-    });
-}
-
-function renderTopArtists(topArtists) {
-    const container = document.getElementById('top-artists-list');
-    container.innerHTML = '';
-
-    topArtists.forEach((artist, index) => {
-        const item = createListItem(
-            index + 1,
-            artist.artist_name || 'Unknown Artist',
-            artist.play_count
-        );
-        container.appendChild(item);
-    });
-}
-
-function renderTopGenres(topGenres) {
-    const container = document.getElementById('top-genres-list');
-    container.innerHTML = '';
-
-    topGenres.forEach((genre, index) => {
-        const item = createListItem(
-            index + 1,
-            genre.genre || 'Unknown Genre',
-            genre.play_count
-        );
-        container.appendChild(item);
-    });
-}
-
-function createListItem(rank, name, count) {
-    const item = document.createElement('div');
-    item.className = 'list-item';
-
-    const rankSpan = document.createElement('span');
-    rankSpan.className = 'list-item-rank';
-    rankSpan.textContent = `#${rank}`;
-
-    const nameSpan = document.createElement('span');
-    nameSpan.className = 'list-item-name';
-    nameSpan.textContent = name;
-
-    const countSpan = document.createElement('span');
-    countSpan.className = 'list-item-count';
-    countSpan.textContent = `${formatNumber(count)} plays`;
-
-    item.appendChild(rankSpan);
-    item.appendChild(nameSpan);
-    item.appendChild(countSpan);
-
-    return item;
-}
-
-// ==========================
-// UI State Management
-// ==========================
 
 function showLoadingState() {
     document.getElementById('loading-state').style.display = 'flex';
@@ -481,24 +587,29 @@ function showMainContent() {
 }
 
 // ==========================
-// Utility Functions
+// Utilities
 // ==========================
+
+function labelForWindow(windowKey) {
+    return WINDOW_LABELS[windowKey] || 'All Time';
+}
 
 function formatNumber(num) {
     if (num >= 1000000) {
         return (num / 1000000).toFixed(1) + 'M';
-    } else if (num >= 1000) {
+    }
+    if (num >= 1000) {
         return (num / 1000).toFixed(1) + 'K';
     }
     return num.toString();
 }
 
 function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // ==========================
-// Error Handling
+// Error handling
 // ==========================
 
 window.addEventListener('error', (event) => {

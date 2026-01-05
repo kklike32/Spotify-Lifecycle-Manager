@@ -1,18 +1,18 @@
 {
   "version": "1.0.0",
-  "generated_at": "2026-01-03T16:49:26.151734-08:00",
+  "generated_at": "2026-01-04T02:19:43.425335-08:00",
   "time_range": {
     "start": "2025-12-26T00:00:00-08:00",
-    "end": "2026-01-03T00:00:00-08:00"
+    "end": "2026-01-04T00:00:00-08:00"
   },
   "metadata": {
-    "generated_at": "2026-01-03T16:49:26.151734-08:00",
-    "total_play_count": 292,
-    "unique_track_count": 193,
-    "unique_artist_count": 146,
+    "generated_at": "2026-01-04T02:19:43.425335-08:00",
+    "total_play_count": 229,
+    "unique_track_count": 194,
+    "unique_artist_count": 190,
     "genre_count": 20,
     "date_range_start": "2025-12-26T00:00:00-08:00",
-    "date_range_end": "2026-01-03T00:00:00-08:00",
+    "date_range_end": "2026-01-04T00:00:00-08:00",
     "default_window": "last_30_days"
   },
   "top_tracks": [
@@ -28,83 +28,13 @@
       "track_name": "Mi Amor",
       "artist_name": "Sharn, The Paul",
       "album_name": "Mi Amor",
-      "play_count": 5
+      "play_count": 3
     },
     {
       "track_id": "spotify:track:3s4mrPrEFFPF0LmAfutW0n",
       "track_name": "The London (feat. J. Cole & Travis Scott)",
       "artist_name": "Young Thug, J. Cole, Travis Scott",
       "album_name": "So Much Fun",
-      "play_count": 4
-    },
-    {
-      "track_id": "spotify:track:5wWAwzGp2OaaoIkwcz6wZs",
-      "track_name": "Life's A Mess (feat. Halsey)",
-      "artist_name": "Juice WRLD, Halsey",
-      "album_name": "Legends Never Die",
-      "play_count": 3
-    },
-    {
-      "track_id": "spotify:track:4B0JvthVoAAuygILe3n4Bs",
-      "track_name": "What Do You Mean?",
-      "artist_name": "Justin Bieber",
-      "album_name": "Purpose (Deluxe)",
-      "play_count": 3
-    },
-    {
-      "track_id": "spotify:track:67BtfxlNbhBmCDR2L2l8qd",
-      "track_name": "MONTERO (Call Me By Your Name)",
-      "artist_name": "Lil Nas X",
-      "album_name": "MONTERO (Call Me By Your Name)",
-      "play_count": 3
-    },
-    {
-      "track_id": "spotify:track:5zDQlhcJ5KOoXeSMGwiuJY",
-      "track_name": "Give It 2 U",
-      "artist_name": "Robin Thicke, Kendrick Lamar",
-      "album_name": "Blurred Lines (Deluxe)",
-      "play_count": 3
-    },
-    {
-      "track_id": "spotify:track:6uFn47ACjqYkc0jADwEdj1",
-      "track_name": "Pop Out (feat. Lil Tjay)",
-      "artist_name": "Polo G, Lil Tjay",
-      "album_name": "Die A Legend",
-      "play_count": 3
-    },
-    {
-      "track_id": "spotify:track:0w75KG0DuLDi6tdHmEMovD",
-      "track_name": "Don't Let Me Down",
-      "artist_name": "The Chainsmokers, Daya",
-      "album_name": "Collage EP",
-      "play_count": 3
-    },
-    {
-      "track_id": "spotify:track:3QzAOrNlsabgbMwlZt7TAY",
-      "track_name": "Ballin' (with Roddy Ricch)",
-      "artist_name": "Mustard, Roddy Ricch",
-      "album_name": "Perfect Ten",
-      "play_count": 3
-    },
-    {
-      "track_id": "spotify:track:0RrR3wg4ezBVwm7lyeybir",
-      "track_name": "Suno- Na Sangemarmar",
-      "artist_name": "Arijit Singh",
-      "album_name": "Youngistaan",
-      "play_count": 3
-    },
-    {
-      "track_id": "spotify:track:5O59s7bCgTFsXDXlWecyQ1",
-      "track_name": "Apparently",
-      "artist_name": "J. Cole",
-      "album_name": "2014 Forest Hills Drive",
-      "play_count": 3
-    },
-    {
-      "track_id": "spotify:track:49FYlytm3dAAraYgpoJZux",
-      "track_name": "Umbrella",
-      "artist_name": "Rihanna, JAY-Z",
-      "album_name": "Good Girl Gone Bad: Reloaded",
       "play_count": 3
     },
     {
@@ -133,13 +63,6 @@
       "track_name": "21 Questions",
       "artist_name": "50 Cent, Nate Dogg",
       "album_name": "Get Rich Or Die Tryin'",
-      "play_count": 2
-    },
-    {
-      "track_id": "spotify:track:0yvPEnB032fojLfVluFjUv",
-      "track_name": "Sorry Not Sorry",
-      "artist_name": "Demi Lovato",
-      "album_name": "Tell Me You Love Me",
       "play_count": 2
     },
     {
@@ -199,13 +122,6 @@
       "play_count": 2
     },
     {
-      "track_id": "spotify:track:01aTsQoKoeXofSTvKuunzv",
-      "track_name": "Lean On",
-      "artist_name": "Major Lazer, DJ Snake, M\u00d8",
-      "album_name": "Peace Is The Mission",
-      "play_count": 2
-    },
-    {
       "track_id": "spotify:track:5pDUMdIiW0rNLzFryqpC9j",
       "track_name": "Diamonds",
       "artist_name": "Rihanna",
@@ -220,151 +136,235 @@
       "play_count": 2
     },
     {
+      "track_id": "spotify:track:5wWAwzGp2OaaoIkwcz6wZs",
+      "track_name": "Life's A Mess (feat. Halsey)",
+      "artist_name": "Juice WRLD, Halsey",
+      "album_name": "Legends Never Die",
+      "play_count": 2
+    },
+    {
+      "track_id": "spotify:track:4B0JvthVoAAuygILe3n4Bs",
+      "track_name": "What Do You Mean?",
+      "artist_name": "Justin Bieber",
+      "album_name": "Purpose (Deluxe)",
+      "play_count": 2
+    },
+    {
+      "track_id": "spotify:track:67BtfxlNbhBmCDR2L2l8qd",
+      "track_name": "MONTERO (Call Me By Your Name)",
+      "artist_name": "Lil Nas X",
+      "album_name": "MONTERO (Call Me By Your Name)",
+      "play_count": 2
+    },
+    {
+      "track_id": "spotify:track:6uFn47ACjqYkc0jADwEdj1",
+      "track_name": "Pop Out (feat. Lil Tjay)",
+      "artist_name": "Polo G, Lil Tjay",
+      "album_name": "Die A Legend",
+      "play_count": 2
+    },
+    {
+      "track_id": "spotify:track:0w75KG0DuLDi6tdHmEMovD",
+      "track_name": "Don't Let Me Down",
+      "artist_name": "The Chainsmokers, Daya",
+      "album_name": "Collage EP",
+      "play_count": 2
+    },
+    {
+      "track_id": "spotify:track:3QzAOrNlsabgbMwlZt7TAY",
+      "track_name": "Ballin' (with Roddy Ricch)",
+      "artist_name": "Mustard, Roddy Ricch",
+      "album_name": "Perfect Ten",
+      "play_count": 2
+    },
+    {
+      "track_id": "spotify:track:0RrR3wg4ezBVwm7lyeybir",
+      "track_name": "Suno- Na Sangemarmar",
+      "artist_name": "Arijit Singh",
+      "album_name": "Youngistaan",
+      "play_count": 2
+    },
+    {
+      "track_id": "spotify:track:5O59s7bCgTFsXDXlWecyQ1",
+      "track_name": "Apparently",
+      "artist_name": "J. Cole",
+      "album_name": "2014 Forest Hills Drive",
+      "play_count": 2
+    },
+    {
+      "track_id": "spotify:track:5EYZZvmNAH5VZCwuzYJqoA",
+      "track_name": "Chand Sifarish",
+      "artist_name": "Jatin-Lalit, Shaan, Kailash Kher, Prasoon Joshi",
+      "album_name": "Fanaa",
+      "play_count": 2
+    },
+    {
+      "track_id": "spotify:track:49FYlytm3dAAraYgpoJZux",
+      "track_name": "Umbrella",
+      "artist_name": "Rihanna, JAY-Z",
+      "album_name": "Good Girl Gone Bad: Reloaded",
+      "play_count": 2
+    },
+    {
+      "track_id": "spotify:track:0yvPEnB032fojLfVluFjUv",
+      "track_name": "Sorry Not Sorry",
+      "artist_name": "Demi Lovato",
+      "album_name": "Tell Me You Love Me",
+      "play_count": 1
+    },
+    {
+      "track_id": "spotify:track:01aTsQoKoeXofSTvKuunzv",
+      "track_name": "Lean On",
+      "artist_name": "Major Lazer, DJ Snake, M\u00d8",
+      "album_name": "Peace Is The Mission",
+      "play_count": 1
+    },
+    {
       "track_id": "spotify:track:1gwO79MdYdumgIjxq8eCxB",
       "track_name": "Bahara",
       "artist_name": "Vishal-Shekhar, Shreya Ghoshal, Sona Mohapatra",
       "album_name": "I Hate Luv Storys (Original Motion Picture Soundtrack)",
-      "play_count": 2
+      "play_count": 1
     },
     {
       "track_id": "spotify:track:2VKHWIONh47ntN7wyoSxEQ",
       "track_name": "The Grinch",
       "artist_name": "Trippie Redd",
       "album_name": "A Love Letter To You 4",
-      "play_count": 2
+      "play_count": 1
+    },
+    {
+      "track_id": "spotify:track:6RtPijgfPKROxEzTHNRiDp",
+      "track_name": "Rude",
+      "artist_name": "MAGIC!",
+      "album_name": "Don't Kill the Magic",
+      "play_count": 1
+    },
+    {
+      "track_id": "spotify:track:5zDQlhcJ5KOoXeSMGwiuJY",
+      "track_name": "Give It 2 U",
+      "artist_name": "Robin Thicke, Kendrick Lamar",
+      "album_name": "Blurred Lines (Deluxe)",
+      "play_count": 1
     },
     {
       "track_id": "spotify:track:6IYS7wNZxRBvLpwMZDbcdP",
       "track_name": "Jai Jai Shivshankar",
       "artist_name": "Vishal-Shekhar, Vishal Dadlani, Benny Dayal, Kumaar",
       "album_name": "War",
-      "play_count": 2
+      "play_count": 1
     },
     {
       "track_id": "spotify:track:7hpH1Ijoygw5J5XUfVS9hh",
       "track_name": "Kya Khoob Lagti Ho",
       "artist_name": "Mukesh, Kanchan",
       "album_name": "Dharmatma (Original Motion Picture Soundtrack)",
-      "play_count": 2
+      "play_count": 1
     },
     {
       "track_id": "spotify:track:4cg1yakyRSIOjxKM2I7J1q",
       "track_name": "Digits",
       "artist_name": "Young Thug",
       "album_name": "Slime Season 3",
-      "play_count": 2
+      "play_count": 1
     },
     {
       "track_id": "spotify:track:7MXVkk9YMctZqd1Srtv4MB",
       "track_name": "Starboy",
       "artist_name": "The Weeknd, Daft Punk",
       "album_name": "Starboy",
-      "play_count": 2
+      "play_count": 1
     },
     {
       "track_id": "spotify:track:2UXqAinFTSFA3Y0nlWPHQn",
       "track_name": "Mehndi Laga Ke Rakhna",
       "artist_name": "Lata Mangeshkar, Udit Narayan",
       "album_name": "Dilwale Dulhania Le Jayenge (Original Motion Picture Soundtrack)",
-      "play_count": 2
+      "play_count": 1
     },
     {
       "track_id": "spotify:track:3BtuIIrQlkujKPuWF2B85z",
       "track_name": "Too Good",
       "artist_name": "Drake, Rihanna",
       "album_name": "Views",
-      "play_count": 2
+      "play_count": 1
+    },
+    {
+      "track_id": "spotify:track:5BrTUo0xP1wKXLJWUaGFtk",
+      "track_name": "Loyal (feat. Lil Wayne & Tyga)",
+      "artist_name": "Chris Brown, Lil Wayne, Tyga",
+      "album_name": "X (Expanded Edition)",
+      "play_count": 1
+    },
+    {
+      "track_id": "spotify:track:5e574bhjycX1eH2l4Auage",
+      "track_name": "Grammys",
+      "artist_name": "Drake, Future",
+      "album_name": "Views",
+      "play_count": 1
     },
     {
       "track_id": "spotify:track:1vnnXMrBeEWiRg3YCMCjQq",
       "track_name": "Despacito - Remix",
       "artist_name": "Luis Fonsi, Daddy Yankee, Justin Bieber",
       "album_name": "VIDA",
-      "play_count": 2
+      "play_count": 1
     },
     {
-      "track_id": "spotify:track:5EYZZvmNAH5VZCwuzYJqoA",
-      "track_name": "Chand Sifarish",
-      "artist_name": "Unknown, Unknown, Unknown, Unknown",
-      "album_name": "Fanaa",
-      "play_count": 2
+      "track_id": "spotify:track:2FY7b99s15jUprqC0M5NCT",
+      "track_name": "Natural",
+      "artist_name": "Imagine Dragons",
+      "album_name": "Origins (Deluxe)",
+      "play_count": 1
     },
     {
-      "track_id": "spotify:track:4zkFR93VC5H04YhnYxr2zz",
-      "track_name": "Unknown",
-      "artist_name": "Unknown",
-      "album_name": "Unknown",
-      "play_count": 2
+      "track_id": "spotify:track:0bGLvHd0ApdT4t0shCfpzG",
+      "track_name": "Side Effects",
+      "artist_name": "The Chainsmokers, Emily Warren",
+      "album_name": "Sick Boy",
+      "play_count": 1
     },
     {
-      "track_id": "spotify:track:5M7LdQfurIG70nbvlSAO07",
-      "track_name": "Unknown",
-      "artist_name": "Unknown",
-      "album_name": "Unknown",
-      "play_count": 2
+      "track_id": "spotify:track:5GXAXm5YOmYT0kL5jHvYBt",
+      "track_name": "I Feel It Coming",
+      "artist_name": "The Weeknd, Daft Punk",
+      "album_name": "Starboy",
+      "play_count": 1
     },
     {
-      "track_id": "spotify:track:1p0rEzrK7YtdRZVtiyV7RN",
-      "track_name": "Unknown",
-      "artist_name": "Unknown",
-      "album_name": "Unknown",
-      "play_count": 2
+      "track_id": "spotify:track:5PvwPy5eRO8BPwpRzCHK3D",
+      "track_name": "Sunn Raha Hai (Male Version)",
+      "artist_name": "Ankit Tiwari",
+      "album_name": "Aashiqui 2",
+      "play_count": 1
     },
     {
-      "track_id": "spotify:track:28veUNu4veN0LOBVa0nFw8",
-      "track_name": "Unknown",
-      "artist_name": "Unknown",
-      "album_name": "Unknown",
-      "play_count": 2
+      "track_id": "spotify:track:0pPGUL7171TRGgI6wyP8wP",
+      "track_name": "Tumhe Jo Maine Dekha",
+      "artist_name": "Abhijeet, Shreya Ghoshal",
+      "album_name": "Main Hoon Na",
+      "play_count": 1
     },
     {
-      "track_id": "spotify:track:32lItqlMi4LBhb4k0BaSaC",
-      "track_name": "Unknown",
-      "artist_name": "Unknown",
-      "album_name": "Unknown",
-      "play_count": 2
+      "track_id": "spotify:track:2YpeDb67231RjR0MgVLzsG",
+      "track_name": "Old Town Road (feat. Billy Ray Cyrus) - Remix",
+      "artist_name": "Lil Nas X, Billy Ray Cyrus",
+      "album_name": "7",
+      "play_count": 1
     },
     {
-      "track_id": "spotify:track:0veO6y9anwdVTaRuW7y8NJ",
-      "track_name": "Unknown",
-      "artist_name": "Unknown",
-      "album_name": "Unknown",
-      "play_count": 2
+      "track_id": "spotify:track:6Z1Q31m2SQt7uLfyqce6ot",
+      "track_name": "To Brazil!",
+      "artist_name": "Vengaboys",
+      "album_name": "The Party Album!",
+      "play_count": 1
     },
     {
-      "track_id": "spotify:track:6WrI0LAC5M1Rw2MnX2ZvEg",
-      "track_name": "Unknown",
-      "artist_name": "Unknown",
-      "album_name": "Unknown",
-      "play_count": 2
-    },
-    {
-      "track_id": "spotify:track:4PklAHGXT5ityno3IA8SKd",
-      "track_name": "Unknown",
-      "artist_name": "Unknown",
-      "album_name": "Unknown",
-      "play_count": 2
-    },
-    {
-      "track_id": "spotify:track:0JssjDh3UWEgjUslVZgHJG",
-      "track_name": "Unknown",
-      "artist_name": "Unknown",
-      "album_name": "Unknown",
-      "play_count": 2
-    },
-    {
-      "track_id": "spotify:track:4HfmI5Yisll9PCOjJhtijw",
-      "track_name": "Unknown",
-      "artist_name": "Unknown",
-      "album_name": "Unknown",
-      "play_count": 2
-    },
-    {
-      "track_id": "spotify:track:17opN752ZQpNuoptelsNQ1",
-      "track_name": "Unknown",
-      "artist_name": "Unknown",
-      "album_name": "Unknown",
-      "play_count": 2
+      "track_id": "spotify:track:2P3SLxeQHPqh8qKB6gtJY2",
+      "track_name": "Poetic Justice",
+      "artist_name": "Kendrick Lamar, Drake",
+      "album_name": "good kid, m.A.A.d city (Deluxe)",
+      "play_count": 1
     }
   ],
   "top_artists": [
@@ -375,7 +375,7 @@
         "melodic rap",
         "emo rap"
       ],
-      "play_count": 22
+      "play_count": 29
     },
     {
       "artist_id": "spotify:artist:3TVXtAsR1Inumwj472S9r4",
@@ -383,7 +383,7 @@
       "genres": [
         "rap"
       ],
-      "play_count": 17
+      "play_count": 19
     },
     {
       "artist_id": "spotify:artist:1RyvyyTE3xzB2ZywiAwp0i",
@@ -391,7 +391,7 @@
       "genres": [
         "rap"
       ],
-      "play_count": 14
+      "play_count": 16
     },
     {
       "artist_id": "spotify:artist:55Aa2cqylxrFIXC767Z865",
@@ -400,23 +400,15 @@
         "rap",
         "hip hop"
       ],
-      "play_count": 13
+      "play_count": 15
     },
     {
-      "artist_id": "spotify:artist:5pKCCKE2ajJHZ9KAiaK11H",
-      "artist_name": "Rihanna",
-      "genres": [],
-      "play_count": 9
-    },
-    {
-      "artist_id": "spotify:artist:50co4Is1HCEo8bhOyUWKpn",
-      "artist_name": "Young Thug",
+      "artist_id": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY",
+      "artist_name": "Travis Scott",
       "genres": [
-        "rap",
-        "melodic rap",
-        "trap"
+        "rap"
       ],
-      "play_count": 8
+      "play_count": 10
     },
     {
       "artist_id": "spotify:artist:6l3HvQ5sa6mXTsMTB19rO5",
@@ -433,66 +425,20 @@
       "play_count": 8
     },
     {
-      "artist_id": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY",
-      "artist_name": "Travis Scott",
+      "artist_id": "spotify:artist:5pKCCKE2ajJHZ9KAiaK11H",
+      "artist_name": "Rihanna",
+      "genres": [],
+      "play_count": 8
+    },
+    {
+      "artist_id": "spotify:artist:50co4Is1HCEo8bhOyUWKpn",
+      "artist_name": "Young Thug",
       "genres": [
-        "rap"
+        "rap",
+        "melodic rap",
+        "trap"
       ],
       "play_count": 7
-    },
-    {
-      "artist_id": "spotify:artist:2YZyLoL8N0Wb9xBt1NhZWg",
-      "artist_name": "Kendrick Lamar",
-      "genres": [
-        "hip hop",
-        "west coast hip hop"
-      ],
-      "play_count": 7
-    },
-    {
-      "artist_id": "spotify:artist:1uNFoZAHBGtllmzznpCI3s",
-      "artist_name": "Justin Bieber",
-      "genres": [],
-      "play_count": 6
-    },
-    {
-      "artist_id": "spotify:artist:1Xyo4u8uXC1ZmMpatF05PJ",
-      "artist_name": "The Weeknd",
-      "genres": [],
-      "play_count": 6
-    },
-    {
-      "artist_id": "spotify:artist:74RGMjbSsFv5RLj8wVx9Yv",
-      "artist_name": "Sharn",
-      "genres": [
-        "punjabi pop",
-        "punjabi hip hop",
-        "desi pop"
-      ],
-      "play_count": 5
-    },
-    {
-      "artist_id": "spotify:artist:1i31OYo0s5VoMCaMRJFZkJ",
-      "artist_name": "The Paul",
-      "genres": [
-        "punjabi pop",
-        "punjabi hip hop"
-      ],
-      "play_count": 5
-    },
-    {
-      "artist_id": "spotify:artist:69GGBxA162lTqCwzJG5jLp",
-      "artist_name": "The Chainsmokers",
-      "genres": [],
-      "play_count": 5
-    },
-    {
-      "artist_id": "spotify:artist:757aE44tKEUQEqRuT6GnEB",
-      "artist_name": "Roddy Ricch",
-      "genres": [
-        "melodic rap"
-      ],
-      "play_count": 5
     },
     {
       "artist_id": "spotify:artist:4YRxDV8wJFPHPTeXepOstw",
@@ -503,13 +449,69 @@
         "desi",
         "bangla pop"
       ],
+      "play_count": 7
+    },
+    {
+      "artist_id": "spotify:artist:1uNFoZAHBGtllmzznpCI3s",
+      "artist_name": "Justin Bieber",
+      "genres": [],
+      "play_count": 6
+    },
+    {
+      "artist_id": "spotify:artist:6Mv8GjQa7LKUGCAqa9qqdb",
+      "artist_name": "Vishal-Shekhar",
+      "genres": [
+        "bollywood",
+        "desi",
+        "hindi pop"
+      ],
+      "play_count": 6
+    },
+    {
+      "artist_id": "spotify:artist:2YZyLoL8N0Wb9xBt1NhZWg",
+      "artist_name": "Kendrick Lamar",
+      "genres": [
+        "hip hop",
+        "west coast hip hop"
+      ],
+      "play_count": 6
+    },
+    {
+      "artist_id": "spotify:artist:7uIbLdzzSEqnX0Pkrb56cR",
+      "artist_name": "Yo Yo Honey Singh",
+      "genres": [
+        "bollywood",
+        "hindi hip hop",
+        "desi",
+        "punjabi pop",
+        "hindi pop",
+        "punjabi hip hop"
+      ],
       "play_count": 5
     },
     {
-      "artist_id": "spotify:artist:7jVv8c5Fj3E9VhNjxT4snq",
-      "artist_name": "Lil Nas X",
+      "artist_id": "spotify:artist:6Xgp2XMz1fhVYe7i6yNAax",
+      "artist_name": "Trippie Redd",
+      "genres": [
+        "melodic rap"
+      ],
+      "play_count": 5
+    },
+    {
+      "artist_id": "spotify:artist:1Xyo4u8uXC1ZmMpatF05PJ",
+      "artist_name": "The Weeknd",
       "genres": [],
-      "play_count": 4
+      "play_count": 5
+    },
+    {
+      "artist_id": "spotify:artist:1wRPtKGflJrBx9BmLsSwlU",
+      "artist_name": "Pritam",
+      "genres": [
+        "bollywood",
+        "hindi pop",
+        "desi"
+      ],
+      "play_count": 5
     },
     {
       "artist_id": "spotify:artist:3q7HBObVc0L8jNeTe5Gofh",
@@ -521,18 +523,30 @@
       "play_count": 4
     },
     {
-      "artist_id": "spotify:artist:7n2wHs1TKAczGzO7Dd2rGr",
-      "artist_name": "Shawn Mendes",
+      "artist_id": "spotify:artist:5K4W6rqBFWDnAN6FQUkS6x",
+      "artist_name": "Kanye West",
+      "genres": [
+        "rap"
+      ],
+      "play_count": 4
+    },
+    {
+      "artist_id": "spotify:artist:6AgTAQt8XS6jRWi4sX7w49",
+      "artist_name": "Polo G",
       "genres": [],
       "play_count": 4
     },
     {
-      "artist_id": "spotify:artist:6Mv8GjQa7LKUGCAqa9qqdb",
-      "artist_name": "Vishal-Shekhar",
+      "artist_id": "spotify:artist:69GGBxA162lTqCwzJG5jLp",
+      "artist_name": "The Chainsmokers",
+      "genres": [],
+      "play_count": 4
+    },
+    {
+      "artist_id": "spotify:artist:757aE44tKEUQEqRuT6GnEB",
+      "artist_name": "Roddy Ricch",
       "genres": [
-        "bollywood",
-        "desi",
-        "hindi pop"
+        "melodic rap"
       ],
       "play_count": 4
     },
@@ -550,96 +564,101 @@
       "play_count": 4
     },
     {
-      "artist_id": "spotify:artist:6Xgp2XMz1fhVYe7i6yNAax",
-      "artist_name": "Trippie Redd",
+      "artist_id": "spotify:artist:04gDigrS5kc9YWfZHwBETP",
+      "artist_name": "Maroon 5",
+      "genres": [
+        "pop"
+      ],
+      "play_count": 4
+    },
+    {
+      "artist_id": "spotify:artist:2hlmm7s2ICUX0LVIhVFlZQ",
+      "artist_name": "Gunna",
       "genres": [
         "melodic rap"
       ],
       "play_count": 4
     },
     {
-      "artist_id": "spotify:artist:61if35zz1W11GejEkxTLEQ",
-      "artist_name": "Benny Dayal",
-      "genres": [
-        "bollywood",
-        "desi",
-        "hindi pop"
-      ],
-      "play_count": 4
-    },
-    {
-      "artist_id": "spotify:artist:5WUlDfRSoLAfcVSX1WnrxN",
-      "artist_name": "Unknown",
+      "artist_id": "spotify:artist:246dkjvS1zLTtiykXe5h60",
+      "artist_name": "Post Malone",
       "genres": [],
       "play_count": 4
     },
     {
-      "artist_id": "spotify:artist:26VFTg2z8YR0cCuwLzESi2",
-      "artist_name": "Halsey",
-      "genres": [],
-      "play_count": 3
-    },
-    {
-      "artist_id": "spotify:artist:0ZrpamOxcZybMHGg1AYtHP",
-      "artist_name": "Robin Thicke",
-      "genres": [],
-      "play_count": 3
-    },
-    {
-      "artist_id": "spotify:artist:6AgTAQt8XS6jRWi4sX7w49",
-      "artist_name": "Polo G",
-      "genres": [],
-      "play_count": 3
-    },
-    {
-      "artist_id": "spotify:artist:6jGMq4yGs7aQzuGsMgVgZR",
-      "artist_name": "Lil Tjay",
-      "genres": [
-        "brooklyn drill",
-        "melodic rap"
-      ],
-      "play_count": 3
-    },
-    {
-      "artist_id": "spotify:artist:6Dd3NScHWwnW6obMFbl1BH",
-      "artist_name": "Daya",
-      "genres": [],
-      "play_count": 3
-    },
-    {
-      "artist_id": "spotify:artist:0YinUQ50QDB7ZxSCLyQ40k",
-      "artist_name": "Mustard",
-      "genres": [],
-      "play_count": 3
-    },
-    {
-      "artist_id": "spotify:artist:3nFkdlSjzX9mRTtwJOzDYB",
-      "artist_name": "JAY-Z",
-      "genres": [
-        "hip hop",
-        "east coast hip hop",
-        "rap"
-      ],
-      "play_count": 3
-    },
-    {
-      "artist_id": "spotify:artist:7uIbLdzzSEqnX0Pkrb56cR",
-      "artist_name": "Yo Yo Honey Singh",
+      "artist_id": "spotify:artist:5f4QpKfy7ptCHwTqspnSJI",
+      "artist_name": "Neha Kakkar",
       "genres": [
         "bollywood",
-        "hindi hip hop",
-        "desi",
-        "punjabi pop",
         "hindi pop",
+        "desi",
+        "desi pop",
+        "gujarati garba"
+      ],
+      "play_count": 4
+    },
+    {
+      "artist_id": "spotify:artist:74RGMjbSsFv5RLj8wVx9Yv",
+      "artist_name": "Sharn",
+      "genres": [
+        "punjabi pop",
+        "punjabi hip hop",
+        "desi pop"
+      ],
+      "play_count": 3
+    },
+    {
+      "artist_id": "spotify:artist:1i31OYo0s5VoMCaMRJFZkJ",
+      "artist_name": "The Paul",
+      "genres": [
+        "punjabi pop",
         "punjabi hip hop"
       ],
       "play_count": 3
     },
     {
-      "artist_id": "spotify:artist:5K4W6rqBFWDnAN6FQUkS6x",
-      "artist_name": "Kanye West",
+      "artist_id": "spotify:artist:4f7KfxeHq9BiylGmyXepGt",
+      "artist_name": "Tanishk Bagchi",
       "genres": [
-        "rap"
+        "bollywood",
+        "hindi pop",
+        "desi",
+        "desi pop",
+        "gujarati garba"
+      ],
+      "play_count": 3
+    },
+    {
+      "artist_id": "spotify:artist:7n2wHs1TKAczGzO7Dd2rGr",
+      "artist_name": "Shawn Mendes",
+      "genres": [],
+      "play_count": 3
+    },
+    {
+      "artist_id": "spotify:artist:7jVv8c5Fj3E9VhNjxT4snq",
+      "artist_name": "Lil Nas X",
+      "genres": [],
+      "play_count": 3
+    },
+    {
+      "artist_id": "spotify:artist:4YgUVg4p7xtMOrOS4GjiJZ",
+      "artist_name": "Jatin-Lalit",
+      "genres": [
+        "bollywood",
+        "hindi pop",
+        "desi"
+      ],
+      "play_count": 3
+    },
+    {
+      "artist_id": "spotify:artist:5cB4d4jPYjMT326sjihQ4m",
+      "artist_name": "Shaan",
+      "genres": [
+        "bollywood",
+        "hindi pop",
+        "desi",
+        "desi pop",
+        "bangla pop"
       ],
       "play_count": 3
     },
@@ -650,13 +669,39 @@
       "play_count": 3
     },
     {
-      "artist_id": "spotify:artist:4tZwfgrHOc3mvqYlEYSvVi",
-      "artist_name": "Daft Punk",
+      "artist_id": "spotify:artist:61if35zz1W11GejEkxTLEQ",
+      "artist_name": "Benny Dayal",
       "genres": [
-        "french house",
-        "electronic",
-        "electro"
+        "bollywood",
+        "desi",
+        "hindi pop"
       ],
+      "play_count": 3
+    },
+    {
+      "artist_id": "spotify:artist:61JrslREXq98hurYL2hYoc",
+      "artist_name": "Lata Mangeshkar",
+      "genres": [
+        "ghazal",
+        "bollywood",
+        "bhajan",
+        "hindi pop",
+        "marathi pop"
+      ],
+      "play_count": 3
+    },
+    {
+      "artist_id": "spotify:artist:7bXgB6jMjp9ATFy66eO08Z",
+      "artist_name": "Chris Brown",
+      "genres": [
+        "r&b"
+      ],
+      "play_count": 3
+    },
+    {
+      "artist_id": "spotify:artist:0iEtIxbK0KxaSlF7G42ZOp",
+      "artist_name": "Metro Boomin",
+      "genres": [],
       "play_count": 3
     },
     {
@@ -666,29 +711,53 @@
       "play_count": 3
     },
     {
-      "artist_id": "spotify:artist:04gDigrS5kc9YWfZHwBETP",
-      "artist_name": "Maroon 5",
+      "artist_id": "spotify:artist:4O15NlyKLIASxsJ0PrXPfz",
+      "artist_name": "Lil Uzi Vert",
       "genres": [
-        "pop"
+        "melodic rap"
       ],
       "play_count": 3
     },
     {
-      "artist_id": "spotify:artist:4O15NlyKLIASxsJ0PrXPfz",
-      "artist_name": "Unknown",
-      "genres": [],
-      "play_count": 3
-    },
-    {
-      "artist_id": "spotify:artist:2hlmm7s2ICUX0LVIhVFlZQ",
-      "artist_name": "Unknown",
+      "artist_id": "spotify:artist:5WUlDfRSoLAfcVSX1WnrxN",
+      "artist_name": "Sia",
       "genres": [],
       "play_count": 3
     },
     {
       "artist_id": "spotify:artist:4cAERazLlAzVGA10ORWaUP",
-      "artist_name": "Unknown",
-      "genres": [],
+      "artist_name": "Manoj Muntashir",
+      "genres": [
+        "bhajan",
+        "bollywood",
+        "hindi pop",
+        "devotional"
+      ],
+      "play_count": 3
+    },
+    {
+      "artist_id": "spotify:artist:1dVygo6tRFXC8CSWURQJq2",
+      "artist_name": "Sonu Nigam",
+      "genres": [
+        "kannada pop",
+        "bollywood",
+        "sandalwood",
+        "hindi pop",
+        "desi",
+        "marathi pop"
+      ],
+      "play_count": 3
+    },
+    {
+      "artist_id": "spotify:artist:6LEG9Ld1aLImEFEVHdWNSB",
+      "artist_name": "AP Dhillon",
+      "genres": [
+        "punjabi hip hop",
+        "punjabi pop",
+        "desi",
+        "bhangra",
+        "desi hip hop"
+      ],
       "play_count": 3
     },
     {
@@ -717,24 +786,6 @@
       "play_count": 2
     },
     {
-      "artist_id": "spotify:artist:6S2OmqARrzebs0tKUEyXyp",
-      "artist_name": "Demi Lovato",
-      "genres": [],
-      "play_count": 2
-    },
-    {
-      "artist_id": "spotify:artist:4f7KfxeHq9BiylGmyXepGt",
-      "artist_name": "Tanishk Bagchi",
-      "genres": [
-        "bollywood",
-        "hindi pop",
-        "desi",
-        "desi pop",
-        "gujarati garba"
-      ],
-      "play_count": 2
-    },
-    {
       "artist_id": "spotify:artist:1tqysapcCh1lWEAc9dIFpa",
       "artist_name": "Jubin Nautiyal",
       "genres": [
@@ -755,28 +806,9 @@
         "desi"
       ],
       "play_count": 2
-    },
-    {
-      "artist_id": "spotify:artist:7gnhXaxCLcHKi61BD2JRcz",
-      "artist_name": "Sahil Kaushal",
-      "genres": [],
-      "play_count": 2
-    },
-    {
-      "artist_id": "spotify:artist:3hcs9uc56yIGFCSy9leWe7",
-      "artist_name": "Lil Durk",
-      "genres": [
-        "chicago drill",
-        "drill"
-      ],
-      "play_count": 2
     }
   ],
   "daily_plays": [
-    {
-      "date": "2025-12-27",
-      "play_count": 22
-    },
     {
       "date": "2025-12-28",
       "play_count": 75
@@ -803,13 +835,17 @@
     },
     {
       "date": "2026-01-03",
-      "play_count": 113
+      "play_count": 50
+    },
+    {
+      "date": "2026-01-04",
+      "play_count": 0
     }
   ],
   "hourly_distribution": [
     {
       "hour": 0,
-      "play_count": 8
+      "play_count": 0
     },
     {
       "hour": 1,
@@ -881,7 +917,7 @@
     },
     {
       "hour": 18,
-      "play_count": 11
+      "play_count": 6
     },
     {
       "hour": 19,
@@ -889,108 +925,108 @@
     },
     {
       "hour": 20,
-      "play_count": 7
+      "play_count": 5
     },
     {
       "hour": 21,
-      "play_count": 2
+      "play_count": 1
     },
     {
       "hour": 22,
-      "play_count": 8
+      "play_count": 0
     },
     {
       "hour": 23,
-      "play_count": 1
+      "play_count": 0
     }
   ],
   "top_genres": [
     {
-      "genre": "rap",
-      "play_count": 75
-    },
-    {
-      "genre": "melodic rap",
-      "play_count": 42
+      "genre": "bollywood",
+      "play_count": 121
     },
     {
       "genre": "hindi pop",
-      "play_count": 37
-    },
-    {
-      "genre": "bollywood",
-      "play_count": 37
+      "play_count": 106
     },
     {
       "genre": "desi",
-      "play_count": 32
+      "play_count": 103
+    },
+    {
+      "genre": "rap",
+      "play_count": 83
+    },
+    {
+      "genre": "melodic rap",
+      "play_count": 56
+    },
+    {
+      "genre": "emo rap",
+      "play_count": 29
+    },
+    {
+      "genre": "punjabi pop",
+      "play_count": 26
     },
     {
       "genre": "hip hop",
       "play_count": 25
     },
     {
-      "genre": "emo rap",
-      "play_count": 22
-    },
-    {
-      "genre": "punjabi pop",
-      "play_count": 13
-    },
-    {
       "genre": "punjabi hip hop",
-      "play_count": 13
-    },
-    {
-      "genre": "west coast hip hop",
-      "play_count": 9
-    },
-    {
-      "genre": "bangla pop",
-      "play_count": 9
-    },
-    {
-      "genre": "trap",
-      "play_count": 8
+      "play_count": 21
     },
     {
       "genre": "desi pop",
-      "play_count": 7
+      "play_count": 18
     },
     {
-      "genre": "east coast hip hop",
-      "play_count": 7
-    },
-    {
-      "genre": "old school hip hop",
-      "play_count": 6
-    },
-    {
-      "genre": "marathi pop",
-      "play_count": 6
-    },
-    {
-      "genre": "gujarati garba",
-      "play_count": 4
+      "genre": "bangla pop",
+      "play_count": 14
     },
     {
       "genre": "bhajan",
-      "play_count": 4
+      "play_count": 13
     },
     {
-      "genre": "kannada pop",
-      "play_count": 4
+      "genre": "marathi pop",
+      "play_count": 13
     },
     {
-      "genre": "ghazal",
-      "play_count": 4
+      "genre": "bhangra",
+      "play_count": 12
+    },
+    {
+      "genre": "gujarati garba",
+      "play_count": 10
+    },
+    {
+      "genre": "sufi",
+      "play_count": 9
+    },
+    {
+      "genre": "desi hip hop",
+      "play_count": 9
+    },
+    {
+      "genre": "west coast hip hop",
+      "play_count": 8
+    },
+    {
+      "genre": "devotional",
+      "play_count": 8
+    },
+    {
+      "genre": "hindi hip hop",
+      "play_count": 8
     }
   ],
   "windows": {
     "all_time": {
       "label": "all_time",
       "start": "2025-12-26T00:00:00-08:00",
-      "end": "2026-01-03T00:00:00-08:00",
+      "end": "2026-01-04T00:00:00-08:00",
       "top_tracks": [
         {
           "track_id": "spotify:track:2XHzzp1j4IfTNp1FTn7YFg",
@@ -1004,83 +1040,13 @@
           "track_name": "Mi Amor",
           "artist_name": "Sharn, The Paul",
           "album_name": "Mi Amor",
-          "play_count": 5
+          "play_count": 3
         },
         {
           "track_id": "spotify:track:3s4mrPrEFFPF0LmAfutW0n",
           "track_name": "The London (feat. J. Cole & Travis Scott)",
           "artist_name": "Young Thug, J. Cole, Travis Scott",
           "album_name": "So Much Fun",
-          "play_count": 4
-        },
-        {
-          "track_id": "spotify:track:5wWAwzGp2OaaoIkwcz6wZs",
-          "track_name": "Life's A Mess (feat. Halsey)",
-          "artist_name": "Juice WRLD, Halsey",
-          "album_name": "Legends Never Die",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:4B0JvthVoAAuygILe3n4Bs",
-          "track_name": "What Do You Mean?",
-          "artist_name": "Justin Bieber",
-          "album_name": "Purpose (Deluxe)",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:67BtfxlNbhBmCDR2L2l8qd",
-          "track_name": "MONTERO (Call Me By Your Name)",
-          "artist_name": "Lil Nas X",
-          "album_name": "MONTERO (Call Me By Your Name)",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:5zDQlhcJ5KOoXeSMGwiuJY",
-          "track_name": "Give It 2 U",
-          "artist_name": "Robin Thicke, Kendrick Lamar",
-          "album_name": "Blurred Lines (Deluxe)",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:6uFn47ACjqYkc0jADwEdj1",
-          "track_name": "Pop Out (feat. Lil Tjay)",
-          "artist_name": "Polo G, Lil Tjay",
-          "album_name": "Die A Legend",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:0w75KG0DuLDi6tdHmEMovD",
-          "track_name": "Don't Let Me Down",
-          "artist_name": "The Chainsmokers, Daya",
-          "album_name": "Collage EP",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:3QzAOrNlsabgbMwlZt7TAY",
-          "track_name": "Ballin' (with Roddy Ricch)",
-          "artist_name": "Mustard, Roddy Ricch",
-          "album_name": "Perfect Ten",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:0RrR3wg4ezBVwm7lyeybir",
-          "track_name": "Suno- Na Sangemarmar",
-          "artist_name": "Arijit Singh",
-          "album_name": "Youngistaan",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:5O59s7bCgTFsXDXlWecyQ1",
-          "track_name": "Apparently",
-          "artist_name": "J. Cole",
-          "album_name": "2014 Forest Hills Drive",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:49FYlytm3dAAraYgpoJZux",
-          "track_name": "Umbrella",
-          "artist_name": "Rihanna, JAY-Z",
-          "album_name": "Good Girl Gone Bad: Reloaded",
           "play_count": 3
         },
         {
@@ -1109,13 +1075,6 @@
           "track_name": "21 Questions",
           "artist_name": "50 Cent, Nate Dogg",
           "album_name": "Get Rich Or Die Tryin'",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:0yvPEnB032fojLfVluFjUv",
-          "track_name": "Sorry Not Sorry",
-          "artist_name": "Demi Lovato",
-          "album_name": "Tell Me You Love Me",
           "play_count": 2
         },
         {
@@ -1175,13 +1134,6 @@
           "play_count": 2
         },
         {
-          "track_id": "spotify:track:01aTsQoKoeXofSTvKuunzv",
-          "track_name": "Lean On",
-          "artist_name": "Major Lazer, DJ Snake, M\u00d8",
-          "album_name": "Peace Is The Mission",
-          "play_count": 2
-        },
-        {
           "track_id": "spotify:track:5pDUMdIiW0rNLzFryqpC9j",
           "track_name": "Diamonds",
           "artist_name": "Rihanna",
@@ -1196,151 +1148,235 @@
           "play_count": 2
         },
         {
+          "track_id": "spotify:track:5wWAwzGp2OaaoIkwcz6wZs",
+          "track_name": "Life's A Mess (feat. Halsey)",
+          "artist_name": "Juice WRLD, Halsey",
+          "album_name": "Legends Never Die",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:4B0JvthVoAAuygILe3n4Bs",
+          "track_name": "What Do You Mean?",
+          "artist_name": "Justin Bieber",
+          "album_name": "Purpose (Deluxe)",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:67BtfxlNbhBmCDR2L2l8qd",
+          "track_name": "MONTERO (Call Me By Your Name)",
+          "artist_name": "Lil Nas X",
+          "album_name": "MONTERO (Call Me By Your Name)",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:6uFn47ACjqYkc0jADwEdj1",
+          "track_name": "Pop Out (feat. Lil Tjay)",
+          "artist_name": "Polo G, Lil Tjay",
+          "album_name": "Die A Legend",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:0w75KG0DuLDi6tdHmEMovD",
+          "track_name": "Don't Let Me Down",
+          "artist_name": "The Chainsmokers, Daya",
+          "album_name": "Collage EP",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:3QzAOrNlsabgbMwlZt7TAY",
+          "track_name": "Ballin' (with Roddy Ricch)",
+          "artist_name": "Mustard, Roddy Ricch",
+          "album_name": "Perfect Ten",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:0RrR3wg4ezBVwm7lyeybir",
+          "track_name": "Suno- Na Sangemarmar",
+          "artist_name": "Arijit Singh",
+          "album_name": "Youngistaan",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:5O59s7bCgTFsXDXlWecyQ1",
+          "track_name": "Apparently",
+          "artist_name": "J. Cole",
+          "album_name": "2014 Forest Hills Drive",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:5EYZZvmNAH5VZCwuzYJqoA",
+          "track_name": "Chand Sifarish",
+          "artist_name": "Jatin-Lalit, Shaan, Kailash Kher, Prasoon Joshi",
+          "album_name": "Fanaa",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:49FYlytm3dAAraYgpoJZux",
+          "track_name": "Umbrella",
+          "artist_name": "Rihanna, JAY-Z",
+          "album_name": "Good Girl Gone Bad: Reloaded",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:0yvPEnB032fojLfVluFjUv",
+          "track_name": "Sorry Not Sorry",
+          "artist_name": "Demi Lovato",
+          "album_name": "Tell Me You Love Me",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:01aTsQoKoeXofSTvKuunzv",
+          "track_name": "Lean On",
+          "artist_name": "Major Lazer, DJ Snake, M\u00d8",
+          "album_name": "Peace Is The Mission",
+          "play_count": 1
+        },
+        {
           "track_id": "spotify:track:1gwO79MdYdumgIjxq8eCxB",
           "track_name": "Bahara",
           "artist_name": "Vishal-Shekhar, Shreya Ghoshal, Sona Mohapatra",
           "album_name": "I Hate Luv Storys (Original Motion Picture Soundtrack)",
-          "play_count": 2
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:2VKHWIONh47ntN7wyoSxEQ",
           "track_name": "The Grinch",
           "artist_name": "Trippie Redd",
           "album_name": "A Love Letter To You 4",
-          "play_count": 2
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:6RtPijgfPKROxEzTHNRiDp",
+          "track_name": "Rude",
+          "artist_name": "MAGIC!",
+          "album_name": "Don't Kill the Magic",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:5zDQlhcJ5KOoXeSMGwiuJY",
+          "track_name": "Give It 2 U",
+          "artist_name": "Robin Thicke, Kendrick Lamar",
+          "album_name": "Blurred Lines (Deluxe)",
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:6IYS7wNZxRBvLpwMZDbcdP",
           "track_name": "Jai Jai Shivshankar",
           "artist_name": "Vishal-Shekhar, Vishal Dadlani, Benny Dayal, Kumaar",
           "album_name": "War",
-          "play_count": 2
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:7hpH1Ijoygw5J5XUfVS9hh",
           "track_name": "Kya Khoob Lagti Ho",
           "artist_name": "Mukesh, Kanchan",
           "album_name": "Dharmatma (Original Motion Picture Soundtrack)",
-          "play_count": 2
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:4cg1yakyRSIOjxKM2I7J1q",
           "track_name": "Digits",
           "artist_name": "Young Thug",
           "album_name": "Slime Season 3",
-          "play_count": 2
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:7MXVkk9YMctZqd1Srtv4MB",
           "track_name": "Starboy",
           "artist_name": "The Weeknd, Daft Punk",
           "album_name": "Starboy",
-          "play_count": 2
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:2UXqAinFTSFA3Y0nlWPHQn",
           "track_name": "Mehndi Laga Ke Rakhna",
           "artist_name": "Lata Mangeshkar, Udit Narayan",
           "album_name": "Dilwale Dulhania Le Jayenge (Original Motion Picture Soundtrack)",
-          "play_count": 2
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:3BtuIIrQlkujKPuWF2B85z",
           "track_name": "Too Good",
           "artist_name": "Drake, Rihanna",
           "album_name": "Views",
-          "play_count": 2
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:5BrTUo0xP1wKXLJWUaGFtk",
+          "track_name": "Loyal (feat. Lil Wayne & Tyga)",
+          "artist_name": "Chris Brown, Lil Wayne, Tyga",
+          "album_name": "X (Expanded Edition)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:5e574bhjycX1eH2l4Auage",
+          "track_name": "Grammys",
+          "artist_name": "Drake, Future",
+          "album_name": "Views",
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:1vnnXMrBeEWiRg3YCMCjQq",
           "track_name": "Despacito - Remix",
           "artist_name": "Luis Fonsi, Daddy Yankee, Justin Bieber",
           "album_name": "VIDA",
-          "play_count": 2
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:5EYZZvmNAH5VZCwuzYJqoA",
-          "track_name": "Chand Sifarish",
-          "artist_name": "Unknown, Unknown, Unknown, Unknown",
-          "album_name": "Fanaa",
-          "play_count": 2
+          "track_id": "spotify:track:2FY7b99s15jUprqC0M5NCT",
+          "track_name": "Natural",
+          "artist_name": "Imagine Dragons",
+          "album_name": "Origins (Deluxe)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:4zkFR93VC5H04YhnYxr2zz",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:0bGLvHd0ApdT4t0shCfpzG",
+          "track_name": "Side Effects",
+          "artist_name": "The Chainsmokers, Emily Warren",
+          "album_name": "Sick Boy",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:5M7LdQfurIG70nbvlSAO07",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:5GXAXm5YOmYT0kL5jHvYBt",
+          "track_name": "I Feel It Coming",
+          "artist_name": "The Weeknd, Daft Punk",
+          "album_name": "Starboy",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:1p0rEzrK7YtdRZVtiyV7RN",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:5PvwPy5eRO8BPwpRzCHK3D",
+          "track_name": "Sunn Raha Hai (Male Version)",
+          "artist_name": "Ankit Tiwari",
+          "album_name": "Aashiqui 2",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:28veUNu4veN0LOBVa0nFw8",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:0pPGUL7171TRGgI6wyP8wP",
+          "track_name": "Tumhe Jo Maine Dekha",
+          "artist_name": "Abhijeet, Shreya Ghoshal",
+          "album_name": "Main Hoon Na",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:32lItqlMi4LBhb4k0BaSaC",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:2YpeDb67231RjR0MgVLzsG",
+          "track_name": "Old Town Road (feat. Billy Ray Cyrus) - Remix",
+          "artist_name": "Lil Nas X, Billy Ray Cyrus",
+          "album_name": "7",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:0veO6y9anwdVTaRuW7y8NJ",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:6Z1Q31m2SQt7uLfyqce6ot",
+          "track_name": "To Brazil!",
+          "artist_name": "Vengaboys",
+          "album_name": "The Party Album!",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:6WrI0LAC5M1Rw2MnX2ZvEg",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:4PklAHGXT5ityno3IA8SKd",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:0JssjDh3UWEgjUslVZgHJG",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:4HfmI5Yisll9PCOjJhtijw",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:17opN752ZQpNuoptelsNQ1",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:2P3SLxeQHPqh8qKB6gtJY2",
+          "track_name": "Poetic Justice",
+          "artist_name": "Kendrick Lamar, Drake",
+          "album_name": "good kid, m.A.A.d city (Deluxe)",
+          "play_count": 1
         }
       ],
       "top_artists": [
@@ -1351,7 +1387,7 @@
             "melodic rap",
             "emo rap"
           ],
-          "play_count": 22
+          "play_count": 29
         },
         {
           "artist_id": "spotify:artist:3TVXtAsR1Inumwj472S9r4",
@@ -1359,7 +1395,7 @@
           "genres": [
             "rap"
           ],
-          "play_count": 17
+          "play_count": 19
         },
         {
           "artist_id": "spotify:artist:1RyvyyTE3xzB2ZywiAwp0i",
@@ -1367,7 +1403,7 @@
           "genres": [
             "rap"
           ],
-          "play_count": 14
+          "play_count": 16
         },
         {
           "artist_id": "spotify:artist:55Aa2cqylxrFIXC767Z865",
@@ -1376,23 +1412,15 @@
             "rap",
             "hip hop"
           ],
-          "play_count": 13
+          "play_count": 15
         },
         {
-          "artist_id": "spotify:artist:5pKCCKE2ajJHZ9KAiaK11H",
-          "artist_name": "Rihanna",
-          "genres": [],
-          "play_count": 9
-        },
-        {
-          "artist_id": "spotify:artist:50co4Is1HCEo8bhOyUWKpn",
-          "artist_name": "Young Thug",
+          "artist_id": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY",
+          "artist_name": "Travis Scott",
           "genres": [
-            "rap",
-            "melodic rap",
-            "trap"
+            "rap"
           ],
-          "play_count": 8
+          "play_count": 10
         },
         {
           "artist_id": "spotify:artist:6l3HvQ5sa6mXTsMTB19rO5",
@@ -1409,66 +1437,20 @@
           "play_count": 8
         },
         {
-          "artist_id": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY",
-          "artist_name": "Travis Scott",
+          "artist_id": "spotify:artist:5pKCCKE2ajJHZ9KAiaK11H",
+          "artist_name": "Rihanna",
+          "genres": [],
+          "play_count": 8
+        },
+        {
+          "artist_id": "spotify:artist:50co4Is1HCEo8bhOyUWKpn",
+          "artist_name": "Young Thug",
           "genres": [
-            "rap"
+            "rap",
+            "melodic rap",
+            "trap"
           ],
           "play_count": 7
-        },
-        {
-          "artist_id": "spotify:artist:2YZyLoL8N0Wb9xBt1NhZWg",
-          "artist_name": "Kendrick Lamar",
-          "genres": [
-            "hip hop",
-            "west coast hip hop"
-          ],
-          "play_count": 7
-        },
-        {
-          "artist_id": "spotify:artist:1uNFoZAHBGtllmzznpCI3s",
-          "artist_name": "Justin Bieber",
-          "genres": [],
-          "play_count": 6
-        },
-        {
-          "artist_id": "spotify:artist:1Xyo4u8uXC1ZmMpatF05PJ",
-          "artist_name": "The Weeknd",
-          "genres": [],
-          "play_count": 6
-        },
-        {
-          "artist_id": "spotify:artist:74RGMjbSsFv5RLj8wVx9Yv",
-          "artist_name": "Sharn",
-          "genres": [
-            "punjabi pop",
-            "punjabi hip hop",
-            "desi pop"
-          ],
-          "play_count": 5
-        },
-        {
-          "artist_id": "spotify:artist:1i31OYo0s5VoMCaMRJFZkJ",
-          "artist_name": "The Paul",
-          "genres": [
-            "punjabi pop",
-            "punjabi hip hop"
-          ],
-          "play_count": 5
-        },
-        {
-          "artist_id": "spotify:artist:69GGBxA162lTqCwzJG5jLp",
-          "artist_name": "The Chainsmokers",
-          "genres": [],
-          "play_count": 5
-        },
-        {
-          "artist_id": "spotify:artist:757aE44tKEUQEqRuT6GnEB",
-          "artist_name": "Roddy Ricch",
-          "genres": [
-            "melodic rap"
-          ],
-          "play_count": 5
         },
         {
           "artist_id": "spotify:artist:4YRxDV8wJFPHPTeXepOstw",
@@ -1479,13 +1461,69 @@
             "desi",
             "bangla pop"
           ],
+          "play_count": 7
+        },
+        {
+          "artist_id": "spotify:artist:1uNFoZAHBGtllmzznpCI3s",
+          "artist_name": "Justin Bieber",
+          "genres": [],
+          "play_count": 6
+        },
+        {
+          "artist_id": "spotify:artist:6Mv8GjQa7LKUGCAqa9qqdb",
+          "artist_name": "Vishal-Shekhar",
+          "genres": [
+            "bollywood",
+            "desi",
+            "hindi pop"
+          ],
+          "play_count": 6
+        },
+        {
+          "artist_id": "spotify:artist:2YZyLoL8N0Wb9xBt1NhZWg",
+          "artist_name": "Kendrick Lamar",
+          "genres": [
+            "hip hop",
+            "west coast hip hop"
+          ],
+          "play_count": 6
+        },
+        {
+          "artist_id": "spotify:artist:7uIbLdzzSEqnX0Pkrb56cR",
+          "artist_name": "Yo Yo Honey Singh",
+          "genres": [
+            "bollywood",
+            "hindi hip hop",
+            "desi",
+            "punjabi pop",
+            "hindi pop",
+            "punjabi hip hop"
+          ],
           "play_count": 5
         },
         {
-          "artist_id": "spotify:artist:7jVv8c5Fj3E9VhNjxT4snq",
-          "artist_name": "Lil Nas X",
+          "artist_id": "spotify:artist:6Xgp2XMz1fhVYe7i6yNAax",
+          "artist_name": "Trippie Redd",
+          "genres": [
+            "melodic rap"
+          ],
+          "play_count": 5
+        },
+        {
+          "artist_id": "spotify:artist:1Xyo4u8uXC1ZmMpatF05PJ",
+          "artist_name": "The Weeknd",
           "genres": [],
-          "play_count": 4
+          "play_count": 5
+        },
+        {
+          "artist_id": "spotify:artist:1wRPtKGflJrBx9BmLsSwlU",
+          "artist_name": "Pritam",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi"
+          ],
+          "play_count": 5
         },
         {
           "artist_id": "spotify:artist:3q7HBObVc0L8jNeTe5Gofh",
@@ -1497,18 +1535,30 @@
           "play_count": 4
         },
         {
-          "artist_id": "spotify:artist:7n2wHs1TKAczGzO7Dd2rGr",
-          "artist_name": "Shawn Mendes",
+          "artist_id": "spotify:artist:5K4W6rqBFWDnAN6FQUkS6x",
+          "artist_name": "Kanye West",
+          "genres": [
+            "rap"
+          ],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:6AgTAQt8XS6jRWi4sX7w49",
+          "artist_name": "Polo G",
           "genres": [],
           "play_count": 4
         },
         {
-          "artist_id": "spotify:artist:6Mv8GjQa7LKUGCAqa9qqdb",
-          "artist_name": "Vishal-Shekhar",
+          "artist_id": "spotify:artist:69GGBxA162lTqCwzJG5jLp",
+          "artist_name": "The Chainsmokers",
+          "genres": [],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:757aE44tKEUQEqRuT6GnEB",
+          "artist_name": "Roddy Ricch",
           "genres": [
-            "bollywood",
-            "desi",
-            "hindi pop"
+            "melodic rap"
           ],
           "play_count": 4
         },
@@ -1526,96 +1576,101 @@
           "play_count": 4
         },
         {
-          "artist_id": "spotify:artist:6Xgp2XMz1fhVYe7i6yNAax",
-          "artist_name": "Trippie Redd",
+          "artist_id": "spotify:artist:04gDigrS5kc9YWfZHwBETP",
+          "artist_name": "Maroon 5",
+          "genres": [
+            "pop"
+          ],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:2hlmm7s2ICUX0LVIhVFlZQ",
+          "artist_name": "Gunna",
           "genres": [
             "melodic rap"
           ],
           "play_count": 4
         },
         {
-          "artist_id": "spotify:artist:61if35zz1W11GejEkxTLEQ",
-          "artist_name": "Benny Dayal",
-          "genres": [
-            "bollywood",
-            "desi",
-            "hindi pop"
-          ],
-          "play_count": 4
-        },
-        {
-          "artist_id": "spotify:artist:5WUlDfRSoLAfcVSX1WnrxN",
-          "artist_name": "Unknown",
+          "artist_id": "spotify:artist:246dkjvS1zLTtiykXe5h60",
+          "artist_name": "Post Malone",
           "genres": [],
           "play_count": 4
         },
         {
-          "artist_id": "spotify:artist:26VFTg2z8YR0cCuwLzESi2",
-          "artist_name": "Halsey",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:0ZrpamOxcZybMHGg1AYtHP",
-          "artist_name": "Robin Thicke",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:6AgTAQt8XS6jRWi4sX7w49",
-          "artist_name": "Polo G",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:6jGMq4yGs7aQzuGsMgVgZR",
-          "artist_name": "Lil Tjay",
-          "genres": [
-            "brooklyn drill",
-            "melodic rap"
-          ],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:6Dd3NScHWwnW6obMFbl1BH",
-          "artist_name": "Daya",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:0YinUQ50QDB7ZxSCLyQ40k",
-          "artist_name": "Mustard",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:3nFkdlSjzX9mRTtwJOzDYB",
-          "artist_name": "JAY-Z",
-          "genres": [
-            "hip hop",
-            "east coast hip hop",
-            "rap"
-          ],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:7uIbLdzzSEqnX0Pkrb56cR",
-          "artist_name": "Yo Yo Honey Singh",
+          "artist_id": "spotify:artist:5f4QpKfy7ptCHwTqspnSJI",
+          "artist_name": "Neha Kakkar",
           "genres": [
             "bollywood",
-            "hindi hip hop",
-            "desi",
-            "punjabi pop",
             "hindi pop",
+            "desi",
+            "desi pop",
+            "gujarati garba"
+          ],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:74RGMjbSsFv5RLj8wVx9Yv",
+          "artist_name": "Sharn",
+          "genres": [
+            "punjabi pop",
+            "punjabi hip hop",
+            "desi pop"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:1i31OYo0s5VoMCaMRJFZkJ",
+          "artist_name": "The Paul",
+          "genres": [
+            "punjabi pop",
             "punjabi hip hop"
           ],
           "play_count": 3
         },
         {
-          "artist_id": "spotify:artist:5K4W6rqBFWDnAN6FQUkS6x",
-          "artist_name": "Kanye West",
+          "artist_id": "spotify:artist:4f7KfxeHq9BiylGmyXepGt",
+          "artist_name": "Tanishk Bagchi",
           "genres": [
-            "rap"
+            "bollywood",
+            "hindi pop",
+            "desi",
+            "desi pop",
+            "gujarati garba"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:7n2wHs1TKAczGzO7Dd2rGr",
+          "artist_name": "Shawn Mendes",
+          "genres": [],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:7jVv8c5Fj3E9VhNjxT4snq",
+          "artist_name": "Lil Nas X",
+          "genres": [],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:4YgUVg4p7xtMOrOS4GjiJZ",
+          "artist_name": "Jatin-Lalit",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:5cB4d4jPYjMT326sjihQ4m",
+          "artist_name": "Shaan",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi",
+            "desi pop",
+            "bangla pop"
           ],
           "play_count": 3
         },
@@ -1626,13 +1681,39 @@
           "play_count": 3
         },
         {
-          "artist_id": "spotify:artist:4tZwfgrHOc3mvqYlEYSvVi",
-          "artist_name": "Daft Punk",
+          "artist_id": "spotify:artist:61if35zz1W11GejEkxTLEQ",
+          "artist_name": "Benny Dayal",
           "genres": [
-            "french house",
-            "electronic",
-            "electro"
+            "bollywood",
+            "desi",
+            "hindi pop"
           ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:61JrslREXq98hurYL2hYoc",
+          "artist_name": "Lata Mangeshkar",
+          "genres": [
+            "ghazal",
+            "bollywood",
+            "bhajan",
+            "hindi pop",
+            "marathi pop"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:7bXgB6jMjp9ATFy66eO08Z",
+          "artist_name": "Chris Brown",
+          "genres": [
+            "r&b"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:0iEtIxbK0KxaSlF7G42ZOp",
+          "artist_name": "Metro Boomin",
+          "genres": [],
           "play_count": 3
         },
         {
@@ -1642,29 +1723,53 @@
           "play_count": 3
         },
         {
-          "artist_id": "spotify:artist:04gDigrS5kc9YWfZHwBETP",
-          "artist_name": "Maroon 5",
+          "artist_id": "spotify:artist:4O15NlyKLIASxsJ0PrXPfz",
+          "artist_name": "Lil Uzi Vert",
           "genres": [
-            "pop"
+            "melodic rap"
           ],
           "play_count": 3
         },
         {
-          "artist_id": "spotify:artist:4O15NlyKLIASxsJ0PrXPfz",
-          "artist_name": "Unknown",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:2hlmm7s2ICUX0LVIhVFlZQ",
-          "artist_name": "Unknown",
+          "artist_id": "spotify:artist:5WUlDfRSoLAfcVSX1WnrxN",
+          "artist_name": "Sia",
           "genres": [],
           "play_count": 3
         },
         {
           "artist_id": "spotify:artist:4cAERazLlAzVGA10ORWaUP",
-          "artist_name": "Unknown",
-          "genres": [],
+          "artist_name": "Manoj Muntashir",
+          "genres": [
+            "bhajan",
+            "bollywood",
+            "hindi pop",
+            "devotional"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:1dVygo6tRFXC8CSWURQJq2",
+          "artist_name": "Sonu Nigam",
+          "genres": [
+            "kannada pop",
+            "bollywood",
+            "sandalwood",
+            "hindi pop",
+            "desi",
+            "marathi pop"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:6LEG9Ld1aLImEFEVHdWNSB",
+          "artist_name": "AP Dhillon",
+          "genres": [
+            "punjabi hip hop",
+            "punjabi pop",
+            "desi",
+            "bhangra",
+            "desi hip hop"
+          ],
           "play_count": 3
         },
         {
@@ -1693,24 +1798,6 @@
           "play_count": 2
         },
         {
-          "artist_id": "spotify:artist:6S2OmqARrzebs0tKUEyXyp",
-          "artist_name": "Demi Lovato",
-          "genres": [],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:4f7KfxeHq9BiylGmyXepGt",
-          "artist_name": "Tanishk Bagchi",
-          "genres": [
-            "bollywood",
-            "hindi pop",
-            "desi",
-            "desi pop",
-            "gujarati garba"
-          ],
-          "play_count": 2
-        },
-        {
           "artist_id": "spotify:artist:1tqysapcCh1lWEAc9dIFpa",
           "artist_name": "Jubin Nautiyal",
           "genres": [
@@ -1731,484 +1818,459 @@
             "desi"
           ],
           "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:7gnhXaxCLcHKi61BD2JRcz",
-          "artist_name": "Sahil Kaushal",
-          "genres": [],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:3hcs9uc56yIGFCSy9leWe7",
-          "artist_name": "Lil Durk",
-          "genres": [
-            "chicago drill",
-            "drill"
-          ],
-          "play_count": 2
         }
       ],
       "top_genres": [
         {
-          "genre": "rap",
-          "play_count": 75
-        },
-        {
-          "genre": "melodic rap",
-          "play_count": 42
+          "genre": "bollywood",
+          "play_count": 121
         },
         {
           "genre": "hindi pop",
-          "play_count": 37
-        },
-        {
-          "genre": "bollywood",
-          "play_count": 37
+          "play_count": 106
         },
         {
           "genre": "desi",
-          "play_count": 32
+          "play_count": 103
+        },
+        {
+          "genre": "rap",
+          "play_count": 83
+        },
+        {
+          "genre": "melodic rap",
+          "play_count": 56
+        },
+        {
+          "genre": "emo rap",
+          "play_count": 29
+        },
+        {
+          "genre": "punjabi pop",
+          "play_count": 26
         },
         {
           "genre": "hip hop",
           "play_count": 25
         },
         {
-          "genre": "emo rap",
-          "play_count": 22
-        },
-        {
-          "genre": "punjabi pop",
-          "play_count": 13
-        },
-        {
           "genre": "punjabi hip hop",
-          "play_count": 13
-        },
-        {
-          "genre": "west coast hip hop",
-          "play_count": 9
-        },
-        {
-          "genre": "bangla pop",
-          "play_count": 9
-        },
-        {
-          "genre": "trap",
-          "play_count": 8
+          "play_count": 21
         },
         {
           "genre": "desi pop",
-          "play_count": 7
+          "play_count": 18
         },
         {
-          "genre": "east coast hip hop",
-          "play_count": 7
-        },
-        {
-          "genre": "old school hip hop",
-          "play_count": 6
-        },
-        {
-          "genre": "marathi pop",
-          "play_count": 6
-        },
-        {
-          "genre": "gujarati garba",
-          "play_count": 4
+          "genre": "bangla pop",
+          "play_count": 14
         },
         {
           "genre": "bhajan",
-          "play_count": 4
+          "play_count": 13
         },
         {
-          "genre": "kannada pop",
-          "play_count": 4
+          "genre": "marathi pop",
+          "play_count": 13
         },
         {
-          "genre": "ghazal",
-          "play_count": 4
+          "genre": "bhangra",
+          "play_count": 12
+        },
+        {
+          "genre": "gujarati garba",
+          "play_count": 10
+        },
+        {
+          "genre": "sufi",
+          "play_count": 9
+        },
+        {
+          "genre": "desi hip hop",
+          "play_count": 9
+        },
+        {
+          "genre": "west coast hip hop",
+          "play_count": 8
+        },
+        {
+          "genre": "devotional",
+          "play_count": 8
+        },
+        {
+          "genre": "hindi hip hop",
+          "play_count": 8
         }
       ],
-      "total_play_count": 292,
-      "unique_track_count": 193,
-      "unique_artist_count": 146
+      "total_play_count": 229,
+      "unique_track_count": 194,
+      "unique_artist_count": 190
     },
     "year_to_date": {
       "label": "year_to_date",
       "start": "2026-01-01T00:00:00-08:00",
-      "end": "2026-01-03T00:00:00-08:00",
+      "end": "2026-01-04T00:00:00-08:00",
       "top_tracks": [
         {
           "track_id": "spotify:track:6abZ3FsLpBIKhjq387M6VH",
           "track_name": "Mi Amor",
           "artist_name": "Sharn, The Paul",
           "album_name": "Mi Amor",
-          "play_count": 4
+          "play_count": 2
         },
         {
           "track_id": "spotify:track:4zkFR93VC5H04YhnYxr2zz",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_name": "Matt Hardy 999",
+          "artist_name": "Trippie Redd, Juice WRLD",
+          "album_name": "Trip At Knight",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:5M7LdQfurIG70nbvlSAO07",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:6hEzT3fE6ecwWvhlqiFCLF",
+          "track_name": "Celebrate (with Offset)",
+          "artist_name": "Juice WRLD, Offset",
+          "album_name": "The Party Never Ends 2.0",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:1p0rEzrK7YtdRZVtiyV7RN",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:45XhKYRRkyeqoW3teSOkCM",
+          "track_name": "Wild Thoughts (feat. Rihanna & Bryson Tiller)",
+          "artist_name": "DJ Khaled, Rihanna, Bryson Tiller",
+          "album_name": "Grateful",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:28veUNu4veN0LOBVa0nFw8",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:21jGcNKet2qwijlDFuPiPb",
+          "track_name": "Circles",
+          "artist_name": "Post Malone",
+          "album_name": "Hollywood's Bleeding",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:32lItqlMi4LBhb4k0BaSaC",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:4at3d5QWnlibMVN75ECDrp",
+          "track_name": "Pretty Little Fears (feat. J. Cole)",
+          "artist_name": "6LACK, J. Cole",
+          "album_name": "East Atlanta Love Letter",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:55XOUxXsBBbC07PD3Zml3F",
+          "track_name": "Maze",
+          "artist_name": "Juice WRLD",
+          "album_name": "Death Race For Love (Bonus Track Version)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:4YiY551vHi6glMtgVxuqAy",
+          "track_name": "c l o s e",
+          "artist_name": "J. Cole",
+          "album_name": "The Off-Season",
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:0veO6y9anwdVTaRuW7y8NJ",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_name": "You Wouldn't Understand",
+          "artist_name": "Juice WRLD",
+          "album_name": "Fighting Demons (Deluxe)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:67BtfxlNbhBmCDR2L2l8qd",
-          "track_name": "MONTERO (Call Me By Your Name)",
-          "artist_name": "Lil Nas X",
-          "album_name": "MONTERO (Call Me By Your Name)",
-          "play_count": 2
+          "track_id": "spotify:track:5L9fLNHSj5SuGvJRljdWJb",
+          "track_name": "Koi Mil Gaya",
+          "artist_name": "Jatin-Lalit, Kavita Krishnamurthy, Udit Narayan, Alka Yagnik",
+          "album_name": "Kuch Kuch Hota Hai (Original Motion Picture Soundtrack)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:6WrI0LAC5M1Rw2MnX2ZvEg",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:3hsmbFKT5Cujb5GQjqEU39",
+          "track_name": "Look At Me Now (feat. Lil' Wayne & Busta Rhymes)",
+          "artist_name": "Chris Brown, Lil Wayne, Busta Rhymes",
+          "album_name": "F.A.M.E. (Expanded Edition)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:339Y993TrFyWyO438be0RY",
+          "track_name": "Better",
+          "artist_name": "Khalid",
+          "album_name": "Free Spirit",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:2OsDoAzo5SGq10qwmKSQBv",
+          "track_name": "Jet Lag (feat. Young Scooter)",
+          "artist_name": "Future, Juice WRLD, Young Scooter",
+          "album_name": "Future & Juice WRLD Present... WRLD ON DRUGS",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:5cGpjfgAvidLy6znwkCxkP",
+          "track_name": "Can't Be Broken",
+          "artist_name": "Lil Wayne",
+          "album_name": "Tha Carter V",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:2wkej79m7pKn0iTljW929c",
+          "track_name": "Out My Way",
+          "artist_name": "Juice WRLD",
+          "album_name": "Death Race For Love (Bonus Track Version)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:18YHbIhrleUkKKj2DvEp79",
+          "track_name": "Zara Sa",
+          "artist_name": "Pritam, KK, Sayeed Quadri",
+          "album_name": "Jannat (Original Motion Picture Soundtrack)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:0uFz9q2SvuKyWB6Ur1YCfI",
+          "track_name": "Mamacita (feat. Rich Homie Quan & Young Thug)",
+          "artist_name": "Travis Scott, Rich Homie Quan, Young Thug",
+          "album_name": "DAYS BEFORE RODEO",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:2H9SvhMVXSYPxxkQgzkTKp",
+          "track_name": "Hey Shona",
+          "artist_name": "Vishal-Shekhar, Shaan, Sunidhi Chauhan, Javed Akhtar",
+          "album_name": "Ta Ra Rum Pum",
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:4PklAHGXT5ityno3IA8SKd",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_name": "Go Stupid",
+          "artist_name": "Polo G, Stunna 4 Vegas, NLE Choppa, Mike WiLL Made-It",
+          "album_name": "THE GOAT",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:0RrR3wg4ezBVwm7lyeybir",
-          "track_name": "Suno- Na Sangemarmar",
-          "artist_name": "Arijit Singh",
-          "album_name": "Youngistaan",
-          "play_count": 2
+          "track_id": "spotify:track:2cYqizR4lgvp4Qu6IQ3qGN",
+          "track_name": "BUTTERFLY EFFECT",
+          "artist_name": "Travis Scott",
+          "album_name": "ASTROWORLD",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:2rMFawCg4BW65jzbwztXAV",
+          "track_name": "Oh My Dis Side (feat. Quavo)",
+          "artist_name": "Travis Scott, Quavo",
+          "album_name": "Rodeo",
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:0JssjDh3UWEgjUslVZgHJG",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_name": "Sugar",
+          "artist_name": "Maroon 5",
+          "album_name": "V (Deluxe)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:4HfmI5Yisll9PCOjJhtijw",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:5Z3GHaZ6ec9bsiI5BenrbY",
+          "track_name": "Young Dumb & Broke",
+          "artist_name": "Khalid",
+          "album_name": "American Teen",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:3QzAOrNlsabgbMwlZt7TAY",
-          "track_name": "Ballin' (with Roddy Ricch)",
-          "artist_name": "Mustard, Roddy Ricch",
-          "album_name": "Perfect Ten",
-          "play_count": 2
+          "track_id": "spotify:track:6WrI0LAC5M1Rw2MnX2ZvEg",
+          "track_name": "Don't Start Now",
+          "artist_name": "Dua Lipa",
+          "album_name": "Don't Start Now",
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:17opN752ZQpNuoptelsNQ1",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_name": "Pehli Nazar Mein",
+          "artist_name": "Atif Aslam, Pritam",
+          "album_name": "Race (Original Motion Picture Soundtrack)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:1p0rEzrK7YtdRZVtiyV7RN",
+          "track_name": "Lemonade (feat. NAV)",
+          "artist_name": "Internet Money, Gunna, Don Toliver, NAV",
+          "album_name": "B4 The Storm",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:4HfmI5Yisll9PCOjJhtijw",
+          "track_name": "Jhoom Barabar Jhoom",
+          "artist_name": "Shankar-Ehsaan-Loy, KK, Sukhwinder Singh, Mahalakshmi Iyer, Shankar Mahadevan, Gulzar",
+          "album_name": "Jhoom Barabar Jhoom",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:7IK26RNUdgoZWJdlarrcty",
+          "track_name": "All Night (Live)",
+          "artist_name": "AP Dhillon, Shinda Kahlon",
+          "album_name": "Two Hearts Never Break The Same",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:5orNEFkFG4RP24goF02AuD",
+          "track_name": "Kashmir Main Tu Kanyakumari",
+          "artist_name": "Vishal-Shekhar, Sunidhi Chauhan, Arijit Singh, Neeti Mohan",
+          "album_name": "Chennai Express",
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:57kR5SniQIbsbVoIjjOUDa",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_name": "You Know You Like It",
+          "artist_name": "DJ Snake, AlunaGeorge",
+          "album_name": "You Know You Like It",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:28veUNu4veN0LOBVa0nFw8",
+          "track_name": "Muqabla (From \"Street Dancer 3D\")",
+          "artist_name": "Yash Narvekar, Parampara Tandon, Tanishk Bagchi",
+          "album_name": "Muqabla (From \"Street Dancer 3D\")",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:7tavmiMMEibizGOiXoozar",
+          "track_name": "Goat",
+          "artist_name": "AP Dhillon, Gurinder Gill, Money Musik",
+          "album_name": "Not by Chance",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:0iXLwnLmLwn9y54JtBTNxY",
+          "track_name": "Main Agar Kahoon",
+          "artist_name": "Vishal-Shekhar, Sonu Nigam, Shreya Ghoshal",
+          "album_name": "Om Shanti Om",
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:3s4mrPrEFFPF0LmAfutW0n",
           "track_name": "The London (feat. J. Cole & Travis Scott)",
           "artist_name": "Young Thug, J. Cole, Travis Scott",
           "album_name": "So Much Fun",
-          "play_count": 2
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:49FYlytm3dAAraYgpoJZux",
-          "track_name": "Umbrella",
-          "artist_name": "Rihanna, JAY-Z",
-          "album_name": "Good Girl Gone Bad: Reloaded",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:5wWAwzGp2OaaoIkwcz6wZs",
-          "track_name": "Life's A Mess (feat. Halsey)",
-          "artist_name": "Juice WRLD, Halsey",
-          "album_name": "Legends Never Die",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:7tavmiMMEibizGOiXoozar",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:5Z3GHaZ6ec9bsiI5BenrbY",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:0XwRlvv3KlOu4HWlOH34XG",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:4B0JvthVoAAuygILe3n4Bs",
-          "track_name": "What Do You Mean?",
-          "artist_name": "Justin Bieber",
-          "album_name": "Purpose (Deluxe)",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:339Y993TrFyWyO438be0RY",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:5M7LdQfurIG70nbvlSAO07",
+          "track_name": "Dil Deewana - Female Vocals",
+          "artist_name": "Lata Mangeshkar",
+          "album_name": "Maine Pyar Kiya (Original Motion Picture Soundtrack)",
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:7Bpx2vsWfQFBACRz4h3IqH",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:18YHbIhrleUkKKj2DvEp79",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:3hsmbFKT5Cujb5GQjqEU39",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:7IK26RNUdgoZWJdlarrcty",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:2H9SvhMVXSYPxxkQgzkTKp",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:2cYqizR4lgvp4Qu6IQ3qGN",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:21jGcNKet2qwijlDFuPiPb",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:5O59s7bCgTFsXDXlWecyQ1",
-          "track_name": "Apparently",
-          "artist_name": "J. Cole",
-          "album_name": "2014 Forest Hills Drive",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:0w75KG0DuLDi6tdHmEMovD",
-          "track_name": "Don't Let Me Down",
-          "artist_name": "The Chainsmokers, Daya",
-          "album_name": "Collage EP",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:2OKo7g3KfmCt3kyLvUAL0g",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:1K8zYNuDywMknSJuNGoWy0",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:5cGpjfgAvidLy6znwkCxkP",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:5zDQlhcJ5KOoXeSMGwiuJY",
-          "track_name": "Give It 2 U",
-          "artist_name": "Robin Thicke, Kendrick Lamar",
-          "album_name": "Blurred Lines (Deluxe)",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:4at3d5QWnlibMVN75ECDrp",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:2rMFawCg4BW65jzbwztXAV",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_name": "family ties (with Kendrick Lamar)",
+          "artist_name": "Baby Keem, Kendrick Lamar",
+          "album_name": "family ties (with Kendrick Lamar)",
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:0lHAMNU8RGiIObScrsRgmP",
           "track_name": "Titanium (feat. Sia)",
-          "artist_name": "Unknown, Unknown",
+          "artist_name": "David Guetta, Sia",
           "album_name": "Nothing but the Beat 2.0",
-          "play_count": 2
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:5orNEFkFG4RP24goF02AuD",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:2OKo7g3KfmCt3kyLvUAL0g",
+          "track_name": "The Search",
+          "artist_name": "NF",
+          "album_name": "The Search",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:0uFz9q2SvuKyWB6Ur1YCfI",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:0iXLwnLmLwn9y54JtBTNxY",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:5L9fLNHSj5SuGvJRljdWJb",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:2OsDoAzo5SGq10qwmKSQBv",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:1K8zYNuDywMknSJuNGoWy0",
+          "track_name": "O Saki Saki",
+          "artist_name": "Vishal-Shekhar, Neha Kakkar, Tulsi Kumar, B Praak",
+          "album_name": "Batla House",
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:2QZ7WLBE8h2y1Y5Fb8RYbH",
           "track_name": "In My Blood",
           "artist_name": "Shawn Mendes",
           "album_name": "Shawn Mendes",
-          "play_count": 2
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:55XOUxXsBBbC07PD3Zml3F",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:0XwRlvv3KlOu4HWlOH34XG",
+          "track_name": "Lover",
+          "artist_name": "Diljit Dosanjh",
+          "album_name": "MoonChild Era",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:45XhKYRRkyeqoW3teSOkCM",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:32lItqlMi4LBhb4k0BaSaC",
+          "track_name": "Candy Paint",
+          "artist_name": "Post Malone",
+          "album_name": "beerbongs & bentleys",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:2wkej79m7pKn0iTljW929c",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:0RrR3wg4ezBVwm7lyeybir",
+          "track_name": "Suno- Na Sangemarmar",
+          "artist_name": "Arijit Singh",
+          "album_name": "Youngistaan",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:4YiY551vHi6glMtgVxuqAy",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:49FYlytm3dAAraYgpoJZux",
+          "track_name": "Umbrella",
+          "artist_name": "Rihanna, JAY-Z",
+          "album_name": "Good Girl Gone Bad: Reloaded",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:5O59s7bCgTFsXDXlWecyQ1",
+          "track_name": "Apparently",
+          "artist_name": "J. Cole",
+          "album_name": "2014 Forest Hills Drive",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:4B0JvthVoAAuygILe3n4Bs",
+          "track_name": "What Do You Mean?",
+          "artist_name": "Justin Bieber",
+          "album_name": "Purpose (Deluxe)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:3QzAOrNlsabgbMwlZt7TAY",
+          "track_name": "Ballin' (with Roddy Ricch)",
+          "artist_name": "Mustard, Roddy Ricch",
+          "album_name": "Perfect Ten",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:5wWAwzGp2OaaoIkwcz6wZs",
+          "track_name": "Life's A Mess (feat. Halsey)",
+          "artist_name": "Juice WRLD, Halsey",
+          "album_name": "Legends Never Die",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:67BtfxlNbhBmCDR2L2l8qd",
+          "track_name": "MONTERO (Call Me By Your Name)",
+          "artist_name": "Lil Nas X",
+          "album_name": "MONTERO (Call Me By Your Name)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:0w75KG0DuLDi6tdHmEMovD",
+          "track_name": "Don't Let Me Down",
+          "artist_name": "The Chainsmokers, Daya",
+          "album_name": "Collage EP",
+          "play_count": 1
         }
       ],
       "top_artists": [
         {
-          "artist_id": "spotify:artist:74RGMjbSsFv5RLj8wVx9Yv",
-          "artist_name": "Sharn",
+          "artist_id": "spotify:artist:4MCBfE4596Uoi2O4DtmEMz",
+          "artist_name": "Juice WRLD",
           "genres": [
-            "punjabi pop",
-            "punjabi hip hop",
-            "desi pop"
+            "melodic rap",
+            "emo rap"
           ],
-          "play_count": 4
-        },
-        {
-          "artist_id": "spotify:artist:1i31OYo0s5VoMCaMRJFZkJ",
-          "artist_name": "The Paul",
-          "genres": [
-            "punjabi pop",
-            "punjabi hip hop"
-          ],
-          "play_count": 4
+          "play_count": 7
         },
         {
           "artist_id": "spotify:artist:6l3HvQ5sa6mXTsMTB19rO5",
@@ -2219,6 +2281,90 @@
           "play_count": 4
         },
         {
+          "artist_id": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY",
+          "artist_name": "Travis Scott",
+          "genres": [
+            "rap"
+          ],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:6Mv8GjQa7LKUGCAqa9qqdb",
+          "artist_name": "Vishal-Shekhar",
+          "genres": [
+            "bollywood",
+            "desi",
+            "hindi pop"
+          ],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:74RGMjbSsFv5RLj8wVx9Yv",
+          "artist_name": "Sharn",
+          "genres": [
+            "punjabi pop",
+            "punjabi hip hop",
+            "desi pop"
+          ],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:1i31OYo0s5VoMCaMRJFZkJ",
+          "artist_name": "The Paul",
+          "genres": [
+            "punjabi pop",
+            "punjabi hip hop"
+          ],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:5pKCCKE2ajJHZ9KAiaK11H",
+          "artist_name": "Rihanna",
+          "genres": [],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:246dkjvS1zLTtiykXe5h60",
+          "artist_name": "Post Malone",
+          "genres": [],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:55Aa2cqylxrFIXC767Z865",
+          "artist_name": "Lil Wayne",
+          "genres": [
+            "rap",
+            "hip hop"
+          ],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:6LuN9FCkKOj5PcnpouEgny",
+          "artist_name": "Khalid",
+          "genres": [],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:1wRPtKGflJrBx9BmLsSwlU",
+          "artist_name": "Pritam",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi"
+          ],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:4fEkbug6kZzzJ8eYX6Kbbp",
+          "artist_name": "KK",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi"
+          ],
+          "play_count": 2
+        },
+        {
           "artist_id": "spotify:artist:50co4Is1HCEo8bhOyUWKpn",
           "artist_name": "Young Thug",
           "genres": [
@@ -2226,24 +2372,28 @@
             "melodic rap",
             "trap"
           ],
-          "play_count": 3
+          "play_count": 2
         },
         {
-          "artist_id": "spotify:artist:5pKCCKE2ajJHZ9KAiaK11H",
-          "artist_name": "Rihanna",
-          "genres": [],
-          "play_count": 3
+          "artist_id": "spotify:artist:3eDT9fwXKuHWFvgZaaYC5v",
+          "artist_name": "Sunidhi Chauhan",
+          "genres": [
+            "bollywood",
+            "desi",
+            "hindi pop"
+          ],
+          "play_count": 2
         },
         {
-          "artist_id": "spotify:artist:1uNFoZAHBGtllmzznpCI3s",
-          "artist_name": "Justin Bieber",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:7jVv8c5Fj3E9VhNjxT4snq",
-          "artist_name": "Lil Nas X",
-          "genres": [],
+          "artist_id": "spotify:artist:6LEG9Ld1aLImEFEVHdWNSB",
+          "artist_name": "AP Dhillon",
+          "genres": [
+            "punjabi hip hop",
+            "punjabi pop",
+            "desi",
+            "bhangra",
+            "desi hip hop"
+          ],
           "play_count": 2
         },
         {
@@ -2258,123 +2408,142 @@
           "play_count": 2
         },
         {
-          "artist_id": "spotify:artist:0YinUQ50QDB7ZxSCLyQ40k",
-          "artist_name": "Mustard",
-          "genres": [],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:757aE44tKEUQEqRuT6GnEB",
-          "artist_name": "Roddy Ricch",
+          "artist_id": "spotify:artist:6Xgp2XMz1fhVYe7i6yNAax",
+          "artist_name": "Trippie Redd",
           "genres": [
             "melodic rap"
           ],
-          "play_count": 2
+          "play_count": 1
         },
         {
-          "artist_id": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY",
-          "artist_name": "Travis Scott",
+          "artist_id": "spotify:artist:4DdkRBBYG6Yk9Ka8tdJ9BW",
+          "artist_name": "Offset",
+          "genres": [],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:0QHgL1lAIqAw0HtD7YldmP",
+          "artist_name": "DJ Khaled",
+          "genres": [],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:2EMAnMvWE2eb56ToJVfCWs",
+          "artist_name": "Bryson Tiller",
           "genres": [
-            "rap"
+            "trap soul",
+            "r&b"
           ],
-          "play_count": 2
+          "play_count": 1
         },
         {
-          "artist_id": "spotify:artist:3nFkdlSjzX9mRTtwJOzDYB",
-          "artist_name": "JAY-Z",
-          "genres": [
-            "hip hop",
-            "east coast hip hop",
-            "rap"
-          ],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:4MCBfE4596Uoi2O4DtmEMz",
-          "artist_name": "Juice WRLD",
-          "genres": [
-            "melodic rap",
-            "emo rap"
-          ],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:26VFTg2z8YR0cCuwLzESi2",
-          "artist_name": "Halsey",
+          "artist_id": "spotify:artist:4IVAbR2w4JJNJDDRFP3E83",
+          "artist_name": "6LACK",
           "genres": [],
-          "play_count": 2
+          "play_count": 1
         },
         {
-          "artist_id": "spotify:artist:69GGBxA162lTqCwzJG5jLp",
-          "artist_name": "The Chainsmokers",
-          "genres": [],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:6Dd3NScHWwnW6obMFbl1BH",
-          "artist_name": "Daya",
-          "genres": [],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:0ZrpamOxcZybMHGg1AYtHP",
-          "artist_name": "Robin Thicke",
-          "genres": [],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:2YZyLoL8N0Wb9xBt1NhZWg",
-          "artist_name": "Kendrick Lamar",
-          "genres": [
-            "hip hop",
-            "west coast hip hop"
-          ],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:1Cs0zKBU1kc0i8ypK3B9ai",
-          "artist_name": "Unknown",
-          "genres": [],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:5WUlDfRSoLAfcVSX1WnrxN",
-          "artist_name": "Unknown",
-          "genres": [],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:7n2wHs1TKAczGzO7Dd2rGr",
-          "artist_name": "Shawn Mendes",
-          "genres": [],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:6Mv8GjQa7LKUGCAqa9qqdb",
-          "artist_name": "Vishal-Shekhar",
+          "artist_id": "spotify:artist:4YgUVg4p7xtMOrOS4GjiJZ",
+          "artist_name": "Jatin-Lalit",
           "genres": [
             "bollywood",
-            "desi",
-            "hindi pop"
+            "hindi pop",
+            "desi"
           ],
-          "play_count": 2
+          "play_count": 1
         },
         {
-          "artist_id": "spotify:artist:0oOet2f43PA68X5RxKobEy",
-          "artist_name": "Shreya Ghoshal",
+          "artist_id": "spotify:artist:6WPmTGeeoymoVlXVtsCwz7",
+          "artist_name": "Kavita Krishnamurthy",
+          "genres": [
+            "bollywood",
+            "gujarati garba",
+            "hindi pop"
+          ],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:70B80Lwx2sxti0M1Ng9e8K",
+          "artist_name": "Udit Narayan",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi"
+          ],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:3gBKY0y3dFFVRqicLnVZYz",
+          "artist_name": "Alka Yagnik",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi"
+          ],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:7bXgB6jMjp9ATFy66eO08Z",
+          "artist_name": "Chris Brown",
+          "genres": [
+            "r&b"
+          ],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:1YfEcTuGvBQ8xSD1f53UnK",
+          "artist_name": "Busta Rhymes",
+          "genres": [
+            "east coast hip hop"
+          ],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:1RyvyyTE3xzB2ZywiAwp0i",
+          "artist_name": "Future",
+          "genres": [
+            "rap"
+          ],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:4cmA2QDPdzh8W2ytpyUGes",
+          "artist_name": "Young Scooter",
+          "genres": [],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:2pGRniGOJSOvYoK3dGaBb8",
+          "artist_name": "Sayeed Quadri",
+          "genres": [
+            "bollywood",
+            "hindi pop"
+          ],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:5lHRUCqkQZCIWeX7xG4sYT",
+          "artist_name": "Rich Homie Quan",
+          "genres": [
+            "southern hip hop"
+          ],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:5cB4d4jPYjMT326sjihQ4m",
+          "artist_name": "Shaan",
           "genres": [
             "bollywood",
             "hindi pop",
             "desi",
-            "kannada pop",
-            "marathi pop",
+            "desi pop",
             "bangla pop"
           ],
           "play_count": 1
         },
         {
-          "artist_id": "spotify:artist:5bv6NvAYNuvd2Vq13nHdG3",
-          "artist_name": "Sona Mohapatra",
+          "artist_id": "spotify:artist:3UpmjPgIFSGqnxXuiwD014",
+          "artist_name": "Javed Akhtar",
           "genres": [
             "bollywood",
             "desi",
@@ -2389,60 +2558,99 @@
           "play_count": 1
         },
         {
-          "artist_id": "spotify:artist:6jGMq4yGs7aQzuGsMgVgZR",
-          "artist_name": "Lil Tjay",
+          "artist_id": "spotify:artist:44IvvHRk2XF243QLA2VOa8",
+          "artist_name": "Stunna 4 Vegas",
+          "genres": [],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:0ErzCpIMyLcjPiwT4elrtZ",
+          "artist_name": "NLE Choppa",
+          "genres": [],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:0NWbwDZY1VkRqFafuQm6wk",
+          "artist_name": "Mike WiLL Made-It",
+          "genres": [],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:0VRj0yCOv2FXJNP47XQnx5",
+          "artist_name": "Quavo",
+          "genres": [],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:04gDigrS5kc9YWfZHwBETP",
+          "artist_name": "Maroon 5",
           "genres": [
-            "brooklyn drill",
+            "pop"
+          ],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:6M2wZ9GZgrQXHCFfjv46we",
+          "artist_name": "Dua Lipa",
+          "genres": [
+            "pop"
+          ],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:2oSONSC9zQ4UonDKnLqksx",
+          "artist_name": "Atif Aslam",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi",
+            "sufi",
+            "qawwali"
+          ],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:6MPCFvOQv5cIGfw3jODMF0",
+          "artist_name": "Internet Money",
+          "genres": [],
+          "play_count": 1
+        },
+        {
+          "artist_id": "spotify:artist:2hlmm7s2ICUX0LVIhVFlZQ",
+          "artist_name": "Gunna",
+          "genres": [
             "melodic rap"
           ],
           "play_count": 1
         },
         {
-          "artist_id": "spotify:artist:3TVXtAsR1Inumwj472S9r4",
-          "artist_name": "Drake",
-          "genres": [
-            "rap"
-          ],
-          "play_count": 1
-        },
-        {
-          "artist_id": "spotify:artist:4etv0ut4ws0GbXBtolzf5e",
-          "artist_name": "Mukesh",
-          "genres": [
-            "ghazal",
-            "tamil dance"
-          ],
-          "play_count": 1
-        },
-        {
-          "artist_id": "spotify:artist:20LxVmOnMzPm716JTA7XKi",
-          "artist_name": "Kanchan",
+          "artist_id": "spotify:artist:4Gso3d4CscCijv0lmajZWs",
+          "artist_name": "Don Toliver",
           "genres": [],
           "play_count": 1
         },
         {
-          "artist_id": "spotify:artist:738wLrAtLtCtFOLvQBXOXp",
-          "artist_name": "Major Lazer",
+          "artist_id": "spotify:artist:7rkW85dBwwrJtlHRDkJDAC",
+          "artist_name": "NAV",
           "genres": [
-            "moombahton"
+            "melodic rap"
           ],
           "play_count": 1
         },
         {
-          "artist_id": "spotify:artist:540vIaP2JwjQb9dm3aArA4",
-          "artist_name": "DJ Snake",
-          "genres": [],
+          "artist_id": "spotify:artist:0L5GV6LN8SWWUWIdBbTLTZ",
+          "artist_name": "Shankar-Ehsaan-Loy",
+          "genres": [
+            "bollywood",
+            "sufi",
+            "desi",
+            "hindi pop"
+          ],
           "play_count": 1
         },
         {
-          "artist_id": "spotify:artist:0bdfiayQAKewqEvaU6rXCv",
-          "artist_name": "M\u00d8",
-          "genres": [],
-          "play_count": 1
-        },
-        {
-          "artist_id": "spotify:artist:6CXEwIaXYfVJ84biCxqc9k",
-          "artist_name": "Vishal Dadlani",
+          "artist_id": "spotify:artist:19MVxKZZdPj2X0F8pi0OCT",
+          "artist_name": "Sukhwinder Singh",
           "genres": [
             "bollywood",
             "desi",
@@ -2451,127 +2659,80 @@
           "play_count": 1
         },
         {
-          "artist_id": "spotify:artist:61if35zz1W11GejEkxTLEQ",
-          "artist_name": "Benny Dayal",
+          "artist_id": "spotify:artist:0Yb0T3wUUNiIvHjqnfkbuH",
+          "artist_name": "Mahalakshmi Iyer",
           "genres": [
             "bollywood",
-            "desi",
-            "hindi pop"
-          ],
-          "play_count": 1
-        },
-        {
-          "artist_id": "spotify:artist:0m3D4grap8VFSzbJMqgNVk",
-          "artist_name": "Kumaar",
-          "genres": [
-            "bollywood",
-            "hindi pop",
             "desi"
           ],
           "play_count": 1
         },
         {
-          "artist_id": "spotify:artist:1Xyo4u8uXC1ZmMpatF05PJ",
-          "artist_name": "The Weeknd",
-          "genres": [],
-          "play_count": 1
-        },
-        {
-          "artist_id": "spotify:artist:4tZwfgrHOc3mvqYlEYSvVi",
-          "artist_name": "Daft Punk",
+          "artist_id": "spotify:artist:1SJOL9HJ08YOn92lFcYf8a",
+          "artist_name": "Shankar Mahadevan",
           "genres": [
-            "french house",
-            "electronic",
-            "electro"
-          ],
-          "play_count": 1
-        },
-        {
-          "artist_id": "spotify:artist:6Xgp2XMz1fhVYe7i6yNAax",
-          "artist_name": "Trippie Redd",
-          "genres": [
-            "melodic rap"
-          ],
-          "play_count": 1
-        },
-        {
-          "artist_id": "spotify:artist:6S2OmqARrzebs0tKUEyXyp",
-          "artist_name": "Demi Lovato",
-          "genres": [],
-          "play_count": 1
-        },
-        {
-          "artist_id": "spotify:artist:4V8Sr092TqfHkfAA5fXXqG",
-          "artist_name": "Luis Fonsi",
-          "genres": [
-            "latin"
-          ],
-          "play_count": 1
-        },
-        {
-          "artist_id": "spotify:artist:4VMYDCV2IEDYJArk749S6m",
-          "artist_name": "Daddy Yankee",
-          "genres": [
-            "reggaeton",
-            "latin"
-          ],
-          "play_count": 1
-        },
-        {
-          "artist_id": "spotify:artist:61JrslREXq98hurYL2hYoc",
-          "artist_name": "Lata Mangeshkar",
-          "genres": [
-            "ghazal",
+            "marathi pop",
             "bollywood",
+            "devotional",
             "bhajan",
-            "hindi pop",
-            "marathi pop"
+            "desi",
+            "tamil dance",
+            "hindi pop"
           ],
           "play_count": 1
         },
         {
-          "artist_id": "spotify:artist:70B80Lwx2sxti0M1Ng9e8K",
-          "artist_name": "Udit Narayan",
+          "artist_id": "spotify:artist:0yRC5n90spXG0d3aiDQ0vB",
+          "artist_name": "Gulzar",
           "genres": [
             "bollywood",
-            "hindi pop",
-            "desi"
+            "ghazal",
+            "desi",
+            "hindi pop"
           ],
           "play_count": 1
         }
       ],
       "top_genres": [
         {
-          "genre": "rap",
-          "play_count": 12
+          "genre": "bollywood",
+          "play_count": 36
         },
         {
           "genre": "hindi pop",
-          "play_count": 11
-        },
-        {
-          "genre": "bollywood",
-          "play_count": 11
+          "play_count": 34
         },
         {
           "genre": "desi",
-          "play_count": 10
+          "play_count": 34
+        },
+        {
+          "genre": "rap",
+          "play_count": 14
         },
         {
           "genre": "melodic rap",
-          "play_count": 9
+          "play_count": 13
         },
         {
           "genre": "punjabi pop",
-          "play_count": 8
+          "play_count": 10
         },
         {
           "genre": "punjabi hip hop",
-          "play_count": 8
+          "play_count": 10
+        },
+        {
+          "genre": "emo rap",
+          "play_count": 7
         },
         {
           "genre": "desi pop",
-          "play_count": 4
+          "play_count": 6
+        },
+        {
+          "genre": "bhangra",
+          "play_count": 6
         },
         {
           "genre": "hip hop",
@@ -2579,57 +2740,49 @@
         },
         {
           "genre": "bangla pop",
+          "play_count": 4
+        },
+        {
+          "genre": "marathi pop",
+          "play_count": 4
+        },
+        {
+          "genre": "desi hip hop",
+          "play_count": 4
+        },
+        {
+          "genre": "gujarati garba",
           "play_count": 3
         },
         {
-          "genre": "trap",
+          "genre": "bhajan",
           "play_count": 3
+        },
+        {
+          "genre": "r&b",
+          "play_count": 2
         },
         {
           "genre": "east coast hip hop",
           "play_count": 2
         },
         {
-          "genre": "emo rap",
+          "genre": "trap",
           "play_count": 2
         },
         {
-          "genre": "west coast hip hop",
+          "genre": "pop",
           "play_count": 2
-        },
-        {
-          "genre": "marathi pop",
-          "play_count": 2
-        },
-        {
-          "genre": "ghazal",
-          "play_count": 2
-        },
-        {
-          "genre": "latin",
-          "play_count": 2
-        },
-        {
-          "genre": "kannada pop",
-          "play_count": 1
-        },
-        {
-          "genre": "brooklyn drill",
-          "play_count": 1
-        },
-        {
-          "genre": "tamil dance",
-          "play_count": 1
         }
       ],
-      "total_play_count": 114,
-      "unique_track_count": 62,
-      "unique_artist_count": 43
+      "total_play_count": 51,
+      "unique_track_count": 50,
+      "unique_artist_count": 80
     },
     "last_30_days": {
       "label": "last_30_days",
       "start": "2025-12-26T00:00:00-08:00",
-      "end": "2026-01-03T00:00:00-08:00",
+      "end": "2026-01-04T00:00:00-08:00",
       "top_tracks": [
         {
           "track_id": "spotify:track:2XHzzp1j4IfTNp1FTn7YFg",
@@ -2643,83 +2796,13 @@
           "track_name": "Mi Amor",
           "artist_name": "Sharn, The Paul",
           "album_name": "Mi Amor",
-          "play_count": 5
+          "play_count": 3
         },
         {
           "track_id": "spotify:track:3s4mrPrEFFPF0LmAfutW0n",
           "track_name": "The London (feat. J. Cole & Travis Scott)",
           "artist_name": "Young Thug, J. Cole, Travis Scott",
           "album_name": "So Much Fun",
-          "play_count": 4
-        },
-        {
-          "track_id": "spotify:track:5wWAwzGp2OaaoIkwcz6wZs",
-          "track_name": "Life's A Mess (feat. Halsey)",
-          "artist_name": "Juice WRLD, Halsey",
-          "album_name": "Legends Never Die",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:4B0JvthVoAAuygILe3n4Bs",
-          "track_name": "What Do You Mean?",
-          "artist_name": "Justin Bieber",
-          "album_name": "Purpose (Deluxe)",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:67BtfxlNbhBmCDR2L2l8qd",
-          "track_name": "MONTERO (Call Me By Your Name)",
-          "artist_name": "Lil Nas X",
-          "album_name": "MONTERO (Call Me By Your Name)",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:5zDQlhcJ5KOoXeSMGwiuJY",
-          "track_name": "Give It 2 U",
-          "artist_name": "Robin Thicke, Kendrick Lamar",
-          "album_name": "Blurred Lines (Deluxe)",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:6uFn47ACjqYkc0jADwEdj1",
-          "track_name": "Pop Out (feat. Lil Tjay)",
-          "artist_name": "Polo G, Lil Tjay",
-          "album_name": "Die A Legend",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:0w75KG0DuLDi6tdHmEMovD",
-          "track_name": "Don't Let Me Down",
-          "artist_name": "The Chainsmokers, Daya",
-          "album_name": "Collage EP",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:3QzAOrNlsabgbMwlZt7TAY",
-          "track_name": "Ballin' (with Roddy Ricch)",
-          "artist_name": "Mustard, Roddy Ricch",
-          "album_name": "Perfect Ten",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:0RrR3wg4ezBVwm7lyeybir",
-          "track_name": "Suno- Na Sangemarmar",
-          "artist_name": "Arijit Singh",
-          "album_name": "Youngistaan",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:5O59s7bCgTFsXDXlWecyQ1",
-          "track_name": "Apparently",
-          "artist_name": "J. Cole",
-          "album_name": "2014 Forest Hills Drive",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:49FYlytm3dAAraYgpoJZux",
-          "track_name": "Umbrella",
-          "artist_name": "Rihanna, JAY-Z",
-          "album_name": "Good Girl Gone Bad: Reloaded",
           "play_count": 3
         },
         {
@@ -2748,13 +2831,6 @@
           "track_name": "21 Questions",
           "artist_name": "50 Cent, Nate Dogg",
           "album_name": "Get Rich Or Die Tryin'",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:0yvPEnB032fojLfVluFjUv",
-          "track_name": "Sorry Not Sorry",
-          "artist_name": "Demi Lovato",
-          "album_name": "Tell Me You Love Me",
           "play_count": 2
         },
         {
@@ -2814,13 +2890,6 @@
           "play_count": 2
         },
         {
-          "track_id": "spotify:track:01aTsQoKoeXofSTvKuunzv",
-          "track_name": "Lean On",
-          "artist_name": "Major Lazer, DJ Snake, M\u00d8",
-          "album_name": "Peace Is The Mission",
-          "play_count": 2
-        },
-        {
           "track_id": "spotify:track:5pDUMdIiW0rNLzFryqpC9j",
           "track_name": "Diamonds",
           "artist_name": "Rihanna",
@@ -2835,151 +2904,235 @@
           "play_count": 2
         },
         {
+          "track_id": "spotify:track:5wWAwzGp2OaaoIkwcz6wZs",
+          "track_name": "Life's A Mess (feat. Halsey)",
+          "artist_name": "Juice WRLD, Halsey",
+          "album_name": "Legends Never Die",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:4B0JvthVoAAuygILe3n4Bs",
+          "track_name": "What Do You Mean?",
+          "artist_name": "Justin Bieber",
+          "album_name": "Purpose (Deluxe)",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:67BtfxlNbhBmCDR2L2l8qd",
+          "track_name": "MONTERO (Call Me By Your Name)",
+          "artist_name": "Lil Nas X",
+          "album_name": "MONTERO (Call Me By Your Name)",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:6uFn47ACjqYkc0jADwEdj1",
+          "track_name": "Pop Out (feat. Lil Tjay)",
+          "artist_name": "Polo G, Lil Tjay",
+          "album_name": "Die A Legend",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:0w75KG0DuLDi6tdHmEMovD",
+          "track_name": "Don't Let Me Down",
+          "artist_name": "The Chainsmokers, Daya",
+          "album_name": "Collage EP",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:3QzAOrNlsabgbMwlZt7TAY",
+          "track_name": "Ballin' (with Roddy Ricch)",
+          "artist_name": "Mustard, Roddy Ricch",
+          "album_name": "Perfect Ten",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:0RrR3wg4ezBVwm7lyeybir",
+          "track_name": "Suno- Na Sangemarmar",
+          "artist_name": "Arijit Singh",
+          "album_name": "Youngistaan",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:5O59s7bCgTFsXDXlWecyQ1",
+          "track_name": "Apparently",
+          "artist_name": "J. Cole",
+          "album_name": "2014 Forest Hills Drive",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:5EYZZvmNAH5VZCwuzYJqoA",
+          "track_name": "Chand Sifarish",
+          "artist_name": "Jatin-Lalit, Shaan, Kailash Kher, Prasoon Joshi",
+          "album_name": "Fanaa",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:49FYlytm3dAAraYgpoJZux",
+          "track_name": "Umbrella",
+          "artist_name": "Rihanna, JAY-Z",
+          "album_name": "Good Girl Gone Bad: Reloaded",
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:0yvPEnB032fojLfVluFjUv",
+          "track_name": "Sorry Not Sorry",
+          "artist_name": "Demi Lovato",
+          "album_name": "Tell Me You Love Me",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:01aTsQoKoeXofSTvKuunzv",
+          "track_name": "Lean On",
+          "artist_name": "Major Lazer, DJ Snake, M\u00d8",
+          "album_name": "Peace Is The Mission",
+          "play_count": 1
+        },
+        {
           "track_id": "spotify:track:1gwO79MdYdumgIjxq8eCxB",
           "track_name": "Bahara",
           "artist_name": "Vishal-Shekhar, Shreya Ghoshal, Sona Mohapatra",
           "album_name": "I Hate Luv Storys (Original Motion Picture Soundtrack)",
-          "play_count": 2
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:2VKHWIONh47ntN7wyoSxEQ",
           "track_name": "The Grinch",
           "artist_name": "Trippie Redd",
           "album_name": "A Love Letter To You 4",
-          "play_count": 2
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:6RtPijgfPKROxEzTHNRiDp",
+          "track_name": "Rude",
+          "artist_name": "MAGIC!",
+          "album_name": "Don't Kill the Magic",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:5zDQlhcJ5KOoXeSMGwiuJY",
+          "track_name": "Give It 2 U",
+          "artist_name": "Robin Thicke, Kendrick Lamar",
+          "album_name": "Blurred Lines (Deluxe)",
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:6IYS7wNZxRBvLpwMZDbcdP",
           "track_name": "Jai Jai Shivshankar",
           "artist_name": "Vishal-Shekhar, Vishal Dadlani, Benny Dayal, Kumaar",
           "album_name": "War",
-          "play_count": 2
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:7hpH1Ijoygw5J5XUfVS9hh",
           "track_name": "Kya Khoob Lagti Ho",
           "artist_name": "Mukesh, Kanchan",
           "album_name": "Dharmatma (Original Motion Picture Soundtrack)",
-          "play_count": 2
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:4cg1yakyRSIOjxKM2I7J1q",
           "track_name": "Digits",
           "artist_name": "Young Thug",
           "album_name": "Slime Season 3",
-          "play_count": 2
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:7MXVkk9YMctZqd1Srtv4MB",
           "track_name": "Starboy",
           "artist_name": "The Weeknd, Daft Punk",
           "album_name": "Starboy",
-          "play_count": 2
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:2UXqAinFTSFA3Y0nlWPHQn",
           "track_name": "Mehndi Laga Ke Rakhna",
           "artist_name": "Lata Mangeshkar, Udit Narayan",
           "album_name": "Dilwale Dulhania Le Jayenge (Original Motion Picture Soundtrack)",
-          "play_count": 2
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:3BtuIIrQlkujKPuWF2B85z",
           "track_name": "Too Good",
           "artist_name": "Drake, Rihanna",
           "album_name": "Views",
-          "play_count": 2
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:5BrTUo0xP1wKXLJWUaGFtk",
+          "track_name": "Loyal (feat. Lil Wayne & Tyga)",
+          "artist_name": "Chris Brown, Lil Wayne, Tyga",
+          "album_name": "X (Expanded Edition)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:5e574bhjycX1eH2l4Auage",
+          "track_name": "Grammys",
+          "artist_name": "Drake, Future",
+          "album_name": "Views",
+          "play_count": 1
         },
         {
           "track_id": "spotify:track:1vnnXMrBeEWiRg3YCMCjQq",
           "track_name": "Despacito - Remix",
           "artist_name": "Luis Fonsi, Daddy Yankee, Justin Bieber",
           "album_name": "VIDA",
-          "play_count": 2
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:5EYZZvmNAH5VZCwuzYJqoA",
-          "track_name": "Chand Sifarish",
-          "artist_name": "Unknown, Unknown, Unknown, Unknown",
-          "album_name": "Fanaa",
-          "play_count": 2
+          "track_id": "spotify:track:2FY7b99s15jUprqC0M5NCT",
+          "track_name": "Natural",
+          "artist_name": "Imagine Dragons",
+          "album_name": "Origins (Deluxe)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:4zkFR93VC5H04YhnYxr2zz",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:0bGLvHd0ApdT4t0shCfpzG",
+          "track_name": "Side Effects",
+          "artist_name": "The Chainsmokers, Emily Warren",
+          "album_name": "Sick Boy",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:5M7LdQfurIG70nbvlSAO07",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:5GXAXm5YOmYT0kL5jHvYBt",
+          "track_name": "I Feel It Coming",
+          "artist_name": "The Weeknd, Daft Punk",
+          "album_name": "Starboy",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:1p0rEzrK7YtdRZVtiyV7RN",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:5PvwPy5eRO8BPwpRzCHK3D",
+          "track_name": "Sunn Raha Hai (Male Version)",
+          "artist_name": "Ankit Tiwari",
+          "album_name": "Aashiqui 2",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:28veUNu4veN0LOBVa0nFw8",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:0pPGUL7171TRGgI6wyP8wP",
+          "track_name": "Tumhe Jo Maine Dekha",
+          "artist_name": "Abhijeet, Shreya Ghoshal",
+          "album_name": "Main Hoon Na",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:32lItqlMi4LBhb4k0BaSaC",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:2YpeDb67231RjR0MgVLzsG",
+          "track_name": "Old Town Road (feat. Billy Ray Cyrus) - Remix",
+          "artist_name": "Lil Nas X, Billy Ray Cyrus",
+          "album_name": "7",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:0veO6y9anwdVTaRuW7y8NJ",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:6Z1Q31m2SQt7uLfyqce6ot",
+          "track_name": "To Brazil!",
+          "artist_name": "Vengaboys",
+          "album_name": "The Party Album!",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:6WrI0LAC5M1Rw2MnX2ZvEg",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:4PklAHGXT5ityno3IA8SKd",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:0JssjDh3UWEgjUslVZgHJG",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:4HfmI5Yisll9PCOjJhtijw",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:17opN752ZQpNuoptelsNQ1",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:2P3SLxeQHPqh8qKB6gtJY2",
+          "track_name": "Poetic Justice",
+          "artist_name": "Kendrick Lamar, Drake",
+          "album_name": "good kid, m.A.A.d city (Deluxe)",
+          "play_count": 1
         }
       ],
       "top_artists": [
@@ -2990,7 +3143,7 @@
             "melodic rap",
             "emo rap"
           ],
-          "play_count": 22
+          "play_count": 29
         },
         {
           "artist_id": "spotify:artist:3TVXtAsR1Inumwj472S9r4",
@@ -2998,7 +3151,7 @@
           "genres": [
             "rap"
           ],
-          "play_count": 17
+          "play_count": 19
         },
         {
           "artist_id": "spotify:artist:1RyvyyTE3xzB2ZywiAwp0i",
@@ -3006,7 +3159,7 @@
           "genres": [
             "rap"
           ],
-          "play_count": 14
+          "play_count": 16
         },
         {
           "artist_id": "spotify:artist:55Aa2cqylxrFIXC767Z865",
@@ -3015,23 +3168,15 @@
             "rap",
             "hip hop"
           ],
-          "play_count": 13
+          "play_count": 15
         },
         {
-          "artist_id": "spotify:artist:5pKCCKE2ajJHZ9KAiaK11H",
-          "artist_name": "Rihanna",
-          "genres": [],
-          "play_count": 9
-        },
-        {
-          "artist_id": "spotify:artist:50co4Is1HCEo8bhOyUWKpn",
-          "artist_name": "Young Thug",
+          "artist_id": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY",
+          "artist_name": "Travis Scott",
           "genres": [
-            "rap",
-            "melodic rap",
-            "trap"
+            "rap"
           ],
-          "play_count": 8
+          "play_count": 10
         },
         {
           "artist_id": "spotify:artist:6l3HvQ5sa6mXTsMTB19rO5",
@@ -3048,66 +3193,20 @@
           "play_count": 8
         },
         {
-          "artist_id": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY",
-          "artist_name": "Travis Scott",
+          "artist_id": "spotify:artist:5pKCCKE2ajJHZ9KAiaK11H",
+          "artist_name": "Rihanna",
+          "genres": [],
+          "play_count": 8
+        },
+        {
+          "artist_id": "spotify:artist:50co4Is1HCEo8bhOyUWKpn",
+          "artist_name": "Young Thug",
           "genres": [
-            "rap"
+            "rap",
+            "melodic rap",
+            "trap"
           ],
           "play_count": 7
-        },
-        {
-          "artist_id": "spotify:artist:2YZyLoL8N0Wb9xBt1NhZWg",
-          "artist_name": "Kendrick Lamar",
-          "genres": [
-            "hip hop",
-            "west coast hip hop"
-          ],
-          "play_count": 7
-        },
-        {
-          "artist_id": "spotify:artist:1uNFoZAHBGtllmzznpCI3s",
-          "artist_name": "Justin Bieber",
-          "genres": [],
-          "play_count": 6
-        },
-        {
-          "artist_id": "spotify:artist:1Xyo4u8uXC1ZmMpatF05PJ",
-          "artist_name": "The Weeknd",
-          "genres": [],
-          "play_count": 6
-        },
-        {
-          "artist_id": "spotify:artist:74RGMjbSsFv5RLj8wVx9Yv",
-          "artist_name": "Sharn",
-          "genres": [
-            "punjabi pop",
-            "punjabi hip hop",
-            "desi pop"
-          ],
-          "play_count": 5
-        },
-        {
-          "artist_id": "spotify:artist:1i31OYo0s5VoMCaMRJFZkJ",
-          "artist_name": "The Paul",
-          "genres": [
-            "punjabi pop",
-            "punjabi hip hop"
-          ],
-          "play_count": 5
-        },
-        {
-          "artist_id": "spotify:artist:69GGBxA162lTqCwzJG5jLp",
-          "artist_name": "The Chainsmokers",
-          "genres": [],
-          "play_count": 5
-        },
-        {
-          "artist_id": "spotify:artist:757aE44tKEUQEqRuT6GnEB",
-          "artist_name": "Roddy Ricch",
-          "genres": [
-            "melodic rap"
-          ],
-          "play_count": 5
         },
         {
           "artist_id": "spotify:artist:4YRxDV8wJFPHPTeXepOstw",
@@ -3118,13 +3217,69 @@
             "desi",
             "bangla pop"
           ],
+          "play_count": 7
+        },
+        {
+          "artist_id": "spotify:artist:1uNFoZAHBGtllmzznpCI3s",
+          "artist_name": "Justin Bieber",
+          "genres": [],
+          "play_count": 6
+        },
+        {
+          "artist_id": "spotify:artist:6Mv8GjQa7LKUGCAqa9qqdb",
+          "artist_name": "Vishal-Shekhar",
+          "genres": [
+            "bollywood",
+            "desi",
+            "hindi pop"
+          ],
+          "play_count": 6
+        },
+        {
+          "artist_id": "spotify:artist:2YZyLoL8N0Wb9xBt1NhZWg",
+          "artist_name": "Kendrick Lamar",
+          "genres": [
+            "hip hop",
+            "west coast hip hop"
+          ],
+          "play_count": 6
+        },
+        {
+          "artist_id": "spotify:artist:7uIbLdzzSEqnX0Pkrb56cR",
+          "artist_name": "Yo Yo Honey Singh",
+          "genres": [
+            "bollywood",
+            "hindi hip hop",
+            "desi",
+            "punjabi pop",
+            "hindi pop",
+            "punjabi hip hop"
+          ],
           "play_count": 5
         },
         {
-          "artist_id": "spotify:artist:7jVv8c5Fj3E9VhNjxT4snq",
-          "artist_name": "Lil Nas X",
+          "artist_id": "spotify:artist:6Xgp2XMz1fhVYe7i6yNAax",
+          "artist_name": "Trippie Redd",
+          "genres": [
+            "melodic rap"
+          ],
+          "play_count": 5
+        },
+        {
+          "artist_id": "spotify:artist:1Xyo4u8uXC1ZmMpatF05PJ",
+          "artist_name": "The Weeknd",
           "genres": [],
-          "play_count": 4
+          "play_count": 5
+        },
+        {
+          "artist_id": "spotify:artist:1wRPtKGflJrBx9BmLsSwlU",
+          "artist_name": "Pritam",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi"
+          ],
+          "play_count": 5
         },
         {
           "artist_id": "spotify:artist:3q7HBObVc0L8jNeTe5Gofh",
@@ -3136,18 +3291,30 @@
           "play_count": 4
         },
         {
-          "artist_id": "spotify:artist:7n2wHs1TKAczGzO7Dd2rGr",
-          "artist_name": "Shawn Mendes",
+          "artist_id": "spotify:artist:5K4W6rqBFWDnAN6FQUkS6x",
+          "artist_name": "Kanye West",
+          "genres": [
+            "rap"
+          ],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:6AgTAQt8XS6jRWi4sX7w49",
+          "artist_name": "Polo G",
           "genres": [],
           "play_count": 4
         },
         {
-          "artist_id": "spotify:artist:6Mv8GjQa7LKUGCAqa9qqdb",
-          "artist_name": "Vishal-Shekhar",
+          "artist_id": "spotify:artist:69GGBxA162lTqCwzJG5jLp",
+          "artist_name": "The Chainsmokers",
+          "genres": [],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:757aE44tKEUQEqRuT6GnEB",
+          "artist_name": "Roddy Ricch",
           "genres": [
-            "bollywood",
-            "desi",
-            "hindi pop"
+            "melodic rap"
           ],
           "play_count": 4
         },
@@ -3165,96 +3332,101 @@
           "play_count": 4
         },
         {
-          "artist_id": "spotify:artist:6Xgp2XMz1fhVYe7i6yNAax",
-          "artist_name": "Trippie Redd",
+          "artist_id": "spotify:artist:04gDigrS5kc9YWfZHwBETP",
+          "artist_name": "Maroon 5",
+          "genres": [
+            "pop"
+          ],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:2hlmm7s2ICUX0LVIhVFlZQ",
+          "artist_name": "Gunna",
           "genres": [
             "melodic rap"
           ],
           "play_count": 4
         },
         {
-          "artist_id": "spotify:artist:61if35zz1W11GejEkxTLEQ",
-          "artist_name": "Benny Dayal",
-          "genres": [
-            "bollywood",
-            "desi",
-            "hindi pop"
-          ],
-          "play_count": 4
-        },
-        {
-          "artist_id": "spotify:artist:5WUlDfRSoLAfcVSX1WnrxN",
-          "artist_name": "Unknown",
+          "artist_id": "spotify:artist:246dkjvS1zLTtiykXe5h60",
+          "artist_name": "Post Malone",
           "genres": [],
           "play_count": 4
         },
         {
-          "artist_id": "spotify:artist:26VFTg2z8YR0cCuwLzESi2",
-          "artist_name": "Halsey",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:0ZrpamOxcZybMHGg1AYtHP",
-          "artist_name": "Robin Thicke",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:6AgTAQt8XS6jRWi4sX7w49",
-          "artist_name": "Polo G",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:6jGMq4yGs7aQzuGsMgVgZR",
-          "artist_name": "Lil Tjay",
-          "genres": [
-            "brooklyn drill",
-            "melodic rap"
-          ],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:6Dd3NScHWwnW6obMFbl1BH",
-          "artist_name": "Daya",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:0YinUQ50QDB7ZxSCLyQ40k",
-          "artist_name": "Mustard",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:3nFkdlSjzX9mRTtwJOzDYB",
-          "artist_name": "JAY-Z",
-          "genres": [
-            "hip hop",
-            "east coast hip hop",
-            "rap"
-          ],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:7uIbLdzzSEqnX0Pkrb56cR",
-          "artist_name": "Yo Yo Honey Singh",
+          "artist_id": "spotify:artist:5f4QpKfy7ptCHwTqspnSJI",
+          "artist_name": "Neha Kakkar",
           "genres": [
             "bollywood",
-            "hindi hip hop",
-            "desi",
-            "punjabi pop",
             "hindi pop",
+            "desi",
+            "desi pop",
+            "gujarati garba"
+          ],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:74RGMjbSsFv5RLj8wVx9Yv",
+          "artist_name": "Sharn",
+          "genres": [
+            "punjabi pop",
+            "punjabi hip hop",
+            "desi pop"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:1i31OYo0s5VoMCaMRJFZkJ",
+          "artist_name": "The Paul",
+          "genres": [
+            "punjabi pop",
             "punjabi hip hop"
           ],
           "play_count": 3
         },
         {
-          "artist_id": "spotify:artist:5K4W6rqBFWDnAN6FQUkS6x",
-          "artist_name": "Kanye West",
+          "artist_id": "spotify:artist:4f7KfxeHq9BiylGmyXepGt",
+          "artist_name": "Tanishk Bagchi",
           "genres": [
-            "rap"
+            "bollywood",
+            "hindi pop",
+            "desi",
+            "desi pop",
+            "gujarati garba"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:7n2wHs1TKAczGzO7Dd2rGr",
+          "artist_name": "Shawn Mendes",
+          "genres": [],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:7jVv8c5Fj3E9VhNjxT4snq",
+          "artist_name": "Lil Nas X",
+          "genres": [],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:4YgUVg4p7xtMOrOS4GjiJZ",
+          "artist_name": "Jatin-Lalit",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:5cB4d4jPYjMT326sjihQ4m",
+          "artist_name": "Shaan",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi",
+            "desi pop",
+            "bangla pop"
           ],
           "play_count": 3
         },
@@ -3265,13 +3437,39 @@
           "play_count": 3
         },
         {
-          "artist_id": "spotify:artist:4tZwfgrHOc3mvqYlEYSvVi",
-          "artist_name": "Daft Punk",
+          "artist_id": "spotify:artist:61if35zz1W11GejEkxTLEQ",
+          "artist_name": "Benny Dayal",
           "genres": [
-            "french house",
-            "electronic",
-            "electro"
+            "bollywood",
+            "desi",
+            "hindi pop"
           ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:61JrslREXq98hurYL2hYoc",
+          "artist_name": "Lata Mangeshkar",
+          "genres": [
+            "ghazal",
+            "bollywood",
+            "bhajan",
+            "hindi pop",
+            "marathi pop"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:7bXgB6jMjp9ATFy66eO08Z",
+          "artist_name": "Chris Brown",
+          "genres": [
+            "r&b"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:0iEtIxbK0KxaSlF7G42ZOp",
+          "artist_name": "Metro Boomin",
+          "genres": [],
           "play_count": 3
         },
         {
@@ -3281,29 +3479,53 @@
           "play_count": 3
         },
         {
-          "artist_id": "spotify:artist:04gDigrS5kc9YWfZHwBETP",
-          "artist_name": "Maroon 5",
+          "artist_id": "spotify:artist:4O15NlyKLIASxsJ0PrXPfz",
+          "artist_name": "Lil Uzi Vert",
           "genres": [
-            "pop"
+            "melodic rap"
           ],
           "play_count": 3
         },
         {
-          "artist_id": "spotify:artist:4O15NlyKLIASxsJ0PrXPfz",
-          "artist_name": "Unknown",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:2hlmm7s2ICUX0LVIhVFlZQ",
-          "artist_name": "Unknown",
+          "artist_id": "spotify:artist:5WUlDfRSoLAfcVSX1WnrxN",
+          "artist_name": "Sia",
           "genres": [],
           "play_count": 3
         },
         {
           "artist_id": "spotify:artist:4cAERazLlAzVGA10ORWaUP",
-          "artist_name": "Unknown",
-          "genres": [],
+          "artist_name": "Manoj Muntashir",
+          "genres": [
+            "bhajan",
+            "bollywood",
+            "hindi pop",
+            "devotional"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:1dVygo6tRFXC8CSWURQJq2",
+          "artist_name": "Sonu Nigam",
+          "genres": [
+            "kannada pop",
+            "bollywood",
+            "sandalwood",
+            "hindi pop",
+            "desi",
+            "marathi pop"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:6LEG9Ld1aLImEFEVHdWNSB",
+          "artist_name": "AP Dhillon",
+          "genres": [
+            "punjabi hip hop",
+            "punjabi pop",
+            "desi",
+            "bhangra",
+            "desi hip hop"
+          ],
           "play_count": 3
         },
         {
@@ -3332,24 +3554,6 @@
           "play_count": 2
         },
         {
-          "artist_id": "spotify:artist:6S2OmqARrzebs0tKUEyXyp",
-          "artist_name": "Demi Lovato",
-          "genres": [],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:4f7KfxeHq9BiylGmyXepGt",
-          "artist_name": "Tanishk Bagchi",
-          "genres": [
-            "bollywood",
-            "hindi pop",
-            "desi",
-            "desi pop",
-            "gujarati garba"
-          ],
-          "play_count": 2
-        },
-        {
           "artist_id": "spotify:artist:1tqysapcCh1lWEAc9dIFpa",
           "artist_name": "Jubin Nautiyal",
           "genres": [
@@ -3370,113 +3574,98 @@
             "desi"
           ],
           "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:7gnhXaxCLcHKi61BD2JRcz",
-          "artist_name": "Sahil Kaushal",
-          "genres": [],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:3hcs9uc56yIGFCSy9leWe7",
-          "artist_name": "Lil Durk",
-          "genres": [
-            "chicago drill",
-            "drill"
-          ],
-          "play_count": 2
         }
       ],
       "top_genres": [
         {
-          "genre": "rap",
-          "play_count": 75
-        },
-        {
-          "genre": "melodic rap",
-          "play_count": 42
+          "genre": "bollywood",
+          "play_count": 121
         },
         {
           "genre": "hindi pop",
-          "play_count": 37
-        },
-        {
-          "genre": "bollywood",
-          "play_count": 37
+          "play_count": 106
         },
         {
           "genre": "desi",
-          "play_count": 32
+          "play_count": 103
+        },
+        {
+          "genre": "rap",
+          "play_count": 83
+        },
+        {
+          "genre": "melodic rap",
+          "play_count": 56
+        },
+        {
+          "genre": "emo rap",
+          "play_count": 29
+        },
+        {
+          "genre": "punjabi pop",
+          "play_count": 26
         },
         {
           "genre": "hip hop",
           "play_count": 25
         },
         {
-          "genre": "emo rap",
-          "play_count": 22
-        },
-        {
-          "genre": "punjabi pop",
-          "play_count": 13
-        },
-        {
           "genre": "punjabi hip hop",
-          "play_count": 13
-        },
-        {
-          "genre": "west coast hip hop",
-          "play_count": 9
-        },
-        {
-          "genre": "bangla pop",
-          "play_count": 9
-        },
-        {
-          "genre": "trap",
-          "play_count": 8
+          "play_count": 21
         },
         {
           "genre": "desi pop",
-          "play_count": 7
+          "play_count": 18
         },
         {
-          "genre": "east coast hip hop",
-          "play_count": 7
-        },
-        {
-          "genre": "old school hip hop",
-          "play_count": 6
-        },
-        {
-          "genre": "marathi pop",
-          "play_count": 6
-        },
-        {
-          "genre": "gujarati garba",
-          "play_count": 4
+          "genre": "bangla pop",
+          "play_count": 14
         },
         {
           "genre": "bhajan",
-          "play_count": 4
+          "play_count": 13
         },
         {
-          "genre": "kannada pop",
-          "play_count": 4
+          "genre": "marathi pop",
+          "play_count": 13
         },
         {
-          "genre": "ghazal",
-          "play_count": 4
+          "genre": "bhangra",
+          "play_count": 12
+        },
+        {
+          "genre": "gujarati garba",
+          "play_count": 10
+        },
+        {
+          "genre": "sufi",
+          "play_count": 9
+        },
+        {
+          "genre": "desi hip hop",
+          "play_count": 9
+        },
+        {
+          "genre": "west coast hip hop",
+          "play_count": 8
+        },
+        {
+          "genre": "devotional",
+          "play_count": 8
+        },
+        {
+          "genre": "hindi hip hop",
+          "play_count": 8
         }
       ],
-      "total_play_count": 292,
-      "unique_track_count": 193,
-      "unique_artist_count": 146
+      "total_play_count": 229,
+      "unique_track_count": 194,
+      "unique_artist_count": 190
     },
     "last_7_days": {
       "label": "last_7_days",
-      "start": "2025-12-27T00:00:00-08:00",
-      "end": "2026-01-03T00:00:00-08:00",
+      "start": "2025-12-28T00:00:00-08:00",
+      "end": "2026-01-04T00:00:00-08:00",
       "top_tracks": [
         {
           "track_id": "spotify:track:2XHzzp1j4IfTNp1FTn7YFg",
@@ -3486,73 +3675,10 @@
           "play_count": 8
         },
         {
-          "track_id": "spotify:track:6abZ3FsLpBIKhjq387M6VH",
-          "track_name": "Mi Amor",
-          "artist_name": "Sharn, The Paul",
-          "album_name": "Mi Amor",
-          "play_count": 5
-        },
-        {
           "track_id": "spotify:track:3s4mrPrEFFPF0LmAfutW0n",
           "track_name": "The London (feat. J. Cole & Travis Scott)",
           "artist_name": "Young Thug, J. Cole, Travis Scott",
           "album_name": "So Much Fun",
-          "play_count": 4
-        },
-        {
-          "track_id": "spotify:track:5wWAwzGp2OaaoIkwcz6wZs",
-          "track_name": "Life's A Mess (feat. Halsey)",
-          "artist_name": "Juice WRLD, Halsey",
-          "album_name": "Legends Never Die",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:4B0JvthVoAAuygILe3n4Bs",
-          "track_name": "What Do You Mean?",
-          "artist_name": "Justin Bieber",
-          "album_name": "Purpose (Deluxe)",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:67BtfxlNbhBmCDR2L2l8qd",
-          "track_name": "MONTERO (Call Me By Your Name)",
-          "artist_name": "Lil Nas X",
-          "album_name": "MONTERO (Call Me By Your Name)",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:5zDQlhcJ5KOoXeSMGwiuJY",
-          "track_name": "Give It 2 U",
-          "artist_name": "Robin Thicke, Kendrick Lamar",
-          "album_name": "Blurred Lines (Deluxe)",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:6uFn47ACjqYkc0jADwEdj1",
-          "track_name": "Pop Out (feat. Lil Tjay)",
-          "artist_name": "Polo G, Lil Tjay",
-          "album_name": "Die A Legend",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:0w75KG0DuLDi6tdHmEMovD",
-          "track_name": "Don't Let Me Down",
-          "artist_name": "The Chainsmokers, Daya",
-          "album_name": "Collage EP",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:3QzAOrNlsabgbMwlZt7TAY",
-          "track_name": "Ballin' (with Roddy Ricch)",
-          "artist_name": "Mustard, Roddy Ricch",
-          "album_name": "Perfect Ten",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:0RrR3wg4ezBVwm7lyeybir",
-          "track_name": "Suno- Na Sangemarmar",
-          "artist_name": "Arijit Singh",
-          "album_name": "Youngistaan",
           "play_count": 3
         },
         {
@@ -3560,273 +3686,336 @@
           "track_name": "Apparently",
           "artist_name": "J. Cole",
           "album_name": "2014 Forest Hills Drive",
-          "play_count": 3
+          "play_count": 2
+        },
+        {
+          "track_id": "spotify:track:5EYZZvmNAH5VZCwuzYJqoA",
+          "track_name": "Chand Sifarish",
+          "artist_name": "Jatin-Lalit, Shaan, Kailash Kher, Prasoon Joshi",
+          "album_name": "Fanaa",
+          "play_count": 2
         },
         {
           "track_id": "spotify:track:49FYlytm3dAAraYgpoJZux",
           "track_name": "Umbrella",
           "artist_name": "Rihanna, JAY-Z",
           "album_name": "Good Girl Gone Bad: Reloaded",
-          "play_count": 3
-        },
-        {
-          "track_id": "spotify:track:1gwO79MdYdumgIjxq8eCxB",
-          "track_name": "Bahara",
-          "artist_name": "Vishal-Shekhar, Shreya Ghoshal, Sona Mohapatra",
-          "album_name": "I Hate Luv Storys (Original Motion Picture Soundtrack)",
           "play_count": 2
         },
         {
-          "track_id": "spotify:track:2VKHWIONh47ntN7wyoSxEQ",
-          "track_name": "The Grinch",
-          "artist_name": "Trippie Redd",
-          "album_name": "A Love Letter To You 4",
+          "track_id": "spotify:track:6abZ3FsLpBIKhjq387M6VH",
+          "track_name": "Mi Amor",
+          "artist_name": "Sharn, The Paul",
+          "album_name": "Mi Amor",
           "play_count": 2
         },
         {
-          "track_id": "spotify:track:6IYS7wNZxRBvLpwMZDbcdP",
-          "track_name": "Jai Jai Shivshankar",
-          "artist_name": "Vishal-Shekhar, Vishal Dadlani, Benny Dayal, Kumaar",
-          "album_name": "War",
-          "play_count": 2
+          "track_id": "spotify:track:2FY7b99s15jUprqC0M5NCT",
+          "track_name": "Natural",
+          "artist_name": "Imagine Dragons",
+          "album_name": "Origins (Deluxe)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:7hpH1Ijoygw5J5XUfVS9hh",
-          "track_name": "Kya Khoob Lagti Ho",
-          "artist_name": "Mukesh, Kanchan",
-          "album_name": "Dharmatma (Original Motion Picture Soundtrack)",
-          "play_count": 2
+          "track_id": "spotify:track:0bGLvHd0ApdT4t0shCfpzG",
+          "track_name": "Side Effects",
+          "artist_name": "The Chainsmokers, Emily Warren",
+          "album_name": "Sick Boy",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:4cg1yakyRSIOjxKM2I7J1q",
-          "track_name": "Digits",
-          "artist_name": "Young Thug",
-          "album_name": "Slime Season 3",
-          "play_count": 2
-        },
-        {
-          "track_id": "spotify:track:7MXVkk9YMctZqd1Srtv4MB",
-          "track_name": "Starboy",
+          "track_id": "spotify:track:5GXAXm5YOmYT0kL5jHvYBt",
+          "track_name": "I Feel It Coming",
           "artist_name": "The Weeknd, Daft Punk",
           "album_name": "Starboy",
-          "play_count": 2
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:2UXqAinFTSFA3Y0nlWPHQn",
-          "track_name": "Mehndi Laga Ke Rakhna",
-          "artist_name": "Lata Mangeshkar, Udit Narayan",
-          "album_name": "Dilwale Dulhania Le Jayenge (Original Motion Picture Soundtrack)",
-          "play_count": 2
+          "track_id": "spotify:track:5PvwPy5eRO8BPwpRzCHK3D",
+          "track_name": "Sunn Raha Hai (Male Version)",
+          "artist_name": "Ankit Tiwari",
+          "album_name": "Aashiqui 2",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:3BtuIIrQlkujKPuWF2B85z",
-          "track_name": "Too Good",
-          "artist_name": "Drake, Rihanna",
+          "track_id": "spotify:track:0pPGUL7171TRGgI6wyP8wP",
+          "track_name": "Tumhe Jo Maine Dekha",
+          "artist_name": "Abhijeet, Shreya Ghoshal",
+          "album_name": "Main Hoon Na",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:2YpeDb67231RjR0MgVLzsG",
+          "track_name": "Old Town Road (feat. Billy Ray Cyrus) - Remix",
+          "artist_name": "Lil Nas X, Billy Ray Cyrus",
+          "album_name": "7",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:6Z1Q31m2SQt7uLfyqce6ot",
+          "track_name": "To Brazil!",
+          "artist_name": "Vengaboys",
+          "album_name": "The Party Album!",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:2P3SLxeQHPqh8qKB6gtJY2",
+          "track_name": "Poetic Justice",
+          "artist_name": "Kendrick Lamar, Drake",
+          "album_name": "good kid, m.A.A.d city (Deluxe)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:09IStsImFySgyp0pIQdqAc",
+          "track_name": "The Middle",
+          "artist_name": "Zedd, Maren Morris, Grey",
+          "album_name": "The Middle",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:5D2mYZuzcgjpchVY1pmTPh",
+          "track_name": "Candy Shop",
+          "artist_name": "50 Cent, Olivia",
+          "album_name": "The Massacre",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:0b4M7hd7mzLTm99MrMeZsp",
+          "track_name": "She Will",
+          "artist_name": "Lil Wayne, Drake",
+          "album_name": "Tha Carter IV (Complete Edition)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:6bfJggd4HFdzHzvZLQ5EDX",
+          "track_name": "She\u2019s The One",
+          "artist_name": "Juice WRLD",
+          "album_name": "Death Race For Love (Bonus Track Version)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:5JEx7HbmvHQQswJCsoo9rA",
+          "track_name": "Close To Me (with Diplo) (feat. Swae Lee)",
+          "artist_name": "Ellie Goulding, Diplo, Swae Lee",
+          "album_name": "Close To Me (feat. Swae Lee)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:4BTPzhEsyW3blWcxcuhLM0",
+          "track_name": "Mitwa",
+          "artist_name": "Shankar-Ehsaan-Loy, Shankar Mahadevan, Caralisa Monteiro, Shafqat Amanat Ali",
+          "album_name": "Kabhi Alvida Naa Kehna (Original Motion Picture Soundtrack)",
+          "play_count": 1
+        },
+        {
+          "track_id": "spotify:track:3O8NlPh2LByMU9lSRSHedm",
+          "track_name": "Controlla",
+          "artist_name": "Drake",
           "album_name": "Views",
-          "play_count": 2
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:1vnnXMrBeEWiRg3YCMCjQq",
-          "track_name": "Despacito - Remix",
-          "artist_name": "Luis Fonsi, Daddy Yankee, Justin Bieber",
-          "album_name": "VIDA",
-          "play_count": 2
+          "track_id": "spotify:track:5XsoDbDt98b0FkFLOhsJuS",
+          "track_name": "Lat Lag Gayee",
+          "artist_name": "Benny Dayal, Shalmali Kholgade, Pritam",
+          "album_name": "Race 2 (Original Motion Picture Soundtrack)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:5EYZZvmNAH5VZCwuzYJqoA",
-          "track_name": "Chand Sifarish",
-          "artist_name": "Unknown, Unknown, Unknown, Unknown",
-          "album_name": "Fanaa",
-          "play_count": 2
+          "track_id": "spotify:track:7d94IqWX2UmSKMGUYSGFJG",
+          "track_name": "Bad Energy",
+          "artist_name": "Juice WRLD",
+          "album_name": "Legends Never Die",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:4zkFR93VC5H04YhnYxr2zz",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:2dHHgzDwk4BJdRwy9uXhTO",
+          "track_name": "Creepin' (with The Weeknd & 21 Savage)",
+          "artist_name": "Metro Boomin, The Weeknd, 21 Savage",
+          "album_name": "HEROES & VILLAINS",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:5M7LdQfurIG70nbvlSAO07",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:6AvfZXpbb6r35DfF7gHPRq",
+          "track_name": "Wait",
+          "artist_name": "Maroon 5",
+          "album_name": "Red Pill Blues (Deluxe)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:1p0rEzrK7YtdRZVtiyV7RN",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:5eCkuGPZNl4mISFNPgr3Dd",
+          "track_name": "Down",
+          "artist_name": "Marian Hill",
+          "album_name": "ACT ONE",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:28veUNu4veN0LOBVa0nFw8",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:4cktbXiXOapiLBMprHFErI",
+          "track_name": "Memories",
+          "artist_name": "Maroon 5",
+          "album_name": "JORDI (Deluxe)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:32lItqlMi4LBhb4k0BaSaC",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:1QPreu0BNOrUfEb8HTd2qG",
+          "track_name": "Rich Spirit",
+          "artist_name": "Kendrick Lamar",
+          "album_name": "Mr. Morale & The Big Steppers",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:0veO6y9anwdVTaRuW7y8NJ",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:5wujBwqG7INdStqGd4tRMX",
+          "track_name": "Armed And Dangerous",
+          "artist_name": "Juice WRLD",
+          "album_name": "Goodbye & Good Riddance",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:6WrI0LAC5M1Rw2MnX2ZvEg",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:5wyzawAfi1y7Zgsx3jr7MD",
+          "track_name": "Mere Khwabon Mein",
+          "artist_name": "Lata Mangeshkar",
+          "album_name": "Dilwale Dulhania Le Jayenge (Original Motion Picture Soundtrack)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:4PklAHGXT5ityno3IA8SKd",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:4FyesJzVpA39hbYvcseO2d",
+          "track_name": "Just Wanna Rock",
+          "artist_name": "Lil Uzi Vert",
+          "album_name": "Just Wanna Rock",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:0JssjDh3UWEgjUslVZgHJG",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:22sJiw8rbuiiDEpdKNMRVP",
+          "track_name": "Ain't Safe (feat. Don Toliver)",
+          "artist_name": "Trippie Redd, Don Toliver",
+          "album_name": "Ain't Safe (feat. Don Toliver)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:4HfmI5Yisll9PCOjJhtijw",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:5bm0CcD5R9Nj04QbMvwugt",
+          "track_name": "Started From the Bottom",
+          "artist_name": "Drake",
+          "album_name": "Nothing Was The Same (Deluxe)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:17opN752ZQpNuoptelsNQ1",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:6wQlQrTY5mVS8EGaFZVwVF",
+          "track_name": "Smile (with The Weeknd)",
+          "artist_name": "Juice WRLD, The Weeknd",
+          "album_name": "Legends Never Die",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:57kR5SniQIbsbVoIjjOUDa",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:1fewSx2d5KIZ04wsooEBOz",
+          "track_name": "Space Cadet (feat. Gunna)",
+          "artist_name": "Metro Boomin, Gunna",
+          "album_name": "NOT ALL HEROES WEAR CAPES (Deluxe)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:7tavmiMMEibizGOiXoozar",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:4xigPf2sigSPmuFH3qCelB",
+          "track_name": "Genius (feat. Sia, Diplo, and Labrinth)",
+          "artist_name": "Sia, Diplo, Labrinth, LSD",
+          "album_name": "LABRINTH, SIA & DIPLO PRESENT... LSD",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:5Z3GHaZ6ec9bsiI5BenrbY",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:3ySVdXje5nm31d7vL3jNV3",
+          "track_name": "Galliyan",
+          "artist_name": "Ankit Tiwari, Manoj Muntashir",
+          "album_name": "Ek Villain",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:0XwRlvv3KlOu4HWlOH34XG",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:1P17dC1amhFzptugyAO7Il",
+          "track_name": "Look What You Made Me Do",
+          "artist_name": "Taylor Swift",
+          "album_name": "reputation",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:339Y993TrFyWyO438be0RY",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:4jk4CaqBMBbMZhf3PuR1ai",
+          "track_name": "Phir Kabhi",
+          "artist_name": "Arijit Singh, Amaal Mallik, Manoj Muntashir",
+          "album_name": "M.S.Dhoni - The Untold Story",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:7Bpx2vsWfQFBACRz4h3IqH",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:6RUKPb4LETWmmr3iAEQktW",
+          "track_name": "Something Just Like This",
+          "artist_name": "The Chainsmokers, Coldplay",
+          "album_name": "Memories...Do Not Open",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:18YHbIhrleUkKKj2DvEp79",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:1rqqCSm0Qe4I9rUvWncaom",
+          "track_name": "High Hopes",
+          "artist_name": "Panic! At The Disco",
+          "album_name": "Pray for the Wicked",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:3hsmbFKT5Cujb5GQjqEU39",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:2t8yVaLvJ0RenpXUIAC52d",
+          "track_name": "a lot",
+          "artist_name": "21 Savage",
+          "album_name": "i am > i was",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:7IK26RNUdgoZWJdlarrcty",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:0OTO8ZF2YqFQVw9hnZylTd",
+          "track_name": "What Is Love - 7\" Mix",
+          "artist_name": "Haddaway",
+          "album_name": "The Album",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:2H9SvhMVXSYPxxkQgzkTKp",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:5kS3Kw2elRTrodnsyQuhvI",
+          "track_name": "Can't Leave You Alone (feat. Juice WRLD)",
+          "artist_name": "Maroon 5, Juice WRLD",
+          "album_name": "JORDI (Deluxe)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:2cYqizR4lgvp4Qu6IQ3qGN",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:1Knctxx9vGZxpZfF66BIEa",
+          "track_name": "Legends",
+          "artist_name": "Juice WRLD",
+          "album_name": "Legends",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:21jGcNKet2qwijlDFuPiPb",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:5H4rKylLnO8KrmdXTRhj5s",
+          "track_name": "Chaiyya Chaiyya",
+          "artist_name": "Sukhwinder Singh, Sapna Awasthi",
+          "album_name": "Dil Se (Original Motion Picture Soundtrack)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:2OKo7g3KfmCt3kyLvUAL0g",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:0N3W5peJUQtI4eyR6GJT5O",
+          "track_name": "King Kunta",
+          "artist_name": "Kendrick Lamar",
+          "album_name": "To Pimp A Butterfly",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:1K8zYNuDywMknSJuNGoWy0",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:2s1sdSqGcKxpPr5lCl7jAV",
+          "track_name": "Chandelier",
+          "artist_name": "Sia",
+          "album_name": "1000 Forms Of Fear (Deluxe Version)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:5cGpjfgAvidLy6znwkCxkP",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:0bLCiBR9AOtfp98dk7iCL5",
+          "track_name": "Pani Da Rang - Male",
+          "artist_name": "Ayushmann Khurrana, Rochak Kohli",
+          "album_name": "Vicky Donor (Original Motion Picture Soundtrack)",
+          "play_count": 1
         },
         {
-          "track_id": "spotify:track:4at3d5QWnlibMVN75ECDrp",
-          "track_name": "Unknown",
-          "artist_name": "Unknown",
-          "album_name": "Unknown",
-          "play_count": 2
+          "track_id": "spotify:track:6xbraxG0bSBOuAr5IUXmtM",
+          "track_name": "iSpy (feat. Lil Yachty)",
+          "artist_name": "KYLE, Lil Yachty",
+          "album_name": "Light of Mine",
+          "play_count": 1
         }
       ],
       "top_artists": [
@@ -3837,7 +4026,7 @@
             "melodic rap",
             "emo rap"
           ],
-          "play_count": 20
+          "play_count": 26
         },
         {
           "artist_id": "spotify:artist:3TVXtAsR1Inumwj472S9r4",
@@ -3853,7 +4042,7 @@
           "genres": [
             "rap"
           ],
-          "play_count": 14
+          "play_count": 15
         },
         {
           "artist_id": "spotify:artist:55Aa2cqylxrFIXC767Z865",
@@ -3862,17 +4051,15 @@
             "rap",
             "hip hop"
           ],
-          "play_count": 12
+          "play_count": 13
         },
         {
-          "artist_id": "spotify:artist:50co4Is1HCEo8bhOyUWKpn",
-          "artist_name": "Young Thug",
+          "artist_id": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY",
+          "artist_name": "Travis Scott",
           "genres": [
-            "rap",
-            "melodic rap",
-            "trap"
+            "rap"
           ],
-          "play_count": 8
+          "play_count": 10
         },
         {
           "artist_id": "spotify:artist:6l3HvQ5sa6mXTsMTB19rO5",
@@ -3883,72 +4070,14 @@
           "play_count": 8
         },
         {
-          "artist_id": "spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY",
-          "artist_name": "Travis Scott",
+          "artist_id": "spotify:artist:50co4Is1HCEo8bhOyUWKpn",
+          "artist_name": "Young Thug",
           "genres": [
-            "rap"
+            "rap",
+            "melodic rap",
+            "trap"
           ],
-          "play_count": 7
-        },
-        {
-          "artist_id": "spotify:artist:2YZyLoL8N0Wb9xBt1NhZWg",
-          "artist_name": "Kendrick Lamar",
-          "genres": [
-            "hip hop",
-            "west coast hip hop"
-          ],
-          "play_count": 7
-        },
-        {
-          "artist_id": "spotify:artist:5pKCCKE2ajJHZ9KAiaK11H",
-          "artist_name": "Rihanna",
-          "genres": [],
-          "play_count": 7
-        },
-        {
-          "artist_id": "spotify:artist:1uNFoZAHBGtllmzznpCI3s",
-          "artist_name": "Justin Bieber",
-          "genres": [],
           "play_count": 6
-        },
-        {
-          "artist_id": "spotify:artist:1Xyo4u8uXC1ZmMpatF05PJ",
-          "artist_name": "The Weeknd",
-          "genres": [],
-          "play_count": 6
-        },
-        {
-          "artist_id": "spotify:artist:74RGMjbSsFv5RLj8wVx9Yv",
-          "artist_name": "Sharn",
-          "genres": [
-            "punjabi pop",
-            "punjabi hip hop",
-            "desi pop"
-          ],
-          "play_count": 5
-        },
-        {
-          "artist_id": "spotify:artist:1i31OYo0s5VoMCaMRJFZkJ",
-          "artist_name": "The Paul",
-          "genres": [
-            "punjabi pop",
-            "punjabi hip hop"
-          ],
-          "play_count": 5
-        },
-        {
-          "artist_id": "spotify:artist:69GGBxA162lTqCwzJG5jLp",
-          "artist_name": "The Chainsmokers",
-          "genres": [],
-          "play_count": 5
-        },
-        {
-          "artist_id": "spotify:artist:757aE44tKEUQEqRuT6GnEB",
-          "artist_name": "Roddy Ricch",
-          "genres": [
-            "melodic rap"
-          ],
-          "play_count": 5
         },
         {
           "artist_id": "spotify:artist:4YRxDV8wJFPHPTeXepOstw",
@@ -3959,6 +4088,31 @@
             "desi",
             "bangla pop"
           ],
+          "play_count": 6
+        },
+        {
+          "artist_id": "spotify:artist:5pKCCKE2ajJHZ9KAiaK11H",
+          "artist_name": "Rihanna",
+          "genres": [],
+          "play_count": 5
+        },
+        {
+          "artist_id": "spotify:artist:2YZyLoL8N0Wb9xBt1NhZWg",
+          "artist_name": "Kendrick Lamar",
+          "genres": [
+            "hip hop",
+            "west coast hip hop"
+          ],
+          "play_count": 5
+        },
+        {
+          "artist_id": "spotify:artist:1wRPtKGflJrBx9BmLsSwlU",
+          "artist_name": "Pritam",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi"
+          ],
           "play_count": 5
         },
         {
@@ -3968,9 +4122,70 @@
           "play_count": 5
         },
         {
-          "artist_id": "spotify:artist:7jVv8c5Fj3E9VhNjxT4snq",
-          "artist_name": "Lil Nas X",
+          "artist_id": "spotify:artist:1Xyo4u8uXC1ZmMpatF05PJ",
+          "artist_name": "The Weeknd",
           "genres": [],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:04gDigrS5kc9YWfZHwBETP",
+          "artist_name": "Maroon 5",
+          "genres": [
+            "pop"
+          ],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:6Xgp2XMz1fhVYe7i6yNAax",
+          "artist_name": "Trippie Redd",
+          "genres": [
+            "melodic rap"
+          ],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:2hlmm7s2ICUX0LVIhVFlZQ",
+          "artist_name": "Gunna",
+          "genres": [
+            "melodic rap"
+          ],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:246dkjvS1zLTtiykXe5h60",
+          "artist_name": "Post Malone",
+          "genres": [],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:1uNFoZAHBGtllmzznpCI3s",
+          "artist_name": "Justin Bieber",
+          "genres": [],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:7uIbLdzzSEqnX0Pkrb56cR",
+          "artist_name": "Yo Yo Honey Singh",
+          "genres": [
+            "bollywood",
+            "hindi hip hop",
+            "desi",
+            "punjabi pop",
+            "hindi pop",
+            "punjabi hip hop"
+          ],
+          "play_count": 4
+        },
+        {
+          "artist_id": "spotify:artist:5f4QpKfy7ptCHwTqspnSJI",
+          "artist_name": "Neha Kakkar",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi",
+            "desi pop",
+            "gujarati garba"
+          ],
           "play_count": 4
         },
         {
@@ -3984,6 +4199,34 @@
           "play_count": 4
         },
         {
+          "artist_id": "spotify:artist:4YgUVg4p7xtMOrOS4GjiJZ",
+          "artist_name": "Jatin-Lalit",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:5cB4d4jPYjMT326sjihQ4m",
+          "artist_name": "Shaan",
+          "genres": [
+            "bollywood",
+            "hindi pop",
+            "desi",
+            "desi pop",
+            "bangla pop"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:69GGBxA162lTqCwzJG5jLp",
+          "artist_name": "The Chainsmokers",
+          "genres": [],
+          "play_count": 3
+        },
+        {
           "artist_id": "spotify:artist:0oOet2f43PA68X5RxKobEy",
           "artist_name": "Shreya Ghoshal",
           "genres": [
@@ -3994,95 +4237,6 @@
             "marathi pop",
             "bangla pop"
           ],
-          "play_count": 4
-        },
-        {
-          "artist_id": "spotify:artist:6Xgp2XMz1fhVYe7i6yNAax",
-          "artist_name": "Trippie Redd",
-          "genres": [
-            "melodic rap"
-          ],
-          "play_count": 4
-        },
-        {
-          "artist_id": "spotify:artist:61if35zz1W11GejEkxTLEQ",
-          "artist_name": "Benny Dayal",
-          "genres": [
-            "bollywood",
-            "desi",
-            "hindi pop"
-          ],
-          "play_count": 4
-        },
-        {
-          "artist_id": "spotify:artist:5WUlDfRSoLAfcVSX1WnrxN",
-          "artist_name": "Unknown",
-          "genres": [],
-          "play_count": 4
-        },
-        {
-          "artist_id": "spotify:artist:26VFTg2z8YR0cCuwLzESi2",
-          "artist_name": "Halsey",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:0ZrpamOxcZybMHGg1AYtHP",
-          "artist_name": "Robin Thicke",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:6AgTAQt8XS6jRWi4sX7w49",
-          "artist_name": "Polo G",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:6jGMq4yGs7aQzuGsMgVgZR",
-          "artist_name": "Lil Tjay",
-          "genres": [
-            "brooklyn drill",
-            "melodic rap"
-          ],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:6Dd3NScHWwnW6obMFbl1BH",
-          "artist_name": "Daya",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:0YinUQ50QDB7ZxSCLyQ40k",
-          "artist_name": "Mustard",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:3nFkdlSjzX9mRTtwJOzDYB",
-          "artist_name": "JAY-Z",
-          "genres": [
-            "hip hop",
-            "east coast hip hop",
-            "rap"
-          ],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:4tZwfgrHOc3mvqYlEYSvVi",
-          "artist_name": "Daft Punk",
-          "genres": [
-            "french house",
-            "electronic",
-            "electro"
-          ],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:7n2wHs1TKAczGzO7Dd2rGr",
-          "artist_name": "Shawn Mendes",
-          "genres": [],
           "play_count": 3
         },
         {
@@ -4095,60 +4249,144 @@
           "play_count": 3
         },
         {
+          "artist_id": "spotify:artist:0iEtIxbK0KxaSlF7G42ZOp",
+          "artist_name": "Metro Boomin",
+          "genres": [],
+          "play_count": 3
+        },
+        {
           "artist_id": "spotify:artist:1URnnhqYAYcrqrcwql10ft",
           "artist_name": "21 Savage",
           "genres": [],
           "play_count": 3
         },
         {
-          "artist_id": "spotify:artist:04gDigrS5kc9YWfZHwBETP",
-          "artist_name": "Maroon 5",
+          "artist_id": "spotify:artist:4O15NlyKLIASxsJ0PrXPfz",
+          "artist_name": "Lil Uzi Vert",
           "genres": [
-            "pop"
+            "melodic rap"
           ],
           "play_count": 3
         },
         {
-          "artist_id": "spotify:artist:4O15NlyKLIASxsJ0PrXPfz",
-          "artist_name": "Unknown",
-          "genres": [],
-          "play_count": 3
-        },
-        {
-          "artist_id": "spotify:artist:2hlmm7s2ICUX0LVIhVFlZQ",
-          "artist_name": "Unknown",
+          "artist_id": "spotify:artist:5WUlDfRSoLAfcVSX1WnrxN",
+          "artist_name": "Sia",
           "genres": [],
           "play_count": 3
         },
         {
           "artist_id": "spotify:artist:4cAERazLlAzVGA10ORWaUP",
-          "artist_name": "Unknown",
-          "genres": [],
+          "artist_name": "Manoj Muntashir",
+          "genres": [
+            "bhajan",
+            "bollywood",
+            "hindi pop",
+            "devotional"
+          ],
           "play_count": 3
         },
         {
-          "artist_id": "spotify:artist:5bv6NvAYNuvd2Vq13nHdG3",
-          "artist_name": "Sona Mohapatra",
+          "artist_id": "spotify:artist:5K4W6rqBFWDnAN6FQUkS6x",
+          "artist_name": "Kanye West",
           "genres": [
+            "rap"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:757aE44tKEUQEqRuT6GnEB",
+          "artist_name": "Roddy Ricch",
+          "genres": [
+            "melodic rap"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:1dVygo6tRFXC8CSWURQJq2",
+          "artist_name": "Sonu Nigam",
+          "genres": [
+            "kannada pop",
             "bollywood",
+            "sandalwood",
+            "hindi pop",
             "desi",
+            "marathi pop"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:6LEG9Ld1aLImEFEVHdWNSB",
+          "artist_name": "AP Dhillon",
+          "genres": [
+            "punjabi hip hop",
+            "punjabi pop",
+            "desi",
+            "bhangra",
+            "desi hip hop"
+          ],
+          "play_count": 3
+        },
+        {
+          "artist_id": "spotify:artist:4oVMLzAqW6qhRpZWt8fNw4",
+          "artist_name": "Kailash Kher",
+          "genres": [
+            "sufi",
+            "bhajan",
+            "bollywood",
+            "qawwali",
             "hindi pop"
           ],
           "play_count": 2
         },
         {
-          "artist_id": "spotify:artist:6CXEwIaXYfVJ84biCxqc9k",
-          "artist_name": "Vishal Dadlani",
+          "artist_id": "spotify:artist:0e7Xsukwik0zDaqCcSvJTg",
+          "artist_name": "Prasoon Joshi",
           "genres": [
             "bollywood",
-            "desi",
-            "hindi pop"
+            "sufi",
+            "hindi pop",
+            "desi"
           ],
           "play_count": 2
         },
         {
-          "artist_id": "spotify:artist:0m3D4grap8VFSzbJMqgNVk",
-          "artist_name": "Kumaar",
+          "artist_id": "spotify:artist:3nFkdlSjzX9mRTtwJOzDYB",
+          "artist_name": "JAY-Z",
+          "genres": [
+            "hip hop",
+            "east coast hip hop",
+            "rap"
+          ],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:74RGMjbSsFv5RLj8wVx9Yv",
+          "artist_name": "Sharn",
+          "genres": [
+            "punjabi pop",
+            "punjabi hip hop",
+            "desi pop"
+          ],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:1i31OYo0s5VoMCaMRJFZkJ",
+          "artist_name": "The Paul",
+          "genres": [
+            "punjabi pop",
+            "punjabi hip hop"
+          ],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:53XhwfbYqKCa1cC15pYq2q",
+          "artist_name": "Imagine Dragons",
+          "genres": [],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:0E02VcvA5p1ndkLdqWD5JB",
+          "artist_name": "Ankit Tiwari",
           "genres": [
             "bollywood",
             "hindi pop",
@@ -4157,18 +4395,58 @@
           "play_count": 2
         },
         {
-          "artist_id": "spotify:artist:4etv0ut4ws0GbXBtolzf5e",
-          "artist_name": "Mukesh",
+          "artist_id": "spotify:artist:7jVv8c5Fj3E9VhNjxT4snq",
+          "artist_name": "Lil Nas X",
+          "genres": [],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:5fMUXHkw8R8eOP2RNVYEZX",
+          "artist_name": "Diplo",
           "genres": [
-            "ghazal",
-            "tamil dance"
+            "moombahton"
           ],
           "play_count": 2
         },
         {
-          "artist_id": "spotify:artist:20LxVmOnMzPm716JTA7XKi",
-          "artist_name": "Kanchan",
+          "artist_id": "spotify:artist:1zNqQNIdeOUZHb8zbZRFMX",
+          "artist_name": "Swae Lee",
           "genres": [],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:0L5GV6LN8SWWUWIdBbTLTZ",
+          "artist_name": "Shankar-Ehsaan-Loy",
+          "genres": [
+            "bollywood",
+            "sufi",
+            "desi",
+            "hindi pop"
+          ],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:1SJOL9HJ08YOn92lFcYf8a",
+          "artist_name": "Shankar Mahadevan",
+          "genres": [
+            "marathi pop",
+            "bollywood",
+            "devotional",
+            "bhajan",
+            "desi",
+            "tamil dance",
+            "hindi pop"
+          ],
+          "play_count": 2
+        },
+        {
+          "artist_id": "spotify:artist:61if35zz1W11GejEkxTLEQ",
+          "artist_name": "Benny Dayal",
+          "genres": [
+            "bollywood",
+            "desi",
+            "hindi pop"
+          ],
           "play_count": 2
         },
         {
@@ -4184,136 +4462,97 @@
           "play_count": 2
         },
         {
-          "artist_id": "spotify:artist:70B80Lwx2sxti0M1Ng9e8K",
-          "artist_name": "Udit Narayan",
-          "genres": [
-            "bollywood",
-            "hindi pop",
-            "desi"
-          ],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:4V8Sr092TqfHkfAA5fXXqG",
-          "artist_name": "Luis Fonsi",
-          "genres": [
-            "latin"
-          ],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:4VMYDCV2IEDYJArk749S6m",
-          "artist_name": "Daddy Yankee",
-          "genres": [
-            "reggaeton",
-            "latin"
-          ],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:4YgUVg4p7xtMOrOS4GjiJZ",
-          "artist_name": "Unknown",
-          "genres": [],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:5cB4d4jPYjMT326sjihQ4m",
-          "artist_name": "Unknown",
-          "genres": [],
-          "play_count": 2
-        },
-        {
-          "artist_id": "spotify:artist:4oVMLzAqW6qhRpZWt8fNw4",
-          "artist_name": "Unknown",
+          "artist_id": "spotify:artist:4Gso3d4CscCijv0lmajZWs",
+          "artist_name": "Don Toliver",
           "genres": [],
           "play_count": 2
         }
       ],
       "top_genres": [
         {
-          "genre": "rap",
-          "play_count": 72
-        },
-        {
-          "genre": "melodic rap",
-          "play_count": 40
+          "genre": "bollywood",
+          "play_count": 107
         },
         {
           "genre": "hindi pop",
-          "play_count": 33
-        },
-        {
-          "genre": "bollywood",
-          "play_count": 33
+          "play_count": 92
         },
         {
           "genre": "desi",
-          "play_count": 29
+          "play_count": 91
         },
         {
-          "genre": "hip hop",
-          "play_count": 23
+          "genre": "rap",
+          "play_count": 75
+        },
+        {
+          "genre": "melodic rap",
+          "play_count": 48
         },
         {
           "genre": "emo rap",
-          "play_count": 20
+          "play_count": 26
         },
         {
           "genre": "punjabi pop",
-          "play_count": 12
+          "play_count": 23
+        },
+        {
+          "genre": "hip hop",
+          "play_count": 21
         },
         {
           "genre": "punjabi hip hop",
-          "play_count": 12
-        },
-        {
-          "genre": "bangla pop",
-          "play_count": 9
-        },
-        {
-          "genre": "trap",
-          "play_count": 8
-        },
-        {
-          "genre": "west coast hip hop",
-          "play_count": 8
+          "play_count": 18
         },
         {
           "genre": "desi pop",
-          "play_count": 6
+          "play_count": 16
         },
         {
-          "genre": "east coast hip hop",
-          "play_count": 6
+          "genre": "bangla pop",
+          "play_count": 12
+        },
+        {
+          "genre": "bhangra",
+          "play_count": 12
+        },
+        {
+          "genre": "bhajan",
+          "play_count": 11
         },
         {
           "genre": "marathi pop",
-          "play_count": 6
+          "play_count": 11
+        },
+        {
+          "genre": "sufi",
+          "play_count": 9
+        },
+        {
+          "genre": "desi hip hop",
+          "play_count": 9
+        },
+        {
+          "genre": "gujarati garba",
+          "play_count": 8
         },
         {
           "genre": "kannada pop",
-          "play_count": 4
+          "play_count": 7
         },
         {
-          "genre": "ghazal",
-          "play_count": 4
+          "genre": "devotional",
+          "play_count": 7
         },
         {
-          "genre": "latin",
-          "play_count": 4
-        },
-        {
-          "genre": "old school hip hop",
-          "play_count": 4
-        },
-        {
-          "genre": "brooklyn drill",
-          "play_count": 3
+          "genre": "tamil pop",
+          "play_count": 7
         }
       ],
-      "total_play_count": 276,
-      "unique_track_count": 193,
-      "unique_artist_count": 146
+      "total_play_count": 191,
+      "unique_track_count": 178,
+      "unique_artist_count": 177
     }
   }
 }

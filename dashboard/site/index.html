@@ -9,12 +9,21 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="page">
         <!-- Header -->
-        <header>
-            <h1>Spotify Lifecycle Analytics</h1>
-            <p class="subtitle">Keenan Kalra Listening Insights</p>
-            <div id="last-updated" class="last-updated"></div>
+        <header class="page-header">
+            <div class="headline">
+                <p class="eyebrow">Spotify Lifecycle</p>
+                <div class="title-row">
+                    <h1>Listening lifecycle</h1>
+                    <span id="window-active-label" class="pill"></span>
+                </div>
+                <p class="subtitle">Keenan Kalra Listening Insights</p>
+            </div>
+            <div class="meta-block">
+                <div id="last-updated" class="last-updated"></div>
+                <p class="note">Static JSON · Nightly refresh</p>
+            </div>
         </header>
 
         <!-- Loading State -->
@@ -40,84 +49,134 @@
 
         <!-- Main Content -->
         <div id="main-content" style="display: none;">
-            <!-- Summary Cards -->
-            <section class="summary-cards">
-                <div class="card">
-                    <div class="card-icon">🎵</div>
-                    <div class="card-content">
-                        <h3 id="total-plays">-</h3>
-                        <p>Total Plays</p>
+            <!-- Summary -->
+            <section class="summary-grid" aria-label="Summary metrics">
+                <div class="summary-card">
+                    <p class="label">Total Plays</p>
+                    <p class="value" id="total-plays">-</p>
+                    <p class="hint">All spins inside the selected window</p>
+                </div>
+                <div class="summary-card">
+                    <p class="label">Unique Tracks</p>
+                    <p class="value" id="unique-tracks">-</p>
+                    <p class="hint">Distinct songs played</p>
+                </div>
+                <div class="summary-card">
+                    <p class="label">Unique Artists</p>
+                    <p class="value" id="unique-artists">-</p>
+                    <p class="hint">Voices in rotation</p>
+                </div>
+                <div class="summary-card">
+                    <p class="label">Genres</p>
+                    <p class="value" id="unique-genres">-</p>
+                    <p class="hint">Distinct genres represented</p>
+                </div>
+            </section>
+
+            <!-- Filters -->
+            <section class="controls-panel" aria-label="Filters and search">
+                <div class="control-block" id="window-control">
+                    <label for="window-select">Time window</label>
+                    <select id="window-select"></select>
+                </div>
+                <div class="control-block search-block">
+                    <label for="search-input">Search tracks or artists</label>
+                    <div class="input-wrap">
+                        <input id="search-input" type="search" placeholder="Filter by track, artist, or album"
+                            autocomplete="off" />
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-icon">🎤</div>
-                    <div class="card-content">
-                        <h3 id="unique-tracks">-</h3>
-                        <p>Unique Tracks</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">👤</div>
-                    <div class="card-content">
-                        <h3 id="unique-artists">-</h3>
-                        <p>Unique Artists</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🎸</div>
-                    <div class="card-content">
-                        <h3 id="unique-genres">-</h3>
-                        <p>Genres</p>
+                <div class="control-block sort-block">
+                    <span class="label">Sort</span>
+                    <div class="pill-group" id="sort-buttons">
+                        <button class="pill-btn active" data-sort="play_count" data-direction="desc">Plays</button>
+                        <button class="pill-btn" data-sort="track_name" data-direction="asc">Track</button>
+                        <button class="pill-btn" data-sort="artist_name" data-direction="asc">Artist</button>
                     </div>
                 </div>
             </section>
 
-            <!-- Charts Section -->
-            <section class="charts-section">
-                <!-- Daily Listening Trend -->
-                <div class="chart-container">
-                    <h2>Daily Listening Trend (Last 90 Days)</h2>
-                    <canvas id="daily-trend-chart"></canvas>
-                </div>
-
-                <!-- Hourly Distribution -->
-                <div class="chart-container">
-                    <h2>Listening by Hour of Day</h2>
-                    <canvas id="hourly-chart"></canvas>
+            <!-- Primary Content -->
+            <section class="primary-grid">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Top tracks</h2>
+                            <p class="muted">Sorted list for the selected window</p>
+                        </div>
+                        <span id="result-count" class="pill subtle-pill"></span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table" id="tracks-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Track</th>
+                                    <th scope="col">Artist</th>
+                                    <th scope="col">Album</th>
+                                    <th scope="col" class="numeric">Plays</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
-            <!-- Top Lists Section -->
-            <div class="window-control" id="window-control">
-                <label for="window-select">Time Window</label>
-                <select id="window-select"></select>
-                <span id="window-active-label" class="window-pill"></span>
-            </div>
-            <section class="top-lists-section">
-                <!-- Top Tracks -->
-                <div class="top-list">
-                    <h2>Top 50 Tracks</h2>
-                    <div id="top-tracks-list" class="list-container"></div>
+            <!-- Charts -->
+            <section class="charts-grid">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Daily listening</h2>
+                            <p class="muted">Last 90 days</p>
+                        </div>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="daily-trend-chart"></canvas>
+                    </div>
                 </div>
-
-                <!-- Top Artists -->
-                <div class="top-list">
-                    <h2>Top 50 Artists</h2>
-                    <div id="top-artists-list" class="list-container"></div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Listening by hour</h2>
+                            <p class="muted">Where the day peaks</p>
+                        </div>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="hourly-chart"></canvas>
+                    </div>
                 </div>
+            </section>
 
-                <!-- Top Genres -->
-                <div class="top-list">
-                    <h2>Top 20 Genres</h2>
-                    <div id="top-genres-list" class="list-container"></div>
+            <!-- Supporting Lists -->
+            <section class="secondary-grid">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Top artists</h2>
+                            <p class="muted">Most played voices</p>
+                        </div>
+                    </div>
+                    <div id="top-artists-list" class="simple-list"></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Top genres</h2>
+                            <p class="muted">Most played styles</p>
+                        </div>
+                    </div>
+                    <div id="top-genres-list" class="simple-list"></div>
                 </div>
             </section>
         </div>
 
         <!-- Footer -->
         <footer>
-            <p>Data refreshed nightly via serverless aggregation | Zero live queries</p>
-            <p class="cost-note"><a href="https://github.com/kklike32/" target="_blank">View on GitHub</a></p>
+            <p>Data refreshed nightly · No live queries</p>
+            <p class="cost-note"><a href="https://github.com/kklike32/" target="_blank" rel="noreferrer">View on
+                    GitHub</a></p>
         </footer>
     </div>
 

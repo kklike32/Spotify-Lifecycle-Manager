@@ -18,6 +18,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 TERRAFORM_DIR="$PROJECT_ROOT/infra/terraform"
 DASHBOARD_DIR="$PROJECT_ROOT/dashboard/site"
+DASHBOARD_BUILD_DIR="$DASHBOARD_DIR/dist"
+BUILD_SCRIPT="$PROJECT_ROOT/scripts/build_dashboard.py"
 
 # Parse arguments
 DEPLOY_TYPE="${1:-all}"  # all, lambda, terraform, dashboard
@@ -59,6 +61,12 @@ check_prerequisites() {
     # Check if uv is installed
     if ! command -v uv &> /dev/null; then
         print_error "uv is not installed"
+        exit 1
+    fi
+
+    # Check if Python 3 is available (for asset build script)
+    if ! command -v python3 &> /dev/null; then
+        print_error "Python 3 is not installed"
         exit 1
     fi
     
@@ -115,6 +123,14 @@ apply_terraform() {
 # Upload dashboard files to S3
 upload_dashboard() {
     print_header "Uploading Dashboard Files to S3"
+
+    print_info "Building dashboard assets with hashed filenames"
+    if [ ! -f "$BUILD_SCRIPT" ]; then
+        print_error "Build script not found: $BUILD_SCRIPT"
+        exit 1
+    fi
+    
+    python3 "$BUILD_SCRIPT"
     
     # Get bucket name from Terraform output
     cd "$TERRAFORM_DIR"
@@ -126,23 +142,68 @@ upload_dashboard() {
     fi
     
     print_info "Uploading to bucket: $DASHBOARD_BUCKET"
-    
-    # Upload HTML, CSS, and JS files
-    aws s3 cp "$DASHBOARD_DIR/index.html" "s3://$DASHBOARD_BUCKET/" --content-type "text/html"
-    aws s3 cp "$DASHBOARD_DIR/styles.css" "s3://$DASHBOARD_BUCKET/" --content-type "text/css"
-    aws s3 cp "$DASHBOARD_DIR/app.js" "s3://$DASHBOARD_BUCKET/" --content-type "application/javascript"
-    
-    if [ $? -eq 0 ]; then
-        print_success "Dashboard files uploaded successfully"
-        
-        # Get and display dashboard URL
-        DASHBOARD_URL=$(terraform output -raw dashboard_url 2>/dev/null)
-        if [ -n "$DASHBOARD_URL" ]; then
-            print_info "Dashboard URL: $DASHBOARD_URL"
-        fi
-    else
-        print_error "Dashboard upload failed"
+
+    MANIFEST_PATH="$DASHBOARD_BUILD_DIR/manifest.json"
+    if [ ! -f "$MANIFEST_PATH" ]; then
+        print_error "manifest.json not found at $MANIFEST_PATH"
         exit 1
+    fi
+
+    HASHED_FILES=$(
+        MANIFEST_PATH="$MANIFEST_PATH" python3 - <<'PY'
+import json
+import os
+import sys
+
+manifest_path = os.environ.get("MANIFEST_PATH")
+if not manifest_path:
+    sys.exit("MANIFEST_PATH not set")
+with open(manifest_path) as f:
+    manifest = json.load(f)
+print(" ".join(manifest.values()))
+PY
+    )
+
+    if [ -z "$HASHED_FILES" ]; then
+        print_error "No hashed assets found in manifest"
+        exit 1
+    fi
+
+    # Upload HTML and manifest with short cache
+    aws s3 cp "$DASHBOARD_BUILD_DIR/index.html" "s3://$DASHBOARD_BUCKET/index.html" \
+        --content-type "text/html" \
+        --cache-control "public, max-age=60, must-revalidate"
+
+    aws s3 cp "$MANIFEST_PATH" "s3://$DASHBOARD_BUCKET/manifest.json" \
+        --content-type "application/json" \
+        --cache-control "public, max-age=60, must-revalidate"
+
+    # Upload hashed assets with long cache
+    for file in $HASHED_FILES; do
+        EXT="${file##*.}"
+        case "$EXT" in
+            js)
+                CONTENT_TYPE="application/javascript"
+                ;;
+            css)
+                CONTENT_TYPE="text/css"
+                ;;
+            *)
+                CONTENT_TYPE="application/octet-stream"
+                ;;
+        esac
+
+        aws s3 cp "$DASHBOARD_BUILD_DIR/$file" "s3://$DASHBOARD_BUCKET/$file" \
+            --content-type "$CONTENT_TYPE" \
+            --cache-control "public, max-age=31536000, immutable"
+    done
+
+    print_success "Dashboard files uploaded successfully"
+
+    # Get and display dashboard URL
+    DASHBOARD_URL=$(terraform output -raw dashboard_url 2>/dev/null)
+    if [ -n "$DASHBOARD_URL" ]; then
+        print_info "Dashboard URL: $DASHBOARD_URL"
     fi
 }
 

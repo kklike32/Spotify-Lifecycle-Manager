@@ -1,4 +1,4 @@
-.PHONY: help fmt lint test check run-ingest run-enrich run-playlists run-aggregate clean
+.PHONY: help fmt lint test check run-ingest run-enrich run-playlists run-aggregate dashboard-build dashboard-deploy clean
 
 help:
 	@echo "Spotify Lifecycle Manager - Development Commands"
@@ -14,6 +14,10 @@ help:
 	@echo "  make run-enrich      - Run enrichment pipeline"
 	@echo "  make run-playlists   - Run playlist creation pipeline"
 	@echo "  make run-aggregate   - Run aggregation pipeline"
+	@echo ""
+	@echo "Dashboard:"
+	@echo "  make dashboard-build   - Build dashboard/site into dist/ with hashed assets"
+	@echo "  make dashboard-deploy  - Build + deploy hashed dashboard to S3 (uses scripts/deploy.sh dashboard)"
 	@echo ""
 	@echo "Utilities:"
 	@echo "  make clean     - Remove temporary files and caches"
@@ -56,6 +60,14 @@ run-playlists:
 run-aggregate:
 	@echo "Running aggregate pipeline..."
 	uv run python -m spotify_lifecycle.pipeline.aggregate
+
+dashboard-build:
+	@echo "Building dashboard with hashed assets..."
+	python scripts/build_dashboard.py
+
+dashboard-deploy:
+	@echo "Building and deploying dashboard..."
+	./scripts/deploy.sh dashboard
 
 clean:
 	@echo "Cleaning temporary files and caches..."

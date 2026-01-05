@@ -14,7 +14,6 @@ For cost analysis, see: copilot/docs/cost/ANALYTICS_COSTS.md
 
 import json
 import logging
-from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Iterator, Optional
 from zoneinfo import ZoneInfo

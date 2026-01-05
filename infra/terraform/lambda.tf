@@ -25,18 +25,18 @@ resource "aws_lambda_function" "ingest" {
 
   environment {
     variables = {
-      ENVIRONMENT              = var.environment
-      HOT_TABLE_NAME           = aws_dynamodb_table.play_events.name
-      TRACKS_TABLE_NAME        = aws_dynamodb_table.tracks.name
-      ARTISTS_TABLE_NAME       = aws_dynamodb_table.artists.name
-      STATE_TABLE_NAME         = aws_dynamodb_table.state.name
-      RAW_BUCKET_NAME          = aws_s3_bucket.raw_events.id
-      DASHBOARD_BUCKET_NAME    = aws_s3_bucket.dashboard.id
-      LOOKBACK_DAYS            = var.lookback_days
-      SOURCE_PLAYLIST_ID       = var.source_playlist_id
-      USER_ID                  = var.user_id
+      ENVIRONMENT           = var.environment
+      HOT_TABLE_NAME        = aws_dynamodb_table.play_events.name
+      TRACKS_TABLE_NAME     = aws_dynamodb_table.tracks.name
+      ARTISTS_TABLE_NAME    = aws_dynamodb_table.artists.name
+      STATE_TABLE_NAME      = aws_dynamodb_table.state.name
+      RAW_BUCKET_NAME       = aws_s3_bucket.raw_events.id
+      DASHBOARD_BUCKET_NAME = aws_s3_bucket.dashboard.id
+      LOOKBACK_DAYS         = var.lookback_days
+      SOURCE_PLAYLIST_ID    = var.source_playlist_id
+      USER_ID               = var.user_id
       # Secrets loaded from SSM Parameter Store at runtime
-      SPOTIFY_CLIENT_ID_PARAM  = "/${var.project_name}/spotify/client_id"
+      SPOTIFY_CLIENT_ID_PARAM     = "/${var.project_name}/spotify/client_id"
       SPOTIFY_CLIENT_SECRET_PARAM = "/${var.project_name}/spotify/client_secret"
       SPOTIFY_REFRESH_TOKEN_PARAM = "/${var.project_name}/spotify/refresh_token"
     }
@@ -75,17 +75,17 @@ resource "aws_lambda_function" "enrich" {
 
   environment {
     variables = {
-      ENVIRONMENT              = var.environment
-      HOT_TABLE_NAME           = aws_dynamodb_table.play_events.name
-      TRACKS_TABLE_NAME        = aws_dynamodb_table.tracks.name
-      ARTISTS_TABLE_NAME       = aws_dynamodb_table.artists.name
-      STATE_TABLE_NAME         = aws_dynamodb_table.state.name
-      RAW_BUCKET_NAME          = aws_s3_bucket.raw_events.id
-      DASHBOARD_BUCKET_NAME    = aws_s3_bucket.dashboard.id
-      LOOKBACK_DAYS            = var.lookback_days
-      SOURCE_PLAYLIST_ID       = var.source_playlist_id
-      USER_ID                  = var.user_id
-      SPOTIFY_CLIENT_ID_PARAM  = "/${var.project_name}/spotify/client_id"
+      ENVIRONMENT                 = var.environment
+      HOT_TABLE_NAME              = aws_dynamodb_table.play_events.name
+      TRACKS_TABLE_NAME           = aws_dynamodb_table.tracks.name
+      ARTISTS_TABLE_NAME          = aws_dynamodb_table.artists.name
+      STATE_TABLE_NAME            = aws_dynamodb_table.state.name
+      RAW_BUCKET_NAME             = aws_s3_bucket.raw_events.id
+      DASHBOARD_BUCKET_NAME       = aws_s3_bucket.dashboard.id
+      LOOKBACK_DAYS               = var.lookback_days
+      SOURCE_PLAYLIST_ID          = var.source_playlist_id
+      USER_ID                     = var.user_id
+      SPOTIFY_CLIENT_ID_PARAM     = "/${var.project_name}/spotify/client_id"
       SPOTIFY_CLIENT_SECRET_PARAM = "/${var.project_name}/spotify/client_secret"
       SPOTIFY_REFRESH_TOKEN_PARAM = "/${var.project_name}/spotify/refresh_token"
     }
@@ -124,17 +124,17 @@ resource "aws_lambda_function" "playlist" {
 
   environment {
     variables = {
-      ENVIRONMENT              = var.environment
-      HOT_TABLE_NAME           = aws_dynamodb_table.play_events.name
-      TRACKS_TABLE_NAME        = aws_dynamodb_table.tracks.name
-      ARTISTS_TABLE_NAME       = aws_dynamodb_table.artists.name
-      STATE_TABLE_NAME         = aws_dynamodb_table.state.name
-      RAW_BUCKET_NAME          = aws_s3_bucket.raw_events.id
-      DASHBOARD_BUCKET_NAME    = aws_s3_bucket.dashboard.id
-      LOOKBACK_DAYS            = var.lookback_days
-      SOURCE_PLAYLIST_ID       = var.source_playlist_id
-      USER_ID                  = var.user_id
-      SPOTIFY_CLIENT_ID_PARAM  = "/${var.project_name}/spotify/client_id"
+      ENVIRONMENT                 = var.environment
+      HOT_TABLE_NAME              = aws_dynamodb_table.play_events.name
+      TRACKS_TABLE_NAME           = aws_dynamodb_table.tracks.name
+      ARTISTS_TABLE_NAME          = aws_dynamodb_table.artists.name
+      STATE_TABLE_NAME            = aws_dynamodb_table.state.name
+      RAW_BUCKET_NAME             = aws_s3_bucket.raw_events.id
+      DASHBOARD_BUCKET_NAME       = aws_s3_bucket.dashboard.id
+      LOOKBACK_DAYS               = var.lookback_days
+      SOURCE_PLAYLIST_ID          = var.source_playlist_id
+      USER_ID                     = var.user_id
+      SPOTIFY_CLIENT_ID_PARAM     = "/${var.project_name}/spotify/client_id"
       SPOTIFY_CLIENT_SECRET_PARAM = "/${var.project_name}/spotify/client_secret"
       SPOTIFY_REFRESH_TOKEN_PARAM = "/${var.project_name}/spotify/refresh_token"
     }
@@ -165,25 +165,25 @@ resource "aws_lambda_function" "aggregate" {
   role          = aws_iam_role.lambda_execution.arn
   handler       = "spotify_lifecycle.lambda_handler.aggregate_handler"
   runtime       = var.lambda_runtime
-  timeout       = 180  # 3 minutes (down from 300s)
-  memory_size   = 256  # 256 MB (down from 512MB)
+  timeout       = 180 # 3 minutes (down from 300s)
+  memory_size   = 256 # 256 MB (down from 512MB)
 
   filename         = local.lambda_package_path
   source_code_hash = filebase64sha256(local.lambda_package_path)
 
   environment {
     variables = {
-      ENVIRONMENT              = var.environment
-      HOT_TABLE_NAME           = aws_dynamodb_table.play_events.name
-      TRACKS_TABLE_NAME        = aws_dynamodb_table.tracks.name
-      ARTISTS_TABLE_NAME       = aws_dynamodb_table.artists.name
-      STATE_TABLE_NAME         = aws_dynamodb_table.state.name
-      RAW_BUCKET_NAME          = aws_s3_bucket.raw_events.id
-      DASHBOARD_BUCKET_NAME    = aws_s3_bucket.dashboard.id
-      LOOKBACK_DAYS            = var.lookback_days
-      SOURCE_PLAYLIST_ID       = var.source_playlist_id
-      USER_ID                  = var.user_id
-      SPOTIFY_CLIENT_ID_PARAM  = "/${var.project_name}/spotify/client_id"
+      ENVIRONMENT                 = var.environment
+      HOT_TABLE_NAME              = aws_dynamodb_table.play_events.name
+      TRACKS_TABLE_NAME           = aws_dynamodb_table.tracks.name
+      ARTISTS_TABLE_NAME          = aws_dynamodb_table.artists.name
+      STATE_TABLE_NAME            = aws_dynamodb_table.state.name
+      RAW_BUCKET_NAME             = aws_s3_bucket.raw_events.id
+      DASHBOARD_BUCKET_NAME       = aws_s3_bucket.dashboard.id
+      LOOKBACK_DAYS               = var.lookback_days
+      SOURCE_PLAYLIST_ID          = var.source_playlist_id
+      USER_ID                     = var.user_id
+      SPOTIFY_CLIENT_ID_PARAM     = "/${var.project_name}/spotify/client_id"
       SPOTIFY_CLIENT_SECRET_PARAM = "/${var.project_name}/spotify/client_secret"
       SPOTIFY_REFRESH_TOKEN_PARAM = "/${var.project_name}/spotify/refresh_token"
     }
