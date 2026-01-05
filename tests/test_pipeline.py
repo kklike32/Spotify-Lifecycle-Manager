@@ -580,7 +580,8 @@ def test_create_weekly_playlist_success(mock_spotify_client, mock_dynamo_client)
     # Verify: Playlist created with correct name
     mock_spotify_client.create_playlist.assert_called_once()
     call_args = mock_spotify_client.create_playlist.call_args
-    assert "Weekly Unheard" in call_args.kwargs["name"]
+    assert call_args.kwargs["name"].startswith("Unheard - ")
+    assert "W" in call_args.kwargs["name"]
 
     # Verify: Tracks added to playlist
     mock_spotify_client.add_tracks_to_playlist.assert_called_once()
@@ -592,6 +593,34 @@ def test_create_weekly_playlist_success(mock_spotify_client, mock_dynamo_client)
 
     # Verify: State written
     mock_dynamo_client.write_playlist_state.assert_called_once()
+
+
+def test_create_weekly_playlist_accepts_plain_id(mock_spotify_client, mock_dynamo_client):
+    """Plain playlist IDs should be normalized to URIs."""
+    from spotify_lifecycle.pipeline.playlists import create_weekly_playlist
+
+    mock_dynamo_client.get_playlist_state.return_value = None
+    mock_spotify_client.get_playlist_tracks.return_value = ["spotify:track:1"]
+    mock_dynamo_client.get_recently_played_track_ids.return_value = set()
+    mock_spotify_client.create_playlist.return_value = {
+        "id": "new_playlist_id",
+        "uri": "spotify:playlist:new_playlist_id",
+    }
+    mock_dynamo_client.write_playlist_state.return_value = True
+
+    result = create_weekly_playlist(
+        spotify_client=mock_spotify_client,
+        dynamo_client=mock_dynamo_client,
+        source_playlist_id="5YVIdUX5xkMtJu4JEwpnMM",  # plain ID from .env/SSM
+        lookback_days=7,
+    )
+
+    mock_spotify_client.get_playlist_tracks.assert_called_once_with(
+        "spotify:playlist:5YVIdUX5xkMtJu4JEwpnMM"
+    )
+    state_obj = mock_dynamo_client.write_playlist_state.call_args[0][1]
+    assert state_obj.source_playlist_id == "spotify:playlist:5YVIdUX5xkMtJu4JEwpnMM"
+    assert result["playlist_id"] == "spotify:playlist:new_playlist_id"
 
 
 def test_create_weekly_playlist_idempotent_skip(mock_spotify_client, mock_dynamo_client):

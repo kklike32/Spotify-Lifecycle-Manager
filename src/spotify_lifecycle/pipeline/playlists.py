@@ -27,6 +27,20 @@ from spotify_lifecycle.utils.hashing import make_playlist_state_key, make_week_i
 logger = logging.getLogger(__name__)
 
 
+def _normalize_playlist_uri(playlist_id_or_uri: str) -> str:
+    """Convert playlist ID/URL/URI to canonical URI form."""
+    if not playlist_id_or_uri:
+        raise ValueError("source_playlist_id is required")
+
+    if playlist_id_or_uri.startswith("spotify:playlist:"):
+        return playlist_id_or_uri
+
+    if "open.spotify.com/playlist/" in playlist_id_or_uri:
+        playlist_id_or_uri = playlist_id_or_uri.split("playlist/", 1)[1].split("?", 1)[0]
+
+    return f"spotify:playlist:{playlist_id_or_uri}"
+
+
 def create_weekly_playlist(
     spotify_client: SpotifyClient,
     dynamo_client: DynamoDBClient,
@@ -84,6 +98,7 @@ def create_weekly_playlist(
     now = datetime.now(timezone.utc)
     week_id = make_week_id(now)
     state_key = make_playlist_state_key(week_id)
+    source_playlist_uri = _normalize_playlist_uri(source_playlist_id)
 
     existing_state = dynamo_client.get_playlist_state(state_table_name, state_key)
     if existing_state:
@@ -108,11 +123,11 @@ def create_weekly_playlist(
         }
 
     # Step 2: Fetch source playlist tracks (paginated)
-    logger.info("Fetching source playlist", extra={"source_playlist_id": source_playlist_id})
-    source_track_ids = spotify_client.get_playlist_tracks(source_playlist_id)
+    logger.info("Fetching source playlist", extra={"source_playlist_id": source_playlist_uri})
+    source_track_ids = spotify_client.get_playlist_tracks(source_playlist_uri)
 
     if not source_track_ids:
-        raise ValueError(f"Source playlist is empty: {source_playlist_id}")
+        raise ValueError(f"Source playlist is empty: {source_playlist_uri}")
 
     logger.info("Source playlist fetched", extra={"track_count": len(source_track_ids)})
 
@@ -126,13 +141,14 @@ def create_weekly_playlist(
     logger.info("Candidates computed", extra={"candidate_count": len(candidate_track_ids)})
 
     # Step 5: Create new playlist with naming convention
-    playlist_name = f"Weekly Unheard — {week_id}"
+    week_suffix = week_id.split("-")[1] if "-" in week_id else week_id
+    playlist_name = f"Unheard - {now.strftime('%Y - %b %d')} - {week_suffix}"
     playlist_description = (
         f"Tracks from source playlist not played in last {lookback_days} days. "
         f"Generated on {now.strftime('%Y-%m-%d')}."
     )
 
-    logger.info("Creating playlist", extra={"name": playlist_name})
+    logger.info("Creating playlist", extra={"playlist_name": playlist_name})
     playlist = spotify_client.create_playlist(
         user_id=user_id,
         name=playlist_name,
@@ -158,7 +174,7 @@ def create_weekly_playlist(
         playlist_id=playlist_id,
         created_at=now,
         track_count=len(candidate_track_ids),
-        source_playlist_id=source_playlist_id,
+        source_playlist_id=source_playlist_uri,
     )
 
     state_written = dynamo_client.write_playlist_state(state_table_name, playlist_state)

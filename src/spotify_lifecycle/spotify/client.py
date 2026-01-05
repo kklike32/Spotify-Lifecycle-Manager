@@ -28,6 +28,7 @@ class SpotifyClient:
         self.client_secret = client_secret
         self.redirect_uri = redirect_uri
         self.sp: Optional[spotipy.Spotify] = None
+        self._current_user_id: Optional[str] = None
 
     def authenticate(self, refresh_token: Optional[str] = None) -> spotipy.Spotify:
         """Authenticate with Spotify API.
@@ -146,12 +147,28 @@ class SpotifyClient:
         if not self.sp:
             raise RuntimeError("Not authenticated.")
 
+        # If caller passed "me" or omitted user_id, resolve the current authenticated user.
+        target_user = user_id
+        if not target_user or target_user == "me":
+            target_user = self.get_current_user_id()
+
         return self.sp.user_playlist_create(
-            user=user_id,
+            user=target_user,
             name=name,
             public=public,
             description=description,
         )
+
+    def get_current_user_id(self) -> str:
+        """Return the authenticated user's Spotify ID (cached)."""
+        if not self.sp:
+            raise RuntimeError("Not authenticated.")
+
+        if not self._current_user_id:
+            profile = self.sp.current_user()
+            self._current_user_id = profile["id"]
+
+        return self._current_user_id
 
     def add_tracks_to_playlist(self, playlist_id: str, track_ids: list[str]) -> None:
         """Add tracks to a playlist.

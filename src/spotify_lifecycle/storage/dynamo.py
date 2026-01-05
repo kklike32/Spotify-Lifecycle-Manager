@@ -569,7 +569,7 @@ class DynamoDBClient:
         table = self.dynamodb.Table(table_name)
 
         item = {
-            "state_key": state.state_key,
+            "key": state.state_key,
             "week_id": state.week_id,
             "playlist_id": state.playlist_id,
             "created_at": state.created_at.isoformat(),
@@ -581,7 +581,8 @@ class DynamoDBClient:
         try:
             table.put_item(
                 Item=item,
-                ConditionExpression="attribute_not_exists(state_key)",  # Only write if new
+                ConditionExpression="attribute_not_exists(#k)",  # Only write if new
+                ExpressionAttributeNames={"#k": "key"},  # 'key' is a reserved word
             )
             return True
         except ClientError as e:
