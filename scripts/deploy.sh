@@ -200,11 +200,82 @@ PY
 
     print_success "Dashboard files uploaded successfully"
 
+    # Prune old hashed assets (keep newest 2 per type for rollback)
+    prune_hashed_assets "$DASHBOARD_BUCKET" "app." 2
+    prune_hashed_assets "$DASHBOARD_BUCKET" "styles." 2
+
     # Get and display dashboard URL
     DASHBOARD_URL=$(terraform output -raw dashboard_url 2>/dev/null)
     if [ -n "$DASHBOARD_URL" ]; then
         print_info "Dashboard URL: $DASHBOARD_URL"
     fi
+}
+
+prune_hashed_assets() {
+    local bucket="$1"
+    local prefix="$2"
+    local keep_count="${3:-2}"
+
+    print_info "Pruning old assets for prefix '${prefix}' (keeping ${keep_count})"
+
+    # Fetch and sort keys by LastModified (newest first) in a macOS-safe way
+    keys_json=$(
+        aws s3api list-objects-v2 \
+            --bucket "$bucket" \
+            --prefix "$prefix" \
+            --output json 2>/dev/null || true
+    )
+
+    if [ -z "$keys_json" ]; then
+        print_info "No assets found for prefix '${prefix}'"
+        return
+    fi
+
+    keys_list=$(
+        printf '%s' "$keys_json" | python3 - <<'PY'
+import json, sys
+raw = sys.stdin.read().strip()
+if not raw:
+    sys.exit(0)
+data = json.loads(raw)
+items = data.get("Contents") or []
+items.sort(key=lambda x: x.get("LastModified"), reverse=True)
+for item in items:
+    key = item.get("Key")
+    # Keep only hashed assets (exclude base app.js/styles.css)
+    if not key:
+        continue
+    # Accept patterns like app.<hash>.js or styles.<hash>.css (two dots)
+    dot_count = key.count(".")
+    if dot_count < 2:
+        continue
+    if key.startswith("app.") and key.endswith(".js"):
+        print(key)
+    elif key.startswith("styles.") and key.endswith(".css"):
+        print(key)
+PY
+    )
+
+    if [ -z "$keys_list" ]; then
+        print_info "No assets found for prefix '${prefix}'"
+        return
+    fi
+
+    # Read keys into array (bash 3 compatible)
+    IFS=$'\n' read -r -a keys <<< "$keys_list"
+
+    if [ "${#keys[@]}" -le "$keep_count" ]; then
+        print_info "No old assets to prune for prefix '${prefix}'"
+        return
+    fi
+
+    for ((i=keep_count; i<${#keys[@]}; i++)); do
+        key="${keys[$i]}"
+        if [ -n "$key" ]; then
+            print_info "Deleting old asset: $key"
+            aws s3 rm "s3://$bucket/$key"
+        fi
+    done
 }
 
 # Main deployment logic
