@@ -44,6 +44,7 @@ from typing import Any, Dict
 import boto3
 
 from spotify_lifecycle.pipeline.aggregate import build_dashboard_data
+from spotify_lifecycle.pipeline.backfill import check_and_backfill_summaries
 from spotify_lifecycle.pipeline.enrich import run_enrichment
 from spotify_lifecycle.pipeline.ingest import run_ingestion
 from spotify_lifecycle.pipeline.playlists import create_weekly_playlist
@@ -309,6 +310,40 @@ def aggregate_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
         logger.info("aggregate_success", extra=summary)
         return {"statusCode": 200, "body": json.dumps(summary, default=str)}
+
+    except Exception as e:
+        return _handle_error(e)
+
+
+def backfill_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    """Lambda handler for automated summary backfill.
+
+    Checks for missing daily summaries and regenerates them from raw events.
+    This runs automatically before aggregation to prevent dashboard data gaps.
+    """
+    logger.info(
+        "backfill_invoked",
+        extra={
+            "request_id": context.aws_request_id,
+            "source": event.get("source"),
+        },
+    )
+
+    try:
+        raw_bucket_name = os.environ["RAW_BUCKET_NAME"]
+        region = os.environ.get("AWS_REGION", "us-east-1")
+        days_to_check = int(os.environ.get("BACKFILL_DAYS", "7"))
+
+        result = check_and_backfill_summaries(
+            bucket_name=raw_bucket_name,
+            days_to_check=days_to_check,
+            region_name=region,
+        )
+
+        log_level = "warning" if result["missing_days"] > 0 else "info"
+        getattr(logger, log_level)("backfill_complete", extra=result)
+
+        return {"statusCode": 200, "body": json.dumps(result, default=str)}
 
     except Exception as e:
         return _handle_error(e)

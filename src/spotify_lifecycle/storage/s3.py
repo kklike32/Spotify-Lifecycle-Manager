@@ -369,27 +369,50 @@ class S3ColdStore:
 
         This function can be called many times per day (hourly ingest retries).
         It must not accumulate prior counts, otherwise totals will multiply.
+
+        Raises:
+            Exception: If summary calculation or write fails (propagated for logging)
         """
         key = self._daily_summary_key(partition_date)
+        date_str = partition_date.strftime("%Y-%m-%d")
 
         if track_counts is None:
-            track_counts = self._calculate_daily_track_counts(bucket_name, partition_date)
-            logger.info(
-                "calculated daily summary counts from raw events",
-                extra={
-                    "bucket": bucket_name,
-                    "key": key,
-                    "partition_date": partition_date.strftime("%Y-%m-%d"),
-                    "event_files": len(
-                        self._list_partition_keys(bucket_name, partition_date, partition_date)
-                    ),
-                },
-            )
+            try:
+                track_counts = self._calculate_daily_track_counts(bucket_name, partition_date)
+                event_files = len(
+                    self._list_partition_keys(bucket_name, partition_date, partition_date)
+                )
+                logger.info(
+                    f"calculated daily summary from {event_files} event files for {date_str}",
+                    extra={
+                        "bucket": bucket_name,
+                        "key": key,
+                        "partition_date": date_str,
+                        "event_files": event_files,
+                        "unique_tracks": len(track_counts),
+                    },
+                )
+            except Exception as e:
+                logger.error(
+                    f"failed to calculate track counts for {date_str}: "
+                    f"{type(e).__name__}: {str(e)}",
+                    exc_info=True,
+                )
+                raise  # Re-raise to trigger caller's error handling
 
         normalized_counts = {track_id: int(count) for track_id, count in track_counts.items()}
         incoming_total = int(sum(normalized_counts.values()))
 
-        existing = self.read_daily_summary(bucket_name, partition_date)
+        # Read existing summary (if any) to check if update needed
+        try:
+            existing = self.read_daily_summary(bucket_name, partition_date)
+        except Exception as e:
+            logger.warning(
+                f"failed to read existing summary for {date_str}, will create new: "
+                f"{type(e).__name__}: {str(e)}"
+            )
+            existing = None
+
         if existing and "track_counts" in existing:
             if self._counts_match(normalized_counts, existing["track_counts"]):
                 logger.info(
@@ -421,19 +444,29 @@ class S3ColdStore:
             "track_counts": normalized_counts,
         }
 
-        self.s3.put_object(
-            Bucket=bucket_name,
-            Key=key,
-            Body=json.dumps(payload).encode("utf-8"),
-            ContentType="application/json",
-        )
+        # Write summary to S3
+        try:
+            self.s3.put_object(
+                Bucket=bucket_name,
+                Key=key,
+                Body=json.dumps(payload).encode("utf-8"),
+                ContentType="application/json",
+            )
+        except Exception as e:
+            logger.error(
+                f"failed to write summary to S3 for {date_str}: {type(e).__name__}: {str(e)}",
+                exc_info=True,
+            )
+            raise  # Re-raise to trigger caller's error handling
 
         logger.info(
-            "wrote daily summary",
+            f"wrote daily summary for {date_str}: {incoming_total} plays "
+            f"across {len(normalized_counts)} tracks",
             extra={
                 "bucket": bucket_name,
                 "key": key,
                 "total_plays": payload["total_plays"],
+                "unique_tracks": len(normalized_counts),
                 "status": "replaced" if existing else "created",
             },
         )

@@ -113,3 +113,31 @@ resource "aws_lambda_permission" "aggregate_eventbridge" {
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.aggregate_trigger.arn
 }
+
+# -----------------------------------------------------------------------------
+# EventBridge Rule: Backfill (Daily 1:50am UTC, before aggregation)
+# -----------------------------------------------------------------------------
+
+resource "aws_cloudwatch_event_rule" "backfill_trigger" {
+  name                = "${var.project_name}-backfill-trigger"
+  description         = "Trigger backfill Lambda daily at 1:50am UTC"
+  schedule_expression = "cron(50 1 * * ? *)" # 10 minutes before aggregation
+
+  tags = {
+    Name = "${var.project_name}-backfill-trigger"
+  }
+}
+
+resource "aws_cloudwatch_event_target" "backfill_trigger" {
+  rule      = aws_cloudwatch_event_rule.backfill_trigger.name
+  target_id = "BackfillLambda"
+  arn       = aws_lambda_function.backfill.arn
+}
+
+resource "aws_lambda_permission" "backfill_eventbridge" {
+  statement_id  = "AllowEventBridgeInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.backfill.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.backfill_trigger.arn
+}

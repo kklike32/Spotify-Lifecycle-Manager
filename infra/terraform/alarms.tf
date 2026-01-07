@@ -102,6 +102,31 @@ resource "aws_cloudwatch_metric_alarm" "aggregate_errors" {
   }
 }
 
+# Backfill Lambda Error Alarm
+resource "aws_cloudwatch_metric_alarm" "backfill_errors" {
+  alarm_name          = "${var.project_name}-backfill-errors"
+  alarm_description   = "Alert when backfill Lambda has errors"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "Errors"
+  namespace           = "AWS/Lambda"
+  period              = 3600
+  statistic           = "Sum"
+  threshold           = 1
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    FunctionName = aws_lambda_function.backfill.function_name
+  }
+
+  alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []
+
+  tags = {
+    Name        = "${var.project_name}-backfill-errors"
+    Description = "Backfill Lambda error alarm"
+  }
+}
+
 # -----------------------------------------------------------------------------
 # SNS Topic for Alarms (optional, created if email provided)
 # -----------------------------------------------------------------------------
@@ -215,5 +240,41 @@ resource "aws_cloudwatch_metric_alarm" "ingest_summary_mismatch_alarm" {
   tags = {
     Name        = "${var.project_name}-ingest-summary-mismatch"
     Description = "Ingest daily summary mismatch alarm"
+  }
+}
+
+# -----------------------------------------------------------------------------
+# CloudWatch Log Metric Filters (Ingest Lambda) for summary write failures
+# -----------------------------------------------------------------------------
+
+resource "aws_cloudwatch_log_metric_filter" "ingest_summary_write_failed" {
+  name           = "${var.project_name}-ingest-summary-write-failed"
+  log_group_name = aws_cloudwatch_log_group.ingest.name
+  pattern        = "\"daily_summary_write_failed\""
+
+  metric_transformation {
+    name      = "ingest_summary_write_failed"
+    namespace = var.project_name
+    value     = "1"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "ingest_summary_write_failed_alarm" {
+  alarm_name          = "${var.project_name}-ingest-summary-write-failed"
+  alarm_description   = "Alert when daily summary writes fail during ingestion - may cause missing dashboard data"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = aws_cloudwatch_log_metric_filter.ingest_summary_write_failed.metric_transformation[0].name
+  namespace           = var.project_name
+  period              = 3600 # 1 hour window
+  statistic           = "Sum"
+  threshold           = 3 # Alert if 3+ failures in an hour
+  treat_missing_data  = "notBreaching"
+
+  alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []
+
+  tags = {
+    Name        = "${var.project_name}-ingest-summary-write-failed"
+    Description = "Daily summary write failure alarm - critical for dashboard accuracy"
   }
 }

@@ -204,3 +204,42 @@ resource "aws_cloudwatch_log_group" "aggregate" {
     Description = "Logs for aggregation Lambda with ${var.log_retention_days}-day retention"
   }
 }
+
+# -----------------------------------------------------------------------------
+# Backfill Lambda Function
+# -----------------------------------------------------------------------------
+
+resource "aws_lambda_function" "backfill" {
+  function_name = "${var.project_name}-backfill"
+  role          = aws_iam_role.lambda_execution.arn
+  handler       = "spotify_lifecycle.lambda_handler.backfill_handler"
+  runtime       = var.lambda_runtime
+  timeout       = 120 # 2 minutes
+  memory_size   = 256
+
+  filename         = local.lambda_package_path
+  source_code_hash = filebase64sha256(local.lambda_package_path)
+
+  environment {
+    variables = {
+      ENVIRONMENT     = var.environment
+      RAW_BUCKET_NAME = aws_s3_bucket.raw_events.id
+      BACKFILL_DAYS   = "7" # Check last 7 days for missing summaries
+    }
+  }
+
+  tags = {
+    Name        = "${var.project_name}-backfill"
+    Description = "Automated summary backfill for missing data"
+  }
+}
+
+resource "aws_cloudwatch_log_group" "backfill" {
+  name              = "/aws/lambda/${aws_lambda_function.backfill.function_name}"
+  retention_in_days = var.log_retention_days
+
+  tags = {
+    Name        = "${var.project_name}-backfill-logs"
+    Description = "Logs for backfill Lambda with ${var.log_retention_days}-day retention"
+  }
+}

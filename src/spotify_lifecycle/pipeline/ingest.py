@@ -206,18 +206,30 @@ def write_events_to_storage(
 
     # Write to cold store (append-only, idempotent)
     for date_str, date_events in events_by_date.items():
-        try:
-            date = datetime.strptime(date_str, "%Y-%m-%d")
-            s3_client.write_raw_events(raw_bucket_name, date, date_events)
+        date = datetime.strptime(date_str, "%Y-%m-%d")
 
-            # Write daily summary (reads all events for the day from S3)
-            s3_client.write_daily_summary(raw_bucket_name, date)
-            cold_written += len(date_events)
+        # Write raw events first
+        try:
+            s3_client.write_raw_events(raw_bucket_name, date, date_events)
+            logger.debug(f"wrote {len(date_events)} raw events for {date_str}")
         except Exception as e:
             logger.error(
-                "cold_write_failed",
-                extra={"date": date_str, "count": len(date_events), "error": str(e)},
+                f"raw_events_write_failed for {date_str}: {type(e).__name__}: {str(e)}",
+                exc_info=True,
             )
+            # Don't increment cold_written, but continue to try summary
+
+        # Write daily summary (reads all events for the day from S3)
+        try:
+            s3_client.write_daily_summary(raw_bucket_name, date)
+            cold_written += len(date_events)
+            logger.debug(f"wrote daily summary for {date_str}")
+        except Exception as e:
+            logger.error(
+                f"daily_summary_write_failed for {date_str}: {type(e).__name__}: {str(e)}",
+                exc_info=True,
+            )
+            # Continue processing other dates even if summary fails
 
     return hot_written, cold_written
 
