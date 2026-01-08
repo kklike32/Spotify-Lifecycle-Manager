@@ -203,12 +203,6 @@ PY
     # Prune old hashed assets (keep newest 2 per type for rollback)
     prune_hashed_assets "$DASHBOARD_BUCKET" "app." 2
     prune_hashed_assets "$DASHBOARD_BUCKET" "styles." 2
-
-    # Get and display dashboard URL
-    DASHBOARD_URL=$(terraform output -raw dashboard_url 2>/dev/null)
-    if [ -n "$DASHBOARD_URL" ]; then
-        print_info "Dashboard URL: $DASHBOARD_URL"
-    fi
 }
 
 prune_hashed_assets() {

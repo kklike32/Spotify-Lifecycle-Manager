@@ -426,15 +426,50 @@ class S3ColdStore:
                 )
                 return key
 
-            logger.warning(
-                "daily summary mismatch detected; replacing with incoming counts",
-                extra={
-                    "bucket": bucket_name,
-                    "key": key,
-                    "existing_total": existing.get("total_plays", 0),
-                    "incoming_total": incoming_total,
-                },
-            )
+            # Mismatch detected - distinguish expected from unexpected changes
+            existing_total = existing.get("total_plays", 0)
+            delta = incoming_total - existing_total
+
+            if delta > 0:
+                # Expected: new events arrived between runs (normal for hourly ingest)
+                logger.info(
+                    f"daily summary updated: {delta} new plays added",
+                    extra={
+                        "bucket": bucket_name,
+                        "key": key,
+                        "existing_total": existing_total,
+                        "incoming_total": incoming_total,
+                        "delta": delta,
+                        "reason": "new_events_arrived",
+                    },
+                )
+            elif delta < 0:
+                # Unexpected: count decreased (possible bug - data loss, deduplication issue, etc.)
+                logger.error(
+                    f"daily summary mismatch: count DECREASED by {abs(delta)} plays (unexpected)",
+                    extra={
+                        "bucket": bucket_name,
+                        "key": key,
+                        "existing_total": existing_total,
+                        "incoming_total": incoming_total,
+                        "delta": delta,
+                        "reason": "count_decreased",
+                        "severity": "high",
+                    },
+                )
+            else:
+                # delta == 0 but counts still differ (different tracks with same total)
+                logger.warning(
+                    "daily summary mismatch: same total but different track distribution",
+                    extra={
+                        "bucket": bucket_name,
+                        "key": key,
+                        "existing_total": existing_total,
+                        "incoming_total": incoming_total,
+                        "delta": 0,
+                        "reason": "track_distribution_changed",
+                    },
+                )
 
         payload = {
             "version": "2.0.0",

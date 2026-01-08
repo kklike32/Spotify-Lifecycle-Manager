@@ -1,4 +1,4 @@
-.PHONY: help fmt lint test check run-ingest run-enrich run-playlists run-aggregate dashboard-build dashboard-deploy clean
+.PHONY: help fmt lint test check tf-validate-tags run-ingest run-enrich run-playlists run-aggregate dashboard-build dashboard-deploy clean
 
 help:
 	@echo "Spotify Lifecycle Manager - Development Commands"
@@ -45,6 +45,10 @@ test-verbose:
 check: fmt lint test
 	@echo "All checks passed!"
 
+tf-validate-tags:
+	@echo "Validating Terraform tag values..."
+	./scripts/validate_tf_tags.sh
+
 run-ingest:
 	@echo "Running ingest pipeline..."
 	uv run python -m spotify_lifecycle.pipeline.ingest
@@ -68,6 +72,10 @@ dashboard-build:
 dashboard-deploy:
 	@echo "Building and deploying dashboard..."
 	./scripts/deploy.sh dashboard
+
+run-all:
+	@echo "Running all pipelines sequentially..."
+	./scripts/deploy.sh all
 
 clean:
 	@echo "Cleaning temporary files and caches..."

@@ -210,11 +210,13 @@ resource "aws_cloudwatch_metric_alarm" "aggregate_summary_rejected_alarm" {
 # -----------------------------------------------------------------------------
 # CloudWatch Log Metric Filters (Ingest Lambda) for daily summary mismatch
 # -----------------------------------------------------------------------------
+# NOTE: This alarm ONLY fires when counts DECREASE (unexpected data loss).
+# Normal count INCREASES from new events arriving are logged as INFO and do not trigger alarms.
 
 resource "aws_cloudwatch_log_metric_filter" "ingest_summary_mismatch" {
   name           = "${var.project_name}-ingest-summary-mismatch"
   log_group_name = aws_cloudwatch_log_group.ingest.name
-  pattern        = "\"daily summary mismatch detected\""
+  pattern        = "\"count DECREASED\""
 
   metric_transformation {
     name      = "ingest_summary_mismatch"
@@ -225,7 +227,7 @@ resource "aws_cloudwatch_log_metric_filter" "ingest_summary_mismatch" {
 
 resource "aws_cloudwatch_metric_alarm" "ingest_summary_mismatch_alarm" {
   alarm_name          = "${var.project_name}-ingest-summary-mismatch"
-  alarm_description   = "Alert when ingest rewrites daily summaries due to mismatches"
+  alarm_description   = "Alert when daily summary counts DECREASE unexpectedly (indicates data loss or bug)"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
   metric_name         = aws_cloudwatch_log_metric_filter.ingest_summary_mismatch.metric_transformation[0].name
@@ -239,7 +241,7 @@ resource "aws_cloudwatch_metric_alarm" "ingest_summary_mismatch_alarm" {
 
   tags = {
     Name        = "${var.project_name}-ingest-summary-mismatch"
-    Description = "Ingest daily summary mismatch alarm"
+    Description = "Ingest daily summary count decrease alarm - data loss detector"
   }
 }
 

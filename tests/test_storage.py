@@ -963,6 +963,131 @@ def test_daily_summary_deduplicates_play_ids_across_files():
     store.s3.put_object.assert_called_once()
 
 
+def test_daily_summary_count_increase_logs_info(caplog):
+    """Daily summary count INCREASE logs as INFO (new events arrived - expected)."""
+    import logging
+    from unittest.mock import MagicMock
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()
+
+    memory: dict[str, dict] = {}
+
+    def fake_put_object(Bucket, Key, Body, ContentType):
+        memory[Key] = json.loads(Body.decode("utf-8"))
+
+    store.s3.put_object.side_effect = fake_put_object
+
+    def fake_read(bucket_name, partition_date):
+        return memory.get(store._daily_summary_key(partition_date))
+
+    store.read_daily_summary = fake_read
+
+    bucket = "test-bucket"
+    partition_date = datetime(2025, 1, 2)
+    initial_counts = {"track_a": 2}
+    updated_counts = {"track_a": 2, "track_b": 4}  # +4 new plays
+
+    with caplog.at_level(logging.INFO):
+        store.write_daily_summary(bucket, partition_date, initial_counts)
+        caplog.clear()
+        store.write_daily_summary(bucket, partition_date, updated_counts)
+
+    # Should log as INFO (not WARNING/ERROR) since count increased
+    assert any("new plays added" in record.message for record in caplog.records)
+    assert any(
+        record.levelname == "INFO"
+        for record in caplog.records
+        if "new plays added" in record.message
+    )
+
+
+def test_daily_summary_count_decrease_logs_error(caplog):
+    """Daily summary count DECREASE logs as ERROR (data loss - unexpected)."""
+    import logging
+    from unittest.mock import MagicMock
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()
+
+    memory: dict[str, dict] = {}
+
+    def fake_put_object(Bucket, Key, Body, ContentType):
+        memory[Key] = json.loads(Body.decode("utf-8"))
+
+    store.s3.put_object.side_effect = fake_put_object
+
+    def fake_read(bucket_name, partition_date):
+        return memory.get(store._daily_summary_key(partition_date))
+
+    store.read_daily_summary = fake_read
+
+    bucket = "test-bucket"
+    partition_date = datetime(2025, 1, 2)
+    initial_counts = {"track_a": 10}
+    updated_counts = {"track_a": 5}  # -5 plays (unexpected!)
+
+    with caplog.at_level(logging.ERROR):
+        store.write_daily_summary(bucket, partition_date, initial_counts)
+        caplog.clear()
+        store.write_daily_summary(bucket, partition_date, updated_counts)
+
+    # Should log as ERROR since count decreased
+    assert any("count DECREASED" in record.message for record in caplog.records)
+    assert any(
+        record.levelname == "ERROR"
+        for record in caplog.records
+        if "count DECREASED" in record.message
+    )
+
+
+def test_daily_summary_track_distribution_change_logs_warning(caplog):
+    """Daily summary with same total but different tracks logs as WARNING."""
+    import logging
+    from unittest.mock import MagicMock
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()
+
+    memory: dict[str, dict] = {}
+
+    def fake_put_object(Bucket, Key, Body, ContentType):
+        memory[Key] = json.loads(Body.decode("utf-8"))
+
+    store.s3.put_object.side_effect = fake_put_object
+
+    def fake_read(bucket_name, partition_date):
+        return memory.get(store._daily_summary_key(partition_date))
+
+    store.read_daily_summary = fake_read
+
+    bucket = "test-bucket"
+    partition_date = datetime(2025, 1, 2)
+    initial_counts = {"track_a": 5}
+    updated_counts = {"track_b": 5}  # same total, different track
+
+    with caplog.at_level(logging.WARNING):
+        store.write_daily_summary(bucket, partition_date, initial_counts)
+        caplog.clear()
+        store.write_daily_summary(bucket, partition_date, updated_counts)
+
+    # Should log as WARNING since tracks changed but total is same
+    assert any(
+        "same total but different track distribution" in record.message for record in caplog.records
+    )
+    assert any(
+        record.levelname == "WARNING"
+        for record in caplog.records
+        if "same total but different track distribution" in record.message
+    )
+
+
 def test_dashboard_store_read_missing():
     """Test reading missing dashboard data returns None."""
     from unittest.mock import MagicMock
