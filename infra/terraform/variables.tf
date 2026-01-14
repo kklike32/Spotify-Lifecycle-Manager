@@ -162,7 +162,7 @@ variable "playlist_schedule" {
 variable "aggregate_schedule" {
   description = "EventBridge schedule for aggregation (cron expression)"
   type        = string
-  default     = "cron(0 2 * * ? *)" # Daily 2am UTC
+  default     = "cron(1 8 * * ? *)" # Daily 08:01 UTC
 }
 
 # -----------------------------------------------------------------------------

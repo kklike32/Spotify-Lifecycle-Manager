@@ -227,15 +227,16 @@ resource "aws_cloudwatch_log_metric_filter" "ingest_summary_mismatch" {
 
 resource "aws_cloudwatch_metric_alarm" "ingest_summary_mismatch_alarm" {
   alarm_name          = "${var.project_name}-ingest-summary-mismatch"
-  alarm_description   = "Alert when daily summary counts DECREASE unexpectedly (indicates data loss or bug)"
+  alarm_description   = "Alert when daily summary counts DECREASE unexpectedly (data loss/bug). Search ingest logs for 'count DECREASED'."
   comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = 1
+  evaluation_periods  = 3          # 15 minutes lookback
+  datapoints_to_alarm = 2          # require 2 hits
   metric_name         = aws_cloudwatch_log_metric_filter.ingest_summary_mismatch.metric_transformation[0].name
   namespace           = var.project_name
   period              = 300
   statistic           = "Sum"
   threshold           = 1
-  treat_missing_data  = "notBreaching"
+  treat_missing_data  = "missing"  # honest: no data -> insufficient, not OK
 
   alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []
 

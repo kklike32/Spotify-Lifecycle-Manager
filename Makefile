@@ -73,7 +73,15 @@ dashboard-deploy:
 	@echo "Building and deploying dashboard..."
 	./scripts/deploy.sh dashboard
 
-run-all:
+lambda-deploy:
+	@echo "Deploying AWS Lambda functions..."
+	./scripts/deploy.sh lambda
+
+terraform-deploy:
+	@echo "Deploying Terraform infrastructure..."
+	./scripts/deploy.sh terraform
+
+deploy-all:
 	@echo "Running all pipelines sequentially..."
 	./scripts/deploy.sh all
 
