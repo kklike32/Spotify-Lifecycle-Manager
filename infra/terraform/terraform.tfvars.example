@@ -29,6 +29,7 @@ user_id = "me"
 
 # Number of days to look back for recent plays
 lookback_days = 7
+daily_trend_days = 365
 
 # -----------------------------------------------------------------------------
 # Cost Guardrails (Optional)

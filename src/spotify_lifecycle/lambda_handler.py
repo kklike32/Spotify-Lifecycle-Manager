@@ -287,6 +287,7 @@ def aggregate_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         dashboard_bucket_name = os.environ["DASHBOARD_BUCKET_NAME"]
         raw_bucket_name = os.environ["RAW_BUCKET_NAME"]
         lookback_days = int(os.environ.get("LOOKBACK_DAYS", "90"))
+        daily_trend_days = int(os.environ.get("DAILY_TREND_DAYS", str(lookback_days)))
 
         dashboard_data = build_dashboard_data(
             dynamo_client=get_dynamo_client(),
@@ -298,6 +299,7 @@ def aggregate_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             raw_bucket_name=raw_bucket_name,
             dashboard_bucket_name=dashboard_bucket_name,
             lookback_days=lookback_days,
+            daily_trend_days=daily_trend_days,
             spotify_client=get_spotify_client(),  # Enable auto-enrichment
         )
 

@@ -71,6 +71,29 @@ cd dashboard/site
 python3 -m http.server 8000
 ```
 
+**Option 1b: Python Dev Proxy (Uses Production Data, avoids CORS)**
+
+```bash
+cd dashboard/site
+python3 dev_proxy.py
+```
+
+Configure the proxy target with a `.env` file (optional):
+
+```
+# dashboard/site/.env
+DASHBOARD_DATA_URL=https://d25spyc5nz22ju.cloudfront.net/dashboard_data.json
+```
+
+**Option 1c: Force Remote Data on Localhost**
+
+If you still want to fetch CloudFront directly while running locally, set:
+
+```javascript
+// In app.js
+USE_REMOTE_DATA_ON_LOCALHOST: true
+```
+
 **Option 2: Node.js HTTP Server**
 
 ```bash

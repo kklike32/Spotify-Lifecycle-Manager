@@ -239,3 +239,9 @@ variable "lookback_days" {
   type        = number
   default     = 7
 }
+
+variable "daily_trend_days" {
+  description = "Number of days to include in the daily trend series"
+  type        = number
+  default     = 365
+}

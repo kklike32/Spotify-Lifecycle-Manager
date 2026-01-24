@@ -83,6 +83,7 @@ resource "aws_lambda_function" "enrich" {
       RAW_BUCKET_NAME             = aws_s3_bucket.raw_events.id
       DASHBOARD_BUCKET_NAME       = aws_s3_bucket.dashboard.id
       LOOKBACK_DAYS               = var.lookback_days
+      DAILY_TREND_DAYS            = var.daily_trend_days
       SOURCE_PLAYLIST_ID          = var.source_playlist_id
       USER_ID                     = var.user_id
       SPOTIFY_CLIENT_ID_PARAM     = "/${var.project_name}/spotify/client_id"
@@ -132,6 +133,7 @@ resource "aws_lambda_function" "playlist" {
       RAW_BUCKET_NAME             = aws_s3_bucket.raw_events.id
       DASHBOARD_BUCKET_NAME       = aws_s3_bucket.dashboard.id
       LOOKBACK_DAYS               = var.lookback_days
+      DAILY_TREND_DAYS            = var.daily_trend_days
       SOURCE_PLAYLIST_ID          = var.source_playlist_id
       USER_ID                     = var.user_id
       SPOTIFY_CLIENT_ID_PARAM     = "/${var.project_name}/spotify/client_id"
@@ -181,6 +183,7 @@ resource "aws_lambda_function" "aggregate" {
       RAW_BUCKET_NAME             = aws_s3_bucket.raw_events.id
       DASHBOARD_BUCKET_NAME       = aws_s3_bucket.dashboard.id
       LOOKBACK_DAYS               = var.lookback_days
+      DAILY_TREND_DAYS            = var.daily_trend_days
       SOURCE_PLAYLIST_ID          = var.source_playlist_id
       USER_ID                     = var.user_id
       SPOTIFY_CLIENT_ID_PARAM     = "/${var.project_name}/spotify/client_id"

@@ -9,6 +9,8 @@
 
 const CONFIG = {
     DATA_URL: 'dashboard_data.json',
+    LOCAL_DATA_URL: 'https://d25spyc5nz22ju.cloudfront.net/dashboard_data.json',
+    USE_REMOTE_DATA_ON_LOCALHOST: false,
     COLORS: {
         accent: '#0f766e',
         accentSoft: 'rgba(15, 118, 110, 0.12)',
@@ -17,6 +19,7 @@ const CONFIG = {
         grid: '#e3e8f1',
         surface: '#ffffff'
     },
+    DEBUG_CHARTS: false,
     MAX_RETRIES: 3,
     RETRY_DELAY_MS: 2000
 };
@@ -84,17 +87,22 @@ async function initDashboard() {
 // ==========================
 
 async function fetchData(retries = 0) {
+    const dataUrl = resolveDataUrl();
     const cacheBuster = Math.floor(Date.now() / (5 * 60 * 1000));
-    const url = `${CONFIG.DATA_URL}?t=${cacheBuster}`;
-
-    try {
-        const response = await fetch(url, {
+    const url = `${dataUrl}?t=${cacheBuster}`;
+    const isSameOrigin = isSameOriginUrl(dataUrl);
+    const requestOptions = isSameOrigin
+        ? {
             cache: 'no-cache',
             headers: {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
                 Pragma: 'no-cache'
             }
-        });
+        }
+        : { cache: 'no-cache' };
+
+    try {
+        const response = await fetch(url, requestOptions);
 
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -156,6 +164,7 @@ function renderFilters() {
             renderSummary();
             renderTable();
             renderSupportingLists();
+            renderCharts();
         };
     } else if (control) {
         control.style.display = 'none';
@@ -227,7 +236,10 @@ function renderSupportingLists() {
 }
 
 function renderCharts() {
-    renderDailyTrendChart(state.data.daily_plays || []);
+    const dailyPlays = getFilteredDailyPlays();
+    updateDailyChartSubtitle();
+    logDailyChartDiagnostics(dailyPlays, state.activeWindow, getWindowData());
+    renderDailyTrendChart(dailyPlays);
     renderHourlyChart(state.data.hourly_distribution || []);
 }
 
@@ -240,11 +252,6 @@ function renderDailyTrendChart(dailyPlays) {
     if (dailyTrendChart) {
         dailyTrendChart.destroy();
     }
-
-    const parseLocalDate = (dateStr) => {
-        const [y, m, d] = dateStr.split('-').map(Number);
-        return new Date(y, m - 1, d); // construct in local time to avoid UTC shift
-    };
 
     const sortedData = [...dailyPlays].sort((a, b) => a.date.localeCompare(b.date));
 
@@ -395,6 +402,37 @@ function getWindowData() {
     return state.data.windows[state.activeWindow] || null;
 }
 
+function getFilteredDailyPlays() {
+    const dailyPlays = state.data?.daily_plays || [];
+    if (!Array.isArray(dailyPlays) || dailyPlays.length === 0) return [];
+
+    const windowData = getWindowData();
+    const startIso = windowData?.start;
+    const endIso = windowData?.end;
+
+    if (!startIso || !endIso) return dailyPlays;
+
+    const startDate = new Date(startIso);
+    const endDate = new Date(endIso);
+
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) return dailyPlays;
+
+    let rangeStart = toLocalDateStart(startDate);
+    let rangeEnd = toLocalDateEnd(endDate);
+
+    if (rangeStart > rangeEnd) {
+        const temp = rangeStart;
+        rangeStart = rangeEnd;
+        rangeEnd = temp;
+    }
+
+    return dailyPlays.filter((item) => {
+        if (!item?.date) return false;
+        const localDate = parseLocalDate(item.date);
+        return localDate >= rangeStart && localDate <= rangeEnd;
+    });
+}
+
 function getActiveTracks() {
     const windowData = getWindowData();
     return windowData?.top_tracks || state.data.top_tracks || [];
@@ -406,15 +444,15 @@ function applyFiltersAndSort(tracks) {
 
     const filtered = searchTerm
         ? enriched.filter((track) => {
-              const haystack = [
-                  track.track_name || '',
-                  track.artist_name || '',
-                  track.album_name || ''
-              ]
-                  .join(' ')
-                  .toLowerCase();
-              return haystack.includes(searchTerm);
-          })
+            const haystack = [
+                track.track_name || '',
+                track.artist_name || '',
+                track.album_name || ''
+            ]
+                .join(' ')
+                .toLowerCase();
+            return haystack.includes(searchTerm);
+        })
         : enriched;
 
     const direction = state.filters.sortDirection === 'asc' ? 1 : -1;
@@ -598,6 +636,28 @@ function labelForWindow(windowKey) {
     return WINDOW_LABELS[windowKey] || 'All Time';
 }
 
+function resolveDataUrl() {
+    if (window.__DASHBOARD_DATA_URL__) return window.__DASHBOARD_DATA_URL__;
+
+    const hostname = window.location.hostname;
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+
+    if (isLocalhost && CONFIG.USE_REMOTE_DATA_ON_LOCALHOST && CONFIG.LOCAL_DATA_URL) {
+        return CONFIG.LOCAL_DATA_URL;
+    }
+
+    return CONFIG.DATA_URL;
+}
+
+function isSameOriginUrl(url) {
+    try {
+        const resolved = new URL(url, window.location.href);
+        return resolved.origin === window.location.origin;
+    } catch (error) {
+        return true;
+    }
+}
+
 function formatNumber(num) {
     if (num >= 1000000) {
         return (num / 1000000).toFixed(1) + 'M';
@@ -610,6 +670,64 @@ function formatNumber(num) {
 
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function parseLocalDate(dateStr) {
+    if (!dateStr) return null;
+    const [y, m, d] = dateStr.split('-').map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d); // local midnight to avoid UTC shifts
+}
+
+function toLocalDateStart(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function toLocalDateEnd(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
+}
+
+function logDailyChartDiagnostics(dailyPlays, windowKey, windowData) {
+    if (!CONFIG.DEBUG_CHARTS) return;
+
+    const startLabel = windowData?.start || 'n/a';
+    const endLabel = windowData?.end || 'n/a';
+
+    if (!Array.isArray(dailyPlays) || dailyPlays.length === 0) {
+        console.debug(
+            `[charts] daily trend (${windowKey || 'unknown'}) window=${startLabel}→${endLabel}: 0 points`
+        );
+        return;
+    }
+
+    const dates = dailyPlays
+        .map((item) => item?.date)
+        .filter(Boolean)
+        .sort();
+
+    const minDate = dates[0] || 'n/a';
+    const maxDate = dates[dates.length - 1] || 'n/a';
+
+    console.debug(
+        `[charts] daily trend (${windowKey || 'unknown'}) window=${startLabel}→${endLabel}: ${dailyPlays.length} points (${minDate} → ${maxDate})`
+    );
+}
+
+function updateDailyChartSubtitle() {
+    let subtitle = document.getElementById('daily-trend-subtitle');
+
+    if (!subtitle) {
+        const canvas = document.getElementById('daily-trend-chart');
+        if (!canvas) return;
+
+        const panel = canvas.closest('.panel');
+        if (!panel) return;
+
+        subtitle = panel.querySelector('.panel-header .muted');
+        if (!subtitle) return;
+    }
+
+    subtitle.textContent = labelForWindow(state.activeWindow);
 }
 
 // ==========================

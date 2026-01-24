@@ -42,11 +42,14 @@ def build_dashboard_data(
     raw_bucket_name: str,
     dashboard_bucket_name: str,
     lookback_days: int = 90,
+    daily_trend_days: int | None = None,
     hourly_lookback_days: int = 7,
     spotify_client: SpotifyClient | None = None,
 ) -> DashboardData:
     """Build precomputed dashboard data with multi-window top lists (cost-optimized)."""
     now = datetime.now(PACIFIC_TZ)
+    if daily_trend_days is None:
+        daily_trend_days = lookback_days
 
     def _is_summary_plausible(
         summary: dict, max_total_per_day: int = 2000, max_single_track: int = 600
@@ -154,8 +157,8 @@ def build_dashboard_data(
     all_track_ids: set[str] = set()
 
     for key, spec in window_specs.items():
-        start_date = max(spec["start"], summary_start_date)
-        end_date = min(spec["end"], summary_end_date)
+        start_date = spec["start"]
+        end_date = spec["end"]
         if start_date > end_date:
             start_date = end_date
 
@@ -339,8 +342,8 @@ def build_dashboard_data(
     default_window = next((w for w in default_window_order if w in windows_payload), "all_time")
     selected_window = windows_payload.get(default_window, {})
 
-    # Daily plays from summaries (lookback_days inclusive)
-    trend_start_date = summary_end_date - timedelta(days=lookback_days)
+    # Daily plays from summaries (daily_trend_days inclusive)
+    trend_start_date = summary_end_date - timedelta(days=daily_trend_days)
     daily_plays: list[dict] = []
     current_date = trend_start_date
     while current_date <= summary_end_date:
@@ -394,6 +397,8 @@ def build_dashboard_data(
                     "Metrics": [
                         {"Name": "aggregate_total_play_count", "Unit": "None"},
                         {"Name": "aggregate_unique_tracks", "Unit": "None"},
+                        {"Name": "daily_trend_days", "Unit": "Count"},
+                        {"Name": "daily_plays_points", "Unit": "Count"},
                     ],
                 }
             ],
@@ -401,8 +406,12 @@ def build_dashboard_data(
         "event": "aggregate_completed",
         "aggregate_total_play_count": metadata["total_play_count"],
         "aggregate_unique_tracks": metadata["unique_track_count"],
+        "daily_trend_days": daily_trend_days,
+        "daily_plays_points": len(daily_plays),
         "unique_artist_count": metadata["unique_artist_count"],
         "summary_days": len(validated_summaries),
+        "summary_start_date": summary_start_date.isoformat(),
+        "summary_end_date": summary_end_date.isoformat(),
         "date_range_start": metadata["date_range_start"],
         "date_range_end": metadata["date_range_end"],
     }

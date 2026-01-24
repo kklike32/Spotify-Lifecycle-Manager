@@ -104,6 +104,7 @@ environment = "production"
 # Spotify Configuration
 source_playlist_id = "your-playlist-id"
 lookback_days = 7
+daily_trend_days = 365
 
 # Cost Guardrails (optional)
 budget_notification_email = "you@example.com"
