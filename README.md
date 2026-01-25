@@ -163,3 +163,5 @@ See `CONTRIBUTING.md` for setup, tests, and PR guidelines.
 ## License
 
 MIT — see `LICENSE`.
+
+Made by Keenan Kalra
