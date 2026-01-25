@@ -7,8 +7,8 @@ Serverless pipeline for Spotify listening analytics that ingests play history, d
 
 ## Live Demo
 
-- Repo: <https://github.com/><your-org>/<your-repo> (replace)
-- Dashboard: https://<your-cloudfront-domain>/ (replace with your deployed URL)
+- Repo: <https://github.com/kklike32/Spotify-Lifecycle-Manager>
+- Dashboard: <https://d25spyc5nz22ju.cloudfront.net>
 
 ## Features
 
