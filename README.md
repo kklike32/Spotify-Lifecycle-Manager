@@ -1,250 +1,165 @@
 # Spotify Lifecycle Manager
 
-A serverless, event-driven Spotify Lifecycle Manager that tracks play history, creates weekly playlists, and provides long-term analytics.
+Serverless pipeline for Spotify listening analytics that ingests play history, deduplicates events, builds weekly playlists, and serves a zero-query dashboard.
 
-## Goals
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 
-- Reliable ingestion of Spotify play history (no gaps)
-- Idempotent and retry-safe processing
-- Weekly playlist automation based on "not played in last N days"
-- Long-term analytics via cold storage and precomputed aggregates
-- Minimal operational overhead, minimal cost
+## Live Demo
 
-## Quick Start
+- Repo: <https://github.com/><your-org>/<your-repo> (replace)
+- Dashboard: https://<your-cloudfront-domain>/ (replace with your deployed URL)
 
-### Prerequisites
+## Features
 
-- Python 3.11+
-- `uv` for environment and dependency management
-- AWS Account with configured credentials
-- Spotify API credentials ([Get them here](https://developer.spotify.com/dashboard))
-- Terraform 1.0+
+- Cursor-based ingestion to avoid gaps in play history
+- Idempotent processing and dedupe keys
+- Hot store (DynamoDB) + cold store (S3) retention strategy
+- Precomputed, static dashboard JSON for zero-query reads
+- Weekly playlist automation (“not played in last N days”)
 
-### Local Setup
+## Tech Stack
 
-```bash
-# Create virtual environment
-uv venv
-
-# Install dependencies
-uv add spotipy boto3 pydantic python-dotenv
-uv add --dev pytest ruff black
-
-# Run tests
-uv run pytest -q
-
-# Lint and format
-uv run ruff check .
-uv run black .
-```
-
-### AWS Deployment
-
-```bash
-# 1. Configure AWS credentials
-aws configure
-
-# 2. Deploy infrastructure
-cd infra/terraform
-terraform init
-terraform apply
-
-# 3. Set Spotify secrets in SSM Parameter Store
-aws ssm put-parameter \
-    --name "/spotify-lifecycle/spotify/client_id" \
-    --value "YOUR_CLIENT_ID" \
-    --type "SecureString"
-
-aws ssm put-parameter \
-    --name "/spotify-lifecycle/spotify/client_secret" \
-    --value "YOUR_CLIENT_SECRET" \
-    --type "SecureString"
-
-aws ssm put-parameter \
-    --name "/spotify-lifecycle/spotify/refresh_token" \
-    --value "YOUR_REFRESH_TOKEN" \
-    --type "SecureString"
-
-# 4. Deploy everything (Lambda + Dashboard)
-./scripts/deploy.sh all
-```
-
-### Quick Deploy Script
-
-After initial setup, use the deploy script for updates:
-
-```bash
-# Deploy everything
-./scripts/deploy.sh all
-
-# Deploy only Lambda functions
-./scripts/deploy.sh lambda
-
-# Deploy only dashboard
-./scripts/deploy.sh dashboard
-```
-
-## Development
-
-### Running Tests
-
-```bash
-uv run pytest -q
-```
-
-### Linting and Formatting
-
-```bash
-# Check for lint issues
-uv run ruff check .
-
-# Format code
-uv run black .
-```
-
-### Project Structure
-
-```
-src/spotify_lifecycle/  - Main application code
-├── config.py           - Configuration management
-├── models.py           - Data models
-├── lambda_handler.py   - AWS Lambda entry points
-├── spotify/            - Spotify API client
-│   ├── client.py       - Spotipy wrapper
-│   └── oauth.py        - OAuth flow
-├── storage/            - DynamoDB and S3 interactions
-│   ├── dynamo.py       - DynamoDB operations
-│   └── s3.py           - S3 cold storage
-├── pipeline/           - ETL pipeline stages
-│   ├── ingest.py       - Fetch plays from Spotify
-│   ├── enrich.py       - Cache track/artist metadata
-│   ├── playlists.py    - Generate weekly playlists
-│   └── aggregate.py    - Build dashboard analytics
-└── utils/              - Utility functions
-    ├── time.py         - Date/time helpers
-    └── hashing.py      - Dedup key generation
-
-tests/                  - Unit tests
-scripts/
-├── deploy.sh           - Main deployment script
-└── hooks/              - Git hooks
-infra/terraform/        - Infrastructure as Code
-├── build_lambda_package.sh  - Lambda build script
-├── lambda.tf           - Lambda function definitions
-├── dynamodb.tf         - DynamoDB tables
-└── s3.tf               - S3 buckets
-dashboard/site/         - Static dashboard
-├── index.html          - Dashboard UI
-├── app.js              - Dashboard logic
-└── styles.css          - Dashboard styling
-```
+- Python 3.11+, Spotipy
+- AWS Lambda, EventBridge, DynamoDB, S3, CloudWatch
+- Terraform (infra)
+- Static dashboard (HTML/CSS/JS)
 
 ## Architecture
 
-### Pipeline Stages
-
-1. **Ingest (Recorder)** - Fetch play history from Spotify API
-   - Runs hourly via EventBridge
-   - Writes to DynamoDB (hot store, 7-day TTL)
-   - Appends to S3 (cold store, date-partitioned)
-
-2. **Enrich (Librarian)** - Cache track/artist metadata
-   - Runs 5 minutes after ingest
-   - Cache-once strategy (no redundant API calls)
-   - Stores in DynamoDB (no TTL)
-
-3. **Aggregate (Analyst)** - Build dashboard analytics
-   - Runs nightly at 2 AM
-   - Precomputes all charts and stats
-   - Writes single JSON to S3
-
-4. **Playlists (DJ)** - Create weekly curated playlists
-   - Runs every Monday at 8 AM
-   - Set-diff: source playlist - recently played tracks
-   - Creates new playlist in Spotify
-
-### Data Flow
-
-```
-Spotify API → [Ingest] → DynamoDB (hot) + S3 (cold)
-                           ↓
-                        [Enrich]
-                           ↓
-                     DynamoDB (metadata)
-                           ↓
-                        [Aggregate]
-                           ↓
-                     S3 (dashboard.json)
-                           ↓
-                       [Browser]
+```mermaid
+flowchart LR
+  Spotify[Spotify API] --> Ingest[Ingest Lambda]
+  Ingest --> Hot[DynamoDB Hot Store]
+  Ingest --> Cold[S3 Cold Store]
+  Hot --> Enrich[Enrich Lambda]
+  Enrich --> Meta[DynamoDB Metadata]
+  Meta --> Aggregate[Aggregate Lambda]
+  Aggregate --> Dash[S3 dashboard_data.json]
+  Dash --> Browser[Dashboard (Browser)]
+  Ingest --> Playlists[Playlist Lambda]
 ```
 
-### Key Design Decisions
+## Setup
 
-- **Serverless-first**: No always-on servers, only event-driven Lambda
-- **Idempotent**: All operations safe to retry (conditional writes)
-- **TTL-based cleanup**: Hot data auto-expires (no manual cleanup)
-- **Precomputed analytics**: Dashboard reads static JSON (zero queries)
-- **Cross-platform builds**: Lambda packages built with manylinux wheels
+### Prerequisites
 
-## Testing
+- Spotify Developer App (Client ID + Client Secret)
+- AWS account with credentials configured locally
+- Terraform 1.0+
+- Python 3.11+ (recommended: `uv`)
 
-### Manual Testing
+### Environment Variables
+
+Copy `.env.example` to `.env` for local scripts only (never commit `.env`).
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `SPOTIFY_CLIENT_ID` | Yes | Spotify app client ID |
+| `SPOTIFY_CLIENT_SECRET` | Yes | Spotify app client secret |
+| `SPOTIFY_REFRESH_TOKEN` | Yes | OAuth refresh token for non-interactive runs |
+| `SOURCE_PLAYLIST_ID` | Yes | Seed playlist ID for weekly playlist generation |
+| `LOOKBACK_DAYS` | No | Recent-play lookback window (default 7) |
+| `AGGREGATION_FREQUENCY_DAYS` | No | Aggregate window (default 7) |
+| `USER_ID` | No | Spotify user ID (`me` supported) |
+| `AWS_REGION` | No | AWS region (default `us-east-1`) |
+| `HOT_TABLE_NAME` | No | DynamoDB hot table name |
+| `TRACKS_TABLE_NAME` | No | DynamoDB tracks table name |
+| `ARTISTS_TABLE_NAME` | No | DynamoDB artists table name |
+| `STATE_TABLE_NAME` | No | DynamoDB state table name |
+| `RAW_BUCKET_NAME` | No | S3 raw data bucket |
+| `DASHBOARD_BUCKET_NAME` | No | S3 dashboard bucket |
+| `ENVIRONMENT` | No | Environment label (e.g., `development`) |
+| `DASHBOARD_DATA_URL` | No | Dashboard JSON URL for local UI testing |
+
+### Spotify OAuth (refresh token)
+
+Follow the Spotify OAuth guide in `scripts/run_ingest.py` or use your preferred flow to obtain a refresh token. Store refresh tokens in AWS SSM Parameter Store for production use.
+
+## Deploy
+
+### Terraform
 
 ```bash
-# Test ingest
-aws lambda invoke --function-name spotify-lifecycle-ingest /tmp/test.json
-cat /tmp/test.json | jq .
-
-# Test enrich
-aws lambda invoke --function-name spotify-lifecycle-enrich /tmp/test.json
-
-# Test aggregate
-aws lambda invoke --function-name spotify-lifecycle-aggregate /tmp/test.json
-
-# Check DynamoDB
-aws dynamodb scan --table-name spotify-play-events --select COUNT
-
-# Check dashboard data
-aws s3 cp s3://spotify-dashboard-{account-id}/dashboard_data.json - | jq .
+cd infra/terraform
+cp terraform.tfvars.example terraform.tfvars
+# edit terraform.tfvars with your values
+terraform init
+terraform apply
 ```
 
-### Automated Tests
+### Store Secrets in SSM
 
 ```bash
-# Run all tests
+aws ssm put-parameter \
+  --name "/spotify-lifecycle/spotify/client_id" \
+  --value "YOUR_CLIENT_ID" \
+  --type "SecureString"
+
+aws ssm put-parameter \
+  --name "/spotify-lifecycle/spotify/client_secret" \
+  --value "YOUR_CLIENT_SECRET" \
+  --type "SecureString"
+
+aws ssm put-parameter \
+  --name "/spotify-lifecycle/spotify/refresh_token" \
+  --value "YOUR_REFRESH_TOKEN" \
+  --type "SecureString"
+```
+
+### Deploy App Components
+
+```bash
+./scripts/deploy.sh all
+# or
+./scripts/deploy.sh lambda
+./scripts/deploy.sh dashboard
+```
+
+## Local Development
+
+```bash
+uv venv
+uv sync
 uv run pytest -q
-
-# Run specific test file
-uv run pytest tests/test_pipeline.py -v
-
-# Run with coverage
-uv run pytest --cov=spotify_lifecycle
 ```
+
+Dashboard (static):
+
+```bash
+# Serve dashboard locally (simple option)
+python -m http.server --directory dashboard/site 8000
+```
+
+## Data & Privacy
+
+- Stored: track/artist metadata, play history events, and derived aggregates
+- Not stored: audio content, user passwords, or Spotify credentials in code
+- Tokens: refresh token should live in SSM Parameter Store for production
+- Retention: hot store uses TTL (default 7 days); cold store persists until deleted
+- Deletion: remove your S3 objects and DynamoDB tables to purge data
+
+## Costs
+
+Designed to be near-zero cost for personal use when using infrequent schedules and low data volumes. Costs rise with higher ingest frequency, long-term S3 retention, and CloudWatch logs.
 
 ## Troubleshooting
 
-See [DEPLOYMENT.md](copilot/docs/runbooks/DEPLOYMENT.md) for:
+- CORS errors: confirm CloudFront/S3 CORS settings and dashboard URL
+- Spotify 429: lower ingest frequency or add backoff
+- Missing history: verify cursor state and lookback window
+- Empty dashboard: confirm aggregate Lambda writes to S3
 
-- Common issues and solutions
-- Debugging procedures
-- Rollback instructions
-- Cost monitoring
+## Roadmap
 
-## Documentation
-
-- [MVP.md](copilot/MVP.md) - Feature specifications
-- [DEPLOYMENT.md](copilot/docs/runbooks/DEPLOYMENT.md) - Deployment guide
-- [LOCAL_DEV.md](copilot/docs/runbooks/LOCAL_DEV.md) - Local development
-- [OVERVIEW.md](copilot/docs/architecture/OVERVIEW.md) - System architecture
+- OAuth bootstrap CLI
+- Multi-user support
+- Optional Athena queries for ad-hoc analysis
 
 ## Contributing
 
-1. Make changes in `src/`
-2. Run tests: `uv run pytest -q`
-3. Format code: `uv run ruff check . --fix && uv run black .`
-4. Deploy: `./scripts/deploy.sh all`
+See `CONTRIBUTING.md` for setup, tests, and PR guidelines.
 
 ## License
 
-TBD
+MIT — see `LICENSE`.

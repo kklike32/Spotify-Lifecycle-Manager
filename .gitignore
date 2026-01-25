@@ -1,9 +1,7 @@
 copilot/
 .github/*.md
 .venv/
-__pycache__/
-src/spotify_lifecycle/__pycache__
-src/spotify_lifecycle/spotify/__pycache__
+**/__pycache__/
 *.pyc
 .DS_Store
 .vscode/
@@ -13,5 +11,15 @@ env/
 .ruff_cache/
 tmp/
 .env
+.env.*
+!.env.example
+.mcp.json
+infra/terraform/*.tfstate*
+infra/terraform/terraform.tfvars
+infra/terraform/tfplan
 dashboard/site/dist/
+dashboard/site/tmp/
+dashboard/site/dashboard_data.json
+tmp/*dashboard_data*.json
+/*dashboard*.json
 .claude
