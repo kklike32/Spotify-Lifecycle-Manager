@@ -36,7 +36,7 @@ flowchart LR
   Enrich --> Meta[DynamoDB Metadata]
   Meta --> Aggregate[Aggregate Lambda]
   Aggregate --> Dash[S3 dashboard_data.json]
-  Dash --> Browser[Dashboard (Browser)]
+  Dash --> Browser["Dashboard (Browser)"]
   Ingest --> Playlists[Playlist Lambda]
 ```
 
