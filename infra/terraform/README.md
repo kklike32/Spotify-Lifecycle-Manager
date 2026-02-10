@@ -177,10 +177,10 @@ aws lambda invoke \
 
 ```bash
 # Get dashboard URL
-terraform output dashboard_website_url
+echo "https://$(terraform output -raw cloudfront_domain_name)"
 
 # Open in browser
-open $(terraform output -raw dashboard_website_url)
+open "https://$(terraform output -raw cloudfront_domain_name)"
 ```
 
 ### 4. Confirm Budget Alerts (Optional)
@@ -194,7 +194,7 @@ If you provided `budget_notification_email`, check your email for AWS Budget sub
 terraform output
 
 # Show specific output
-terraform output dashboard_website_url
+terraform output cloudfront_domain_name
 
 # Show deployment summary (JSON)
 terraform output -json deployment_summary

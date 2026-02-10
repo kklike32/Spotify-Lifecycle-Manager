@@ -20,7 +20,29 @@ PY_VERSION="${LAMBDA_PY_VERSION:-3.12}" # Match Lambda runtime (default python3.
 
 echo "[INFO] Installing Python dependencies for Linux x86_64 (Python ${PY_VERSION})..."
 cd "$PROJECT_ROOT"
-python -m pip install \
+PYTHON_BIN="$(command -v python)"
+if [ -z "$PYTHON_BIN" ]; then
+  echo "[ERROR] python not found on PATH"
+  exit 1
+fi
+
+# Some local uv-managed virtualenvs may not include pip by default.
+if ! "$PYTHON_BIN" -m pip --version >/dev/null 2>&1; then
+  echo "[INFO] pip not found for $PYTHON_BIN; attempting bootstrap via ensurepip..."
+  "$PYTHON_BIN" -m ensurepip --upgrade >/dev/null 2>&1 || true
+fi
+
+if "$PYTHON_BIN" -m pip --version >/dev/null 2>&1; then
+  INSTALL_CMD=("$PYTHON_BIN" -m pip install)
+elif command -v uv >/dev/null 2>&1; then
+  echo "[INFO] Falling back to uv pip installer..."
+  INSTALL_CMD=(uv pip install --python "$PYTHON_BIN")
+else
+  echo "[ERROR] Unable to install dependencies: pip unavailable and uv not found."
+  exit 1
+fi
+
+"${INSTALL_CMD[@]}" \
   --target "$BUILD_DIR" \
   --platform manylinux2014_x86_64 \
   --python-version "${PY_VERSION}" \
