@@ -203,9 +203,9 @@ output "budget_limit" {
 output "deployment_summary" {
   description = "Summary of deployed resources"
   value = {
-    environment    = var.environment
-    region         = var.aws_region
-    project_name   = var.project_name
+    environment  = var.environment
+    region       = var.aws_region
+    project_name = var.project_name
     dynamodb_tables = {
       play_events = aws_dynamodb_table.play_events.name
       tracks      = aws_dynamodb_table.tracks.name

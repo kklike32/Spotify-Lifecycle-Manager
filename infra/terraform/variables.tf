@@ -166,6 +166,43 @@ variable "aggregate_schedule" {
 }
 
 # -----------------------------------------------------------------------------
+# Aggregate Alarm Configuration
+# -----------------------------------------------------------------------------
+
+variable "aggregate_alarm_mode" {
+  description = "Aggregate total play count alarm mode: 'anomaly' (recommended) or 'static' (legacy threshold)"
+  type        = string
+  default     = "anomaly"
+
+  validation {
+    condition     = contains(["anomaly", "static"], var.aggregate_alarm_mode)
+    error_message = "aggregate_alarm_mode must be one of: anomaly, static."
+  }
+}
+
+variable "aggregate_anomaly_sensitivity" {
+  description = "CloudWatch anomaly detection band width for aggregate_total_play_count (higher = wider band, fewer alerts)"
+  type        = number
+  default     = 2
+
+  validation {
+    condition     = var.aggregate_anomaly_sensitivity > 0
+    error_message = "aggregate_anomaly_sensitivity must be greater than 0."
+  }
+}
+
+variable "aggregate_total_play_count_threshold" {
+  description = "Legacy static threshold used only when aggregate_alarm_mode is 'static'"
+  type        = number
+  default     = 2000
+
+  validation {
+    condition     = var.aggregate_total_play_count_threshold > 0
+    error_message = "aggregate_total_play_count_threshold must be greater than 0."
+  }
+}
+
+# -----------------------------------------------------------------------------
 # CloudWatch Logs Configuration
 # -----------------------------------------------------------------------------
 

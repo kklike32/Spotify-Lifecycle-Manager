@@ -92,5 +92,10 @@ budget_notification_email = ""
 # playlist_schedule  = "cron(0 8 ? * MON *)" # Monday 8am UTC
 # aggregate_schedule = "cron(0 2 * * ? *)"   # Daily 2am UTC
 
+# Aggregate alarm mode
+# aggregate_alarm_mode = "anomaly"            # "anomaly" (recommended) or "static"
+# aggregate_anomaly_sensitivity = 2
+# aggregate_total_play_count_threshold = 2000 # legacy static mode only
+
 # CloudWatch Logs retention (days)
 # log_retention_days = 7

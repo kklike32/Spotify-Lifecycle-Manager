@@ -244,13 +244,55 @@ terraform destroy
 
 See: `copilot/docs/cost/COST_PHILOSOPHY.md` for detailed analysis.
 
+## CloudWatch Alarm Triage Runbook
+
+When you receive an alarm email:
+
+```bash
+# 1) Check current alarm state/config
+aws cloudwatch describe-alarms \
+  --region us-east-1 \
+  --alarm-names spotify-lifecycle-aggregate-total-play-count-high
+
+# 2) Check recent state transitions
+aws cloudwatch describe-alarm-history \
+  --region us-east-1 \
+  --alarm-name spotify-lifecycle-aggregate-total-play-count-high \
+  --history-item-type StateUpdate \
+  --max-records 20
+
+# 3) Inspect the underlying metric trend
+aws cloudwatch get-metric-statistics \
+  --region us-east-1 \
+  --namespace spotify-lifecycle \
+  --metric-name aggregate_total_play_count \
+  --start-time 2026-03-01T00:00:00Z \
+  --end-time 2026-03-10T00:00:00Z \
+  --period 3600 \
+  --statistics Maximum
+
+# 4) Correlate with aggregate Lambda EMF payloads
+aws logs filter-log-events \
+  --region us-east-1 \
+  --log-group-name /aws/lambda/spotify-lifecycle-aggregate \
+  --start-time 1772668800000 \
+  --end-time 1773100800000 \
+  --filter-pattern "aggregate_total_play_count"
+```
+
+Decision tree:
+
+1. If metric follows historical pattern and alarm clears quickly, treat as expected growth/noise.
+2. If metric jumps outside normal trend band, treat as anomaly and investigate data ingestion/backfill.
+3. If data drops or mismatch alarms fire (`ingest-summary-mismatch`, `aggregate-summary-rejected`), treat as data quality incident.
+
 ## Troubleshooting
 
 ### Terraform Init Fails
 
 ```bash
 # Clear Terraform cache
-rm -rf .terraform .terraform.lock.hcl
+trash .terraform .terraform.lock.hcl
 
 # Re-initialize
 terraform init

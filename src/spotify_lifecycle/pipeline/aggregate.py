@@ -385,6 +385,13 @@ def build_dashboard_data(
         ).isoformat(),
         "default_window": default_window,
     }
+    previous_total_play_count = sum(
+        int(summary.get("total_plays", 0))
+        for summary in validated_summaries
+        if datetime.fromisoformat(summary["date"]).date() < summary_end_date
+    )
+    aggregate_daily_new_plays = metadata["total_play_count"] - previous_total_play_count
+    aggregate_summary_days_processed = len(validated_summaries)
 
     # Emit CloudWatch Embedded Metric Format (EMF) for metric extraction
     metric_event = {
@@ -397,6 +404,8 @@ def build_dashboard_data(
                     "Metrics": [
                         {"Name": "aggregate_total_play_count", "Unit": "None"},
                         {"Name": "aggregate_unique_tracks", "Unit": "None"},
+                        {"Name": "aggregate_daily_new_plays", "Unit": "Count"},
+                        {"Name": "aggregate_summary_days_processed", "Unit": "Count"},
                         {"Name": "daily_trend_days", "Unit": "Count"},
                         {"Name": "daily_plays_points", "Unit": "Count"},
                     ],
@@ -406,10 +415,12 @@ def build_dashboard_data(
         "event": "aggregate_completed",
         "aggregate_total_play_count": metadata["total_play_count"],
         "aggregate_unique_tracks": metadata["unique_track_count"],
+        "aggregate_daily_new_plays": aggregate_daily_new_plays,
+        "aggregate_summary_days_processed": aggregate_summary_days_processed,
         "daily_trend_days": daily_trend_days,
         "daily_plays_points": len(daily_plays),
         "unique_artist_count": metadata["unique_artist_count"],
-        "summary_days": len(validated_summaries),
+        "summary_days": aggregate_summary_days_processed,
         "summary_start_date": summary_start_date.isoformat(),
         "summary_end_date": summary_end_date.isoformat(),
         "date_range_start": metadata["date_range_start"],

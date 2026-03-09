@@ -154,18 +154,57 @@ resource "aws_sns_topic_subscription" "alarms_email" {
 # CloudWatch Log Metric Filters (Aggregate Lambda)
 # -----------------------------------------------------------------------------
 
-# Aggregate total play count alarm (uses EMF auto-created metric)
-resource "aws_cloudwatch_metric_alarm" "aggregate_total_play_count_high" {
+# Aggregate total play count alarm (legacy static threshold mode)
+resource "aws_cloudwatch_metric_alarm" "aggregate_total_play_count_high_static" {
+  count               = var.aggregate_alarm_mode == "static" ? 1 : 0
   alarm_name          = "${var.project_name}-aggregate-total-play-count-high"
-  alarm_description   = "Alert when aggregate total_play_count exceeds expected threshold"
+  alarm_description   = "Legacy static threshold alert when aggregate total_play_count exceeds expected threshold"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "aggregate_total_play_count"
   namespace           = var.project_name
   period              = 300
   statistic           = "Maximum"
-  threshold           = 2000
+  threshold           = var.aggregate_total_play_count_threshold
   treat_missing_data  = "notBreaching"
+
+  alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []
+
+  tags = {
+    Name        = "${var.project_name}-aggregate-total-play-count-high"
+    Description = "Aggregate Lambda total_play_count anomaly"
+  }
+}
+
+# Aggregate total play count anomaly alarm (recommended mode)
+resource "aws_cloudwatch_metric_alarm" "aggregate_total_play_count_high_anomaly" {
+  count               = var.aggregate_alarm_mode == "anomaly" ? 1 : 0
+  alarm_name          = "${var.project_name}-aggregate-total-play-count-high"
+  alarm_description   = "Alert when aggregate total_play_count deviates from normal growth trend"
+  comparison_operator = "LessThanLowerOrGreaterThanUpperThreshold"
+  evaluation_periods  = 1
+  threshold_metric_id = "ad1"
+  treat_missing_data  = "notBreaching"
+
+  metric_query {
+    id = "ad1"
+
+    expression  = "ANOMALY_DETECTION_BAND(m1, ${var.aggregate_anomaly_sensitivity})"
+    label       = "aggregate_total_play_count_expected_band"
+    return_data = true
+  }
+
+  metric_query {
+    id = "m1"
+
+    metric {
+      metric_name = "aggregate_total_play_count"
+      namespace   = var.project_name
+      period      = 300
+      stat        = "Maximum"
+    }
+    return_data = true
+  }
 
   alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []
 
@@ -229,14 +268,14 @@ resource "aws_cloudwatch_metric_alarm" "ingest_summary_mismatch_alarm" {
   alarm_name          = "${var.project_name}-ingest-summary-mismatch"
   alarm_description   = "Alert when daily summary counts DECREASE unexpectedly (data loss/bug). Search ingest logs for 'count DECREASED'."
   comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = 3          # 15 minutes lookback
-  datapoints_to_alarm = 2          # require 2 hits
+  evaluation_periods  = 3 # 15 minutes lookback
+  datapoints_to_alarm = 2 # require 2 hits
   metric_name         = aws_cloudwatch_log_metric_filter.ingest_summary_mismatch.metric_transformation[0].name
   namespace           = var.project_name
   period              = 300
   statistic           = "Sum"
   threshold           = 1
-  treat_missing_data  = "missing"  # honest: no data -> insufficient, not OK
+  treat_missing_data  = "missing" # honest: no data -> insufficient, not OK
 
   alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []
 
