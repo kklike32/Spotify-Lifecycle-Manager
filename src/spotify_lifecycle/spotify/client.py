@@ -7,6 +7,8 @@ import spotipy
 from requests.auth import HTTPBasicAuth
 from spotipy.oauth2 import SpotifyOAuth
 
+from spotify_lifecycle.spotify.oauth import SPOTIFY_OAUTH_SCOPE
+
 
 class SpotifyRefreshTokenExpiredError(RuntimeError):
     """Raised when Spotify requires the user to authorize a new refresh token."""
@@ -77,7 +79,7 @@ class SpotifyClient:
                 client_id=self.client_id,
                 client_secret=self.client_secret,
                 redirect_uri=self.redirect_uri,
-                scope="user-read-recently-played playlist-modify-private" " playlist-modify-public",
+                scope=SPOTIFY_OAUTH_SCOPE,
                 open_browser=False,
             )
             self.sp = spotipy.Spotify(auth_manager=auth_manager)

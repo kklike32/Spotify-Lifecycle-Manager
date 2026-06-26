@@ -1,6 +1,6 @@
 # Spotify Lifecycle Manager
 
-Serverless pipeline for Spotify listening analytics that ingests play history, deduplicates events, builds weekly playlists, and serves a zero-query dashboard.
+Serverless pipeline for Spotify listening analytics that ingests play history, deduplicates events, and serves a zero-query dashboard.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
@@ -16,7 +16,7 @@ Serverless pipeline for Spotify listening analytics that ingests play history, d
 - Idempotent processing and dedupe keys
 - Hot store (DynamoDB) + cold store (S3) retention strategy
 - Precomputed, static dashboard JSON for zero-query reads
-- Weekly playlist automation (“not played in last N days”)
+- Optional weekly playlist automation is available for manual use, but its schedule is disabled by default
 
 ## Tech Stack
 
@@ -37,7 +37,6 @@ flowchart LR
   Meta --> Aggregate[Aggregate Lambda]
   Aggregate --> Dash[S3 dashboard_data.json]
   Dash --> Browser["Dashboard (Browser)"]
-  Ingest --> Playlists[Playlist Lambda]
 ```
 
 ## Setup
@@ -59,7 +58,7 @@ Copy `.env.example` to `.env` for local scripts only (never commit `.env`).
 | `SPOTIFY_CLIENT_SECRET` | Yes | Spotify app client secret |
 | `SPOTIFY_REFRESH_TOKEN` | Yes | OAuth refresh token for non-interactive runs |
 | `SPOTIFY_REDIRECT_URI` | No | OAuth redirect URI for refresh-token generation |
-| `SOURCE_PLAYLIST_ID` | Yes | Seed playlist ID for weekly playlist generation |
+| `SOURCE_PLAYLIST_ID` | No | Seed playlist ID for manual weekly playlist generation |
 | `LOOKBACK_DAYS` | No | Recent-play lookback window (default 7) |
 | `AGGREGATION_FREQUENCY_DAYS` | No | Aggregate window (default 7) |
 | `USER_ID` | No | Spotify user ID (`me` supported) |

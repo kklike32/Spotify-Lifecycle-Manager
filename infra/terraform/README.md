@@ -12,7 +12,7 @@ This directory contains Infrastructure as Code (IaC) for deploying the complete 
 **Compute:**
 
 - 4 Lambda functions (ingest, enrich, playlist, aggregate)
-- 4 EventBridge schedules (hourly, daily, weekly triggers)
+- 4 EventBridge rules; the weekly playlist rule is disabled by default
 
 **Monitoring:**
 
@@ -102,7 +102,8 @@ aws_region = "us-east-1"
 environment = "production"
 
 # Spotify Configuration
-source_playlist_id = "your-playlist-id"
+# source_playlist_id is only needed if enable_playlist_schedule is true
+source_playlist_id = ""
 lookback_days = 7
 daily_trend_days = 365
 

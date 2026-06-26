@@ -62,12 +62,13 @@ resource "aws_lambda_permission" "enrich_eventbridge" {
 
 resource "aws_cloudwatch_event_rule" "playlist_trigger" {
   name                = "${var.project_name}-playlist-trigger"
-  description         = "Trigger weekly playlist Lambda every Monday at 8am UTC"
+  description         = "Weekly playlist Lambda trigger (disabled by default)"
   schedule_expression = var.playlist_schedule
+  state               = var.enable_playlist_schedule ? "ENABLED" : "DISABLED"
 
   tags = {
     Name        = "${var.project_name}-playlist-trigger"
-    Description = "Weekly playlist trigger"
+    Description = "Weekly playlist trigger disabled by default"
   }
 }
 

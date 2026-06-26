@@ -21,7 +21,7 @@ project_name = "spotify-lifecycle"
 # Spotify Configuration
 # -----------------------------------------------------------------------------
 
-# Source playlist ID for weekly playlists
+# Source playlist ID for weekly playlists; only needed if enable_playlist_schedule is true
 source_playlist_id = ""
 
 # Spotify user ID (default: "me" for current authenticated user)
@@ -89,6 +89,7 @@ budget_notification_email = ""
 # EventBridge schedules (cron expressions)
 # ingest_schedule    = "rate(1 hour)"
 # enrich_schedule    = "cron(5 * * * ? *)"   # Every hour at 5 minutes past
+# enable_playlist_schedule = false            # Weekly playlist creation disabled by default
 # playlist_schedule  = "cron(0 8 ? * MON *)" # Monday 8am UTC
 # aggregate_schedule = "cron(0 2 * * ? *)"   # Daily 2am UTC
 

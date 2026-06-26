@@ -159,6 +159,12 @@ variable "playlist_schedule" {
   default     = "cron(0 8 ? * MON *)" # Monday 8am UTC
 }
 
+variable "enable_playlist_schedule" {
+  description = "Enable the weekly playlist EventBridge trigger"
+  type        = bool
+  default     = false
+}
+
 variable "aggregate_schedule" {
   description = "EventBridge schedule for aggregation (cron expression)"
   type        = string

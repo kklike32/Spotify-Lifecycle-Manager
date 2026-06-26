@@ -68,3 +68,18 @@ def test_authenticate_other_http_errors_raise_requests_error(monkeypatch):
 
     with pytest.raises(requests.HTTPError):
         client.authenticate(refresh_token="refresh-token")
+
+
+def test_interactive_auth_uses_read_only_recently_played_scope(monkeypatch):
+    """New interactive auth sessions do not request playlist write scopes."""
+    oauth = Mock()
+    spotify = Mock()
+
+    monkeypatch.setattr("spotify_lifecycle.spotify.client.SpotifyOAuth", oauth)
+    monkeypatch.setattr("spotify_lifecycle.spotify.client.spotipy.Spotify", spotify)
+
+    client = SpotifyClient(client_id="client-id", client_secret="client-secret")
+    client.authenticate()
+
+    assert oauth.call_args.kwargs["scope"] == "user-read-recently-played"
+    spotify.assert_called_once_with(auth_manager=oauth.return_value)
