@@ -8,6 +8,10 @@ from requests.auth import HTTPBasicAuth
 from spotipy.oauth2 import SpotifyOAuth
 
 
+class SpotifyRefreshTokenExpiredError(RuntimeError):
+    """Raised when Spotify requires the user to authorize a new refresh token."""
+
+
 class SpotifyClient:
     """Wrapper around Spotipy for Spotify API interactions."""
 
@@ -53,6 +57,17 @@ class SpotifyClient:
                 auth=HTTPBasicAuth(self.client_id, self.client_secret),
                 timeout=10,
             )
+            if response.status_code == 400:
+                try:
+                    error = response.json().get("error")
+                except ValueError:
+                    error = None
+                if error == "invalid_grant":
+                    raise SpotifyRefreshTokenExpiredError(
+                        "Spotify refresh token is expired or revoked; reauthorize the app "
+                        "and replace the stored refresh token."
+                    )
+
             response.raise_for_status()
             access_token = response.json()["access_token"]
             self.sp = spotipy.Spotify(auth=access_token)

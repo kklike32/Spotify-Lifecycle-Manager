@@ -48,7 +48,7 @@ from spotify_lifecycle.pipeline.backfill import check_and_backfill_summaries
 from spotify_lifecycle.pipeline.enrich import run_enrichment
 from spotify_lifecycle.pipeline.ingest import run_ingestion
 from spotify_lifecycle.pipeline.playlists import create_weekly_playlist
-from spotify_lifecycle.spotify.client import SpotifyClient
+from spotify_lifecycle.spotify.client import SpotifyClient, SpotifyRefreshTokenExpiredError
 from spotify_lifecycle.storage.dynamo import DynamoDBClient
 from spotify_lifecycle.storage.s3 import S3ColdStore, S3DashboardStore
 
@@ -112,11 +112,17 @@ def get_spotify_client() -> SpotifyClient:
         client_secret = get_secret("SPOTIFY_CLIENT_SECRET")
         refresh_token = get_secret("SPOTIFY_REFRESH_TOKEN")
 
-        _spotify_client = SpotifyClient(
+        spotify_client = SpotifyClient(
             client_id=client_id,
             client_secret=client_secret,
         )
-        _spotify_client.authenticate(refresh_token=refresh_token)
+        try:
+            spotify_client.authenticate(refresh_token=refresh_token)
+        except SpotifyRefreshTokenExpiredError as e:
+            logger.error("spotify_reauthorization_required", extra={"error": str(e)})
+            raise
+
+        _spotify_client = spotify_client
         logger.info("spotify_client_initialized")
 
     return _spotify_client

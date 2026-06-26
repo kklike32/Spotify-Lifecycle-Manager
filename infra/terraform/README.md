@@ -140,6 +140,24 @@ aws ssm put-parameter \
   --description "Spotify OAuth refresh token"
 ```
 
+Spotify user refresh tokens expire after six months. If a scheduled run fails with
+`invalid_grant` or `SpotifyRefreshTokenExpiredError`, generate a new token from the
+repository root:
+
+```bash
+uv run python scripts/generate_spotify_refresh_token.py
+```
+
+Then replace the SSM value:
+
+```bash
+aws ssm put-parameter \
+  --name "/spotify-lifecycle/spotify/refresh_token" \
+  --value "NEW_REFRESH_TOKEN" \
+  --type "SecureString" \
+  --overwrite
+```
+
 ## Post-Deployment Steps
 
 ### 1. Upload Dashboard Files

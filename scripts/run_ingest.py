@@ -39,7 +39,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from spotify_lifecycle.config import load_config
 from spotify_lifecycle.pipeline.ingest import run_ingestion
-from spotify_lifecycle.spotify.client import SpotifyClient
+from spotify_lifecycle.spotify.client import SpotifyClient, SpotifyRefreshTokenExpiredError
 from spotify_lifecycle.storage.dynamo import DynamoDBClient
 from spotify_lifecycle.storage.s3 import S3ColdStore
 
@@ -111,7 +111,15 @@ def main():
         client_id=config.spotify.client_id,
         client_secret=config.spotify.client_secret,
     )
-    spotify_client.authenticate(refresh_token=config.spotify.refresh_token)
+    try:
+        spotify_client.authenticate(refresh_token=config.spotify.refresh_token)
+    except SpotifyRefreshTokenExpiredError as e:
+        logger.error("%s", e)
+        logger.error(
+            "Generate a new refresh token with scripts/generate_spotify_refresh_token.py "
+            "and replace SPOTIFY_REFRESH_TOKEN in your local env or AWS SSM."
+        )
+        sys.exit(1)
     logger.info("Spotify client authenticated")
 
     if args.dry_run:

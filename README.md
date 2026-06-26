@@ -58,6 +58,7 @@ Copy `.env.example` to `.env` for local scripts only (never commit `.env`).
 | `SPOTIFY_CLIENT_ID` | Yes | Spotify app client ID |
 | `SPOTIFY_CLIENT_SECRET` | Yes | Spotify app client secret |
 | `SPOTIFY_REFRESH_TOKEN` | Yes | OAuth refresh token for non-interactive runs |
+| `SPOTIFY_REDIRECT_URI` | No | OAuth redirect URI for refresh-token generation |
 | `SOURCE_PLAYLIST_ID` | Yes | Seed playlist ID for weekly playlist generation |
 | `LOOKBACK_DAYS` | No | Recent-play lookback window (default 7) |
 | `AGGREGATION_FREQUENCY_DAYS` | No | Aggregate window (default 7) |
@@ -74,7 +75,18 @@ Copy `.env.example` to `.env` for local scripts only (never commit `.env`).
 
 ### Spotify OAuth (refresh token)
 
-Follow the Spotify OAuth guide in `scripts/run_ingest.py` or use your preferred flow to obtain a refresh token. Store refresh tokens in AWS SSM Parameter Store for production use.
+Spotify refresh tokens for user-authorized apps expire after six months. When Spotify
+returns `invalid_grant`, the stored refresh token is expired or revoked: do not retry it.
+Generate a new token, then replace `SPOTIFY_REFRESH_TOKEN` locally or in AWS SSM Parameter
+Store for production use.
+
+```bash
+uv run python scripts/generate_spotify_refresh_token.py
+```
+
+The helper reads `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, and optional
+`SPOTIFY_REDIRECT_URI` from `.env`; `--client-id`, `--client-secret`, and `--redirect-uri`
+can override those values.
 
 ## Deploy
 
@@ -106,6 +118,8 @@ aws ssm put-parameter \
   --value "YOUR_REFRESH_TOKEN" \
   --type "SecureString"
 ```
+
+To replace an expired refresh token, rerun the same command with `--overwrite`.
 
 ### Deploy App Components
 
