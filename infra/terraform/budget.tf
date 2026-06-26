@@ -9,7 +9,7 @@ resource "aws_budgets_budget" "monthly" {
   budget_type       = "COST"
   limit_amount      = var.budget_limit_monthly
   limit_unit        = "USD"
-  time_period_start = formatdate("YYYY-MM-01_00:00", timestamp())
+  time_period_start = var.budget_time_period_start
   time_unit         = "MONTHLY"
 
   cost_filter {

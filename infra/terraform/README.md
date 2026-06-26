@@ -110,6 +110,7 @@ daily_trend_days = 365
 # Cost Guardrails (optional)
 budget_notification_email = "you@example.com"
 budget_limit_monthly = 5
+budget_time_period_start = "2026-06-01_00:00"
 ```
 
 ### Secrets Management

@@ -234,6 +234,17 @@ variable "budget_threshold_percent" {
   default     = 80
 }
 
+variable "budget_time_period_start" {
+  description = "Static monthly budget start time in YYYY-MM-01_00:00 format"
+  type        = string
+  default     = "2026-06-01_00:00"
+
+  validation {
+    condition     = can(regex("^\\d{4}-\\d{2}-01_00:00$", var.budget_time_period_start))
+    error_message = "budget_time_period_start must use YYYY-MM-01_00:00 format."
+  }
+}
+
 variable "budget_notification_email" {
   description = "Email address for budget alert notifications"
   type        = string

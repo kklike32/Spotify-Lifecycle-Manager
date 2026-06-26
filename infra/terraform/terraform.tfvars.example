@@ -38,6 +38,9 @@ daily_trend_days = 365
 # Monthly budget limit (USD)
 budget_limit_monthly = 5
 
+# Static start date for the monthly budget; avoid timestamp() plan drift
+budget_time_period_start = "2026-06-01_00:00"
+
 # Budget threshold percentage for alerts (e.g., 80 = alert at 80%)
 budget_threshold_percent = 80
 
