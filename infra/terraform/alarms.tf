@@ -1,22 +1,118 @@
 # -----------------------------------------------------------------------------
+# CloudWatch Log Metric Filters: caught application errors (lambda_failed)
+# -----------------------------------------------------------------------------
+# _handle_error() in lambda_handler.py catches exceptions and returns a normal
+# dict (statusCode 500) instead of re-raising, so these invocations never
+# increment the built-in AWS/Lambda "Errors" metric. These filters catch that
+# case from the "lambda_failed" log key shared by every handler, and are
+# combined into each function's existing error alarm below (no new alarm
+# resources, so no additional per-alarm cost).
+
+resource "aws_cloudwatch_log_metric_filter" "ingest_lambda_failed" {
+  name           = "${var.project_name}-ingest-lambda-failed"
+  log_group_name = aws_cloudwatch_log_group.ingest.name
+  pattern        = "\"lambda_failed\""
+
+  metric_transformation {
+    name      = "ingest_lambda_failed"
+    namespace = var.project_name
+    value     = "1"
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "enrich_lambda_failed" {
+  name           = "${var.project_name}-enrich-lambda-failed"
+  log_group_name = aws_cloudwatch_log_group.enrich.name
+  pattern        = "\"lambda_failed\""
+
+  metric_transformation {
+    name      = "enrich_lambda_failed"
+    namespace = var.project_name
+    value     = "1"
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "playlist_lambda_failed" {
+  name           = "${var.project_name}-playlist-lambda-failed"
+  log_group_name = aws_cloudwatch_log_group.playlist.name
+  pattern        = "\"lambda_failed\""
+
+  metric_transformation {
+    name      = "playlist_lambda_failed"
+    namespace = var.project_name
+    value     = "1"
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "aggregate_lambda_failed" {
+  name           = "${var.project_name}-aggregate-lambda-failed"
+  log_group_name = aws_cloudwatch_log_group.aggregate.name
+  pattern        = "\"lambda_failed\""
+
+  metric_transformation {
+    name      = "aggregate_lambda_failed"
+    namespace = var.project_name
+    value     = "1"
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "backfill_lambda_failed" {
+  name           = "${var.project_name}-backfill-lambda-failed"
+  log_group_name = aws_cloudwatch_log_group.backfill.name
+  pattern        = "\"lambda_failed\""
+
+  metric_transformation {
+    name      = "backfill_lambda_failed"
+    namespace = var.project_name
+    value     = "1"
+  }
+}
+
+# -----------------------------------------------------------------------------
 # CloudWatch Alarms: Lambda Function Errors
 # -----------------------------------------------------------------------------
+# Each alarm sums the built-in AWS/Lambda "Errors" metric (runtime crashes,
+# timeouts, OOM) with the "lambda_failed" log metric above (caught application
+# errors, e.g. expired Spotify refresh token) via metric math, so either
+# failure mode trips the same alarm and reaches the same SNS subscription.
 
 # Ingest Lambda Error Alarm
 resource "aws_cloudwatch_metric_alarm" "ingest_errors" {
   alarm_name          = "${var.project_name}-ingest-errors"
-  alarm_description   = "Alert when ingestion Lambda has errors"
+  alarm_description   = "Alert when ingestion Lambda has errors (runtime crashes or caught application errors)"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
-  metric_name         = "Errors"
-  namespace           = "AWS/Lambda"
-  period              = 3600 # 1 hour
-  statistic           = "Sum"
   threshold           = 2 # Alert if 2+ errors in 1 hour
   treat_missing_data  = "notBreaching"
 
-  dimensions = {
-    FunctionName = aws_lambda_function.ingest.function_name
+  metric_query {
+    id          = "e1"
+    expression  = "m1 + FILL(m2, 0)"
+    label       = "ingest_total_errors"
+    return_data = true
+  }
+
+  metric_query {
+    id = "m1"
+    metric {
+      metric_name = "Errors"
+      namespace   = "AWS/Lambda"
+      period      = 3600
+      stat        = "Sum"
+      dimensions = {
+        FunctionName = aws_lambda_function.ingest.function_name
+      }
+    }
+  }
+
+  metric_query {
+    id = "m2"
+    metric {
+      metric_name = aws_cloudwatch_log_metric_filter.ingest_lambda_failed.metric_transformation[0].name
+      namespace   = var.project_name
+      period      = 3600
+      stat        = "Sum"
+    }
   }
 
   alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []
@@ -30,18 +126,40 @@ resource "aws_cloudwatch_metric_alarm" "ingest_errors" {
 # Enrich Lambda Error Alarm
 resource "aws_cloudwatch_metric_alarm" "enrich_errors" {
   alarm_name          = "${var.project_name}-enrich-errors"
-  alarm_description   = "Alert when enrichment Lambda has errors"
+  alarm_description   = "Alert when enrichment Lambda has errors (runtime crashes or caught application errors)"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
-  metric_name         = "Errors"
-  namespace           = "AWS/Lambda"
-  period              = 3600
-  statistic           = "Sum"
   threshold           = 2
   treat_missing_data  = "notBreaching"
 
-  dimensions = {
-    FunctionName = aws_lambda_function.enrich.function_name
+  metric_query {
+    id          = "e1"
+    expression  = "m1 + FILL(m2, 0)"
+    label       = "enrich_total_errors"
+    return_data = true
+  }
+
+  metric_query {
+    id = "m1"
+    metric {
+      metric_name = "Errors"
+      namespace   = "AWS/Lambda"
+      period      = 3600
+      stat        = "Sum"
+      dimensions = {
+        FunctionName = aws_lambda_function.enrich.function_name
+      }
+    }
+  }
+
+  metric_query {
+    id = "m2"
+    metric {
+      metric_name = aws_cloudwatch_log_metric_filter.enrich_lambda_failed.metric_transformation[0].name
+      namespace   = var.project_name
+      period      = 3600
+      stat        = "Sum"
+    }
   }
 
   alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []
@@ -55,18 +173,40 @@ resource "aws_cloudwatch_metric_alarm" "enrich_errors" {
 # Playlist Lambda Error Alarm
 resource "aws_cloudwatch_metric_alarm" "playlist_errors" {
   alarm_name          = "${var.project_name}-playlist-errors"
-  alarm_description   = "Alert when weekly playlist Lambda has errors"
+  alarm_description   = "Alert when weekly playlist Lambda has errors (runtime crashes or caught application errors)"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
-  metric_name         = "Errors"
-  namespace           = "AWS/Lambda"
-  period              = 3600
-  statistic           = "Sum"
   threshold           = 1 # Alert on any error (weekly runs only)
   treat_missing_data  = "notBreaching"
 
-  dimensions = {
-    FunctionName = aws_lambda_function.playlist.function_name
+  metric_query {
+    id          = "e1"
+    expression  = "m1 + FILL(m2, 0)"
+    label       = "playlist_total_errors"
+    return_data = true
+  }
+
+  metric_query {
+    id = "m1"
+    metric {
+      metric_name = "Errors"
+      namespace   = "AWS/Lambda"
+      period      = 3600
+      stat        = "Sum"
+      dimensions = {
+        FunctionName = aws_lambda_function.playlist.function_name
+      }
+    }
+  }
+
+  metric_query {
+    id = "m2"
+    metric {
+      metric_name = aws_cloudwatch_log_metric_filter.playlist_lambda_failed.metric_transformation[0].name
+      namespace   = var.project_name
+      period      = 3600
+      stat        = "Sum"
+    }
   }
 
   alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []
@@ -80,18 +220,40 @@ resource "aws_cloudwatch_metric_alarm" "playlist_errors" {
 # Aggregate Lambda Error Alarm
 resource "aws_cloudwatch_metric_alarm" "aggregate_errors" {
   alarm_name          = "${var.project_name}-aggregate-errors"
-  alarm_description   = "Alert when aggregation Lambda has errors"
+  alarm_description   = "Alert when aggregation Lambda has errors (runtime crashes or caught application errors)"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
-  metric_name         = "Errors"
-  namespace           = "AWS/Lambda"
-  period              = 3600
-  statistic           = "Sum"
   threshold           = 1
   treat_missing_data  = "notBreaching"
 
-  dimensions = {
-    FunctionName = aws_lambda_function.aggregate.function_name
+  metric_query {
+    id          = "e1"
+    expression  = "m1 + FILL(m2, 0)"
+    label       = "aggregate_total_errors"
+    return_data = true
+  }
+
+  metric_query {
+    id = "m1"
+    metric {
+      metric_name = "Errors"
+      namespace   = "AWS/Lambda"
+      period      = 3600
+      stat        = "Sum"
+      dimensions = {
+        FunctionName = aws_lambda_function.aggregate.function_name
+      }
+    }
+  }
+
+  metric_query {
+    id = "m2"
+    metric {
+      metric_name = aws_cloudwatch_log_metric_filter.aggregate_lambda_failed.metric_transformation[0].name
+      namespace   = var.project_name
+      period      = 3600
+      stat        = "Sum"
+    }
   }
 
   alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []
@@ -105,18 +267,40 @@ resource "aws_cloudwatch_metric_alarm" "aggregate_errors" {
 # Backfill Lambda Error Alarm
 resource "aws_cloudwatch_metric_alarm" "backfill_errors" {
   alarm_name          = "${var.project_name}-backfill-errors"
-  alarm_description   = "Alert when backfill Lambda has errors"
+  alarm_description   = "Alert when backfill Lambda has errors (runtime crashes or caught application errors)"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
-  metric_name         = "Errors"
-  namespace           = "AWS/Lambda"
-  period              = 3600
-  statistic           = "Sum"
   threshold           = 1
   treat_missing_data  = "notBreaching"
 
-  dimensions = {
-    FunctionName = aws_lambda_function.backfill.function_name
+  metric_query {
+    id          = "e1"
+    expression  = "m1 + FILL(m2, 0)"
+    label       = "backfill_total_errors"
+    return_data = true
+  }
+
+  metric_query {
+    id = "m1"
+    metric {
+      metric_name = "Errors"
+      namespace   = "AWS/Lambda"
+      period      = 3600
+      stat        = "Sum"
+      dimensions = {
+        FunctionName = aws_lambda_function.backfill.function_name
+      }
+    }
+  }
+
+  metric_query {
+    id = "m2"
+    metric {
+      metric_name = aws_cloudwatch_log_metric_filter.backfill_lambda_failed.metric_transformation[0].name
+      namespace   = var.project_name
+      period      = 3600
+      stat        = "Sum"
+    }
   }
 
   alarm_actions = var.budget_notification_email != "" ? [aws_sns_topic.alarms[0].arn] : []

@@ -12,12 +12,16 @@ terraform {
     }
   }
 
-  # Optional: Configure remote state (uncomment for production)
-  # backend "s3" {
-  #   bucket = "spotify-lifecycle-terraform-state"
-  #   key    = "prod/terraform.tfstate"
-  #   region = "us-east-1"
-  # }
+  # Remote state: shared across machines, versioned, encrypted.
+  # No DynamoDB lock table needed - use_lockfile uses S3-native locking
+  # (Terraform 1.10+), which is free vs. an always-on DynamoDB table.
+  backend "s3" {
+    bucket       = "spotify-lifecycle-terraform-state-kk"
+    key          = "prod/terraform.tfstate"
+    region       = "us-east-1"
+    encrypt      = true
+    use_lockfile = true
+  }
 }
 
 locals {
