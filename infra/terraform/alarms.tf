@@ -435,6 +435,9 @@ resource "aws_cloudwatch_metric_alarm" "aggregate_summary_rejected_alarm" {
 # -----------------------------------------------------------------------------
 # NOTE: This alarm ONLY fires when counts DECREASE (unexpected data loss).
 # Normal count INCREASES from new events arriving are logged as INFO and do not trigger alarms.
+# The metric is published only when a log line matches, so the alarm is usually
+# INSUFFICIENT_DATA. datapoints_to_alarm applies to OK -> ALARM only; one
+# matching line still transitions INSUFFICIENT_DATA -> ALARM and pages.
 
 resource "aws_cloudwatch_log_metric_filter" "ingest_summary_mismatch" {
   name           = "${var.project_name}-ingest-summary-mismatch"
@@ -453,7 +456,7 @@ resource "aws_cloudwatch_metric_alarm" "ingest_summary_mismatch_alarm" {
   alarm_description   = "Alert when daily summary counts DECREASE unexpectedly (data loss/bug). Search ingest logs for 'count DECREASED'."
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 3 # 15 minutes lookback
-  datapoints_to_alarm = 2 # require 2 hits
+  datapoints_to_alarm = 2 # OK -> ALARM only; one INSUFFICIENT_DATA hit still pages
   metric_name         = aws_cloudwatch_log_metric_filter.ingest_summary_mismatch.metric_transformation[0].name
   namespace           = var.project_name
   period              = 300

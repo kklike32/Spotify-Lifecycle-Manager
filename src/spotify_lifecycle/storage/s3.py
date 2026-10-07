@@ -337,6 +337,10 @@ class S3ColdStore:
         """Aggregate track counts for a day by reading raw event files.
 
         Deduplicates by play_id to avoid double-counting overlapping ingest runs.
+
+        Raises:
+            Exception: If any raw file cannot be read. A partial count is never
+                returned, so a failed file cannot overwrite a good summary.
         """
         object_keys = self._list_partition_keys(bucket_name, partition_date, partition_date)
         counts: dict[str, int] = defaultdict(int)
@@ -356,6 +360,9 @@ class S3ColdStore:
                     "failed to read events while calculating summary",
                     extra={"bucket": bucket_name, "key": key, "error": str(e)},
                 )
+                # A partial total would replace the stored summary and page on
+                # count DECREASED. Fail the recount so the previous summary stays.
+                raise
 
         return counts
 

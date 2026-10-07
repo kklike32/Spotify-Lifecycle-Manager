@@ -1045,6 +1045,66 @@ def test_daily_summary_count_decrease_logs_error(caplog):
     )
 
 
+def test_daily_summary_failed_file_read_keeps_existing_summary(caplog):
+    """A failed raw-file read must not replace the stored daily summary."""
+    import logging
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock
+
+    import pytest
+
+    from spotify_lifecycle.storage.s3 import S3ColdStore
+
+    store = S3ColdStore()
+    store.s3 = MagicMock()
+
+    memory: dict[str, dict] = {}
+
+    def fake_put_object(Bucket, Key, Body, ContentType):
+        memory[Key] = json.loads(Body.decode("utf-8"))
+
+    store.s3.put_object.side_effect = fake_put_object
+
+    def fake_read(bucket_name, partition_date):
+        return memory.get(store._daily_summary_key(partition_date))
+
+    store.read_daily_summary = fake_read
+
+    bucket = "test-bucket"
+    partition_date = datetime(2025, 1, 2)
+    store.write_daily_summary(bucket, partition_date, {"track_a": 10})
+    key = store._daily_summary_key(partition_date)
+    existing_summary = dict(memory[key])
+    puts_after_seed = store.s3.put_object.call_count
+
+    store._list_partition_keys = MagicMock(
+        return_value=[
+            "dt=2025-01-02/events_ok.jsonl",
+            "dt=2025-01-02/events_bad.jsonl",
+        ]
+    )
+
+    def fake_read_jsonl(bucket_name, object_key):
+        if object_key.endswith("events_bad.jsonl"):
+            raise OSError("s3 read failed")
+        yield SimpleNamespace(play_id="p1", track_id="track_a")
+
+    store._read_jsonl_file = fake_read_jsonl
+
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(OSError, match="s3 read failed"):
+            store.write_daily_summary(bucket, partition_date)
+
+    assert memory[key] == existing_summary
+    assert memory[key]["total_plays"] == 10
+    assert store.s3.put_object.call_count == puts_after_seed
+    assert any(
+        "failed to read events while calculating summary" in record.message
+        for record in caplog.records
+    )
+    assert not any("count DECREASED" in record.message for record in caplog.records)
+
+
 def test_daily_summary_track_distribution_change_logs_warning(caplog):
     """Daily summary with same total but different tracks logs as WARNING."""
     import logging
